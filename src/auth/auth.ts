@@ -53,6 +53,8 @@ export const auhtConfig = {
     logo: "", // Absolute URL to image
     buttonText: "Login", // Hex color code
   },
+
+  //
 } satisfies NextAuthOptions;
 
 // Use it in server contexts
