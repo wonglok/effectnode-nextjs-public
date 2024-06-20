@@ -24,7 +24,7 @@ export function DashLayout({ session, children }) {
         <div className="fixed top-0  left-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between border-r bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[25%] xl:w-[20%] 2xl:w-[15%] dark:bg-gray-800 dark:border-gray-700">
           <div>
             <div className="-mx-6 px-6 py-4">
-              <Link href="/" title="home">
+              <Link href="/" title="home" target="_blank">
                 <img
                   src={`/img/effectnode-logo.png`}
                   className="w-full px-2"
@@ -184,7 +184,7 @@ export function DashLayout({ session, children }) {
               )}
             </ul>
           </div>
-          <div className="-mx-6 flex items-center justify-center border-t px-6 pt-4 dark:border-gray-700 cursor-pointer">
+          <div className="-mx-6 flex items-center justify-center border-t px-6 pt-4 dark:border-gray-700 ">
             <button
               onClick={() => signOut()}
               className="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300  hover:cursor-pointer cursor-pointer bg-gray-100"
