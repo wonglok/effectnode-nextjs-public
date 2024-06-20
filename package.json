@@ -12,15 +12,12 @@
     "@react-three/drei": "^9.107.0",
     "@react-three/fiber": "^8.16.8",
     "@react-three/postprocessing": "^2.16.2",
-    "@tailus/themer": "^0.1.6",
     "glslify-loader": "^2.0.0",
-    "lucide-react": "^0.395.0",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
-    "tailwind-merge": "^2.3.0",
     "three": "^0.165.0"
   },
   "devDependencies": {
