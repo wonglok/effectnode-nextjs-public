@@ -8,7 +8,7 @@ export default function AdminPage() {
       <>
         <DashLayout session={session}>
           <div className="flex h-[90vh] items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
-            <span className="dark:text-white">Content</span>
+            <span className="dark:text-white">Projects</span>
           </div>
         </DashLayout>
         {/* <div className="">
