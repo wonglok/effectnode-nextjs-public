@@ -3,7 +3,13 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@tailus-ui/*": [
+        "/components/tailus-ui/*"
+      ],
+      "@lib/*": [
+        "/lib/*"
+      ],
     }
   }
 }
