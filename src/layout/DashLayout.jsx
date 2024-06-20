@@ -2,6 +2,7 @@ import { Ball } from "@/canvas/WebGL/Ball";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 export function DashLayout({ session, children }) {
   let router = useRouter();
   let getLink = (name) => {
@@ -183,10 +184,10 @@ export function DashLayout({ session, children }) {
               )}
             </ul>
           </div>
-          <div className="-mx-6 flex items-center justify-between border-t px-6 pt-4 dark:border-gray-700">
+          <div className="-mx-6 flex items-center justify-center border-t px-6 pt-4 dark:border-gray-700 cursor-pointer">
             <button
               onClick={() => signOut()}
-              className="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300"
+              className="group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300  hover:cursor-pointer cursor-pointer bg-gray-100"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
