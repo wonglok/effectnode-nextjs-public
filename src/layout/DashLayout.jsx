@@ -11,13 +11,14 @@ export function DashLayout({ session, title = "Dashboard", children }) {
 
     let normal =
       "group flex items-center space-x-4 rounded-md px-4 py-3 text-gray-600 dark:text-gray-300";
-    let current = router.pathname;
+    let current = router?.pathname;
     if (name === current) {
       return active;
     } else {
       return normal;
     }
   };
+
   return (
     <>
       <div className="effectnode-app-container w-hull h-full">
@@ -72,8 +73,8 @@ export function DashLayout({ session, title = "Dashboard", children }) {
                 </li>
                 <li>
                   <Link
-                    href="/admin/projects"
-                    className={getLink(`/admin/projects`)}
+                    href="/admin/workspace"
+                    className={getLink(`/admin/workspace`)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -336,9 +337,7 @@ export function DashLayout({ session, title = "Dashboard", children }) {
                 }
               </div>
             </div>
-            <div className="px-6 pt-6 2xl:container h-full overflow-scroll">
-              {children}
-            </div>
+            <div className="px-6 pt-6 2xl:container  h-full ">{children}</div>
           </div>
         </div>
       </div>

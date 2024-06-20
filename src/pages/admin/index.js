@@ -2,12 +2,21 @@ import { DashLayout } from "@/layout/DashLayout";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function AdminPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className=" text-center">Loading...</div>
+      </div>
+    );
+  }
+
   if (session) {
     return (
       <>
         <DashLayout session={session}>
-          <div className="flex h-[90vh] items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
+          <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
             <span className="dark:text-white">Content</span>
           </div>
         </DashLayout>

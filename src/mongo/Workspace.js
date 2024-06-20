@@ -1,4 +1,5 @@
 import mongoose, { Model } from "mongoose";
+import { getDBConnection } from "./mongo";
 
 const DefaultValues = {
   title: {
@@ -30,4 +31,12 @@ const model =
   mongoose.model("Workspace" + "_Collection", DefinitionInfo);
 
 /** @type {Model} */
-export const Workspace = model;
+export const Workspace = new Proxy(model, {
+  get: (target, key) => {
+    return target[key];
+  },
+  set: (target, key, val) => {
+    target[key] = val;
+    return true;
+  },
+});
