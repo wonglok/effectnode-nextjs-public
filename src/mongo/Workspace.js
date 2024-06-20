@@ -1,9 +1,16 @@
 import mongoose, { Model } from "mongoose";
-import { getDBConnection } from "./mongo";
 
 const DefaultValues = {
   title: {
     type: String,
+    unique: true,
+    require: true,
+    default: "New Workspace",
+  },
+  slug: {
+    type: String,
+    unique: true,
+    require: true,
   },
   screencapThumb: {
     type: String,
@@ -21,7 +28,7 @@ const DefinitionInfo = mongoose.Schema(DefaultValues, {
   timestamps: true,
 });
 
-if (mongoose?.models["Workspace" + "_Collection"]) {
+if (mongoose?.models && mongoose?.models["Workspace" + "_Collection"]) {
   mongoose.deleteModel("Workspace" + "_Collection");
 }
 
@@ -31,12 +38,4 @@ const model =
   mongoose.model("Workspace" + "_Collection", DefinitionInfo);
 
 /** @type {Model} */
-export const Workspace = new Proxy(model, {
-  get: (target, key) => {
-    return target[key];
-  },
-  set: (target, key, val) => {
-    target[key] = val;
-    return true;
-  },
-});
+export const Workspace = model;

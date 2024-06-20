@@ -2,6 +2,7 @@ import { BeginBar } from "../BeginBar/BeginBar";
 import { BeginMenu } from "../BeginBar/BeginMenu";
 import { ThankYouList } from "../BeginBar/ThankYouList";
 import { AppWindows } from "../AppWindows/AppWindows";
+import Link from "next/link";
 export function EditorApp({ useStore }) {
   return (
     <div className="w-full h-full ">
@@ -10,7 +11,11 @@ export function EditorApp({ useStore }) {
         style={{ height: `1.6rem` }}
       >
         <div className="w-full h-full flex items-center justify-between px-2 text-sm">
-          <div>EffectNode FX</div>
+          <div>
+            <Link href={`/admin/workspace`} className="underline">
+              EffectNode FX
+            </Link>
+          </div>
           <div className=""></div>
           <div className="text-white">EffectNode FX</div>
         </div>

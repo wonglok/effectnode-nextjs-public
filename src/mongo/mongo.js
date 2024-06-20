@@ -1,20 +1,20 @@
 import mongoose from "mongoose";
 import { fakeGlobe } from "./fakeGlobe";
 
-const MONGODB_URL = process.env.MONGODB_URL;
-
-if (!MONGODB_URL) {
-  throw new Error(
-    "Please define the MONGODB_URL environment variable inside .env.local"
-  );
-}
-
-let cached = fakeGlobe.mongoose;
-if (!cached) {
-  cached = fakeGlobe.mongoose = { conn: null, promise: null };
-}
-
 async function getDBConnection() {
+  const MONGODB_URL = process.env.MONGODB_URL;
+
+  if (!MONGODB_URL) {
+    throw new Error(
+      "Please define the MONGODB_URL environment variable inside .env.local"
+    );
+  }
+
+  let cached = fakeGlobe.mongoose;
+  if (!cached) {
+    cached = fakeGlobe.mongoose = { conn: null, promise: null };
+  }
+
   if (cached.conn) {
     return cached.conn;
   }

@@ -13,15 +13,68 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 import { create } from "zustand";
 import { EditorApp } from "./EditorApp/EditorApp";
 import { useEffect, useRef, useState } from "react";
+import { getID } from "./utils/getID";
+import { myApps, myWins } from "./utils/myApps";
+import { useRouter } from "next/router";
+import { getOneWorkspace } from "@/pages/api/workspace";
 // thankyouActivated //
 
 export const Editor = () => {
-  let [val, setVal] = useState(null);
+  let [val, setVal] = useState(
+    <div className="w-full h-full flex items-center justify-center">
+      <div className=" text-center">Loading...</div>
+    </div>
+  );
+
+  let router = useRouter();
+  let query = router.query || {};
+  let spaceID = query.spaceID || false;
 
   useEffect(() => {
+    if (!spaceID) {
+      return;
+    }
+
     let core = new EditorCore();
-    setVal(core.getReactElement());
-  }, []);
+
+    Promise.all(
+      //
+      [getOneWorkspace({ _id: spaceID }), []]
+    )
+      //
+      .then(([{ data: workspace }, { data: items }]) => {
+        core.onChange((state, before) => {
+          //
+          console.log(state);
+          localStorage.setItem(
+            spaceID,
+            JSON.stringify({
+              apps: state.apps,
+              wins: state.wins,
+            })
+          );
+        });
+
+        try {
+          let state = JSON.parse(localStorage.getItem(spaceID));
+          core.setState({
+            apps: state.apps,
+            wins: state.wins,
+          });
+        } catch (e) {
+          console.log(e);
+        }
+
+        core.bootup();
+
+        core.setState({
+          workspace: workspace,
+          items: items,
+        });
+
+        setVal(core.getReactElement());
+      });
+  }, [spaceID]);
 
   return <>{val}</>;
 };
@@ -40,7 +93,8 @@ export class EditorCore {
       return {
         apps: [],
         wins: [],
-        activeProject: false,
+        workspace: false,
+        items: [],
 
         //
         overlayPop: "",
@@ -64,8 +118,30 @@ export class EditorCore {
       //
       "apps",
       "wins",
-      "activeProject",
+      "workspace",
+      "items",
     ];
+
+    this.exportBackup = () => {
+      let st = JSON.parse(JSON.stringify(this.getState()));
+      let processedData = {};
+      for (let kn of this.store.saveKeys) {
+        if (st[kn]) {
+          processedData[kn] = st[kn];
+        }
+      }
+      return processedData;
+    };
+    this.restoreBackup = (state) => {
+      let st = JSON.parse(JSON.stringify(state));
+      let processedData = {};
+      for (let kn of this.store.saveKeys) {
+        if (st[kn]) {
+          processedData[kn] = st[kn];
+        }
+      }
+      this.setState(processedData);
+    };
 
     this.setState = (v = {}) => {
       this.store.setState(v);
@@ -98,6 +174,59 @@ export class EditorCore {
     this.getReactElement = () => (
       <EditorApp useStore={this.store} parent={this}></EditorApp>
     );
+
+    this.bootup = () => {
+      let { apps, wins } = this.getState();
+      if (!apps.some((r) => r.type === "editor")) {
+        let appID = getID();
+
+        let app = JSON.parse(
+          JSON.stringify(myApps.find((r) => r.type === "editor"))
+        );
+        app._id = appID;
+
+        let win = JSON.parse(
+          JSON.stringify(myWins.find((r) => r.type === "editor"))
+        );
+        win._id = getID();
+        win.appID = appID;
+        win.zIndex = wins.length;
+
+        apps.push(app);
+        wins.push(win);
+
+        this.setState({
+          apps: [...apps],
+          wins: [...wins],
+          overlayPop: "",
+        });
+      }
+
+      if (!apps.some((r) => r.type === "previwer")) {
+        let appID = getID();
+
+        let app = JSON.parse(
+          JSON.stringify(myApps.find((r) => r.type === "previwer"))
+        );
+        app._id = appID;
+
+        let win = JSON.parse(
+          JSON.stringify(myWins.find((r) => r.type === "previwer"))
+        );
+        win._id = getID();
+        win.appID = appID;
+        win.zIndex = wins.length;
+
+        apps.push(app);
+        wins.push(win);
+
+        this.setState({
+          apps: [...apps],
+          wins: [...wins],
+          overlayPop: "",
+        });
+      }
+    };
   }
 }
 

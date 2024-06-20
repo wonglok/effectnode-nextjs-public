@@ -337,7 +337,7 @@ export function DashLayout({ session, title = "Dashboard", children }) {
                 }
               </div>
             </div>
-            <div className="px-6 pt-6 2xl:container  h-full ">{children}</div>
+            <div className="px-6 pt-6 h-full ">{children}</div>
           </div>
         </div>
       </div>
