@@ -6,14 +6,15 @@ export default function AdminPage() {
   if (session) {
     return (
       <>
-        <DashLayout session={session}>
+        <DashLayout session={session} title="Projects">
           <div className="flex h-[90vh] items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
             <span className="dark:text-white">Projects</span>
           </div>
         </DashLayout>
+
+        {/*  */}
         {/* <div className="">
           Signed in as {session?.user?.name || "Developer Admin"} <br />
-         
         </div> */}
       </>
     );

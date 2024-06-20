@@ -13,7 +13,7 @@ export default function Document() {
         `,
         }}
       ></script>
-      <body>
+      <body className="effectnode-app-container">
         <Main />
         <NextScript />
       </body>

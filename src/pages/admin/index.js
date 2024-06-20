@@ -13,7 +13,6 @@ export default function AdminPage() {
         </DashLayout>
         {/* <div className="">
           Signed in as {session?.user?.name || "Developer Admin"} <br />
-         
         </div> */}
       </>
     );
