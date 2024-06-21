@@ -10,7 +10,7 @@ export function ThankYouList({ useStore }) {
 
       {overlayPop == "credits" && (
         <div
-          className=" absolute top-0 left-0 w-full h-full "
+          className=" z-[99] absolute top-0 left-0 w-full h-full bg-black opacity-20 "
           onClick={() => {
             useStore.setState({
               overlayPop: "",
@@ -21,7 +21,7 @@ export function ThankYouList({ useStore }) {
 
       {overlayPop == "credits" && (
         <div
-          className=" absolute right-5 shadow-2xl p-2 rounded-2xl border-gray-300 border  backdrop-blur-lg  bg-slate-200  bg-opacity-20 "
+          className=" z-[100] absolute right-5 shadow-2xl p-2 rounded-2xl border-gray-300 border  backdrop-blur-lg  bg-slate-200  bg-opacity-20 "
           style={{
             width: "500px",
             height: "500px",
