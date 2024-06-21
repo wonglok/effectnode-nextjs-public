@@ -206,14 +206,13 @@ export class EditorCore {
         win.appID = appID;
         win.zIndex = wins.length;
 
-        win.width = 500;
-        win.height = 375;
+        // win.width = 500;
+        // win.height = 375;
+        // win.top = 10;
+        // win.left = 10;
 
         apps.push(app);
         wins.push(win);
-
-        win.top = 10;
-        win.left = 10;
 
         this.setState({
           apps: [...apps],
@@ -237,8 +236,8 @@ export class EditorCore {
         win.appID = appID;
         win.zIndex = wins.length;
 
-        win.top = 10;
-        win.left = window.innerWidth - win.width - 10;
+        // win.top = 10;
+        // win.left = window.innerWidth - win.width - 10;
 
         apps.push(app);
         wins.push(win);
@@ -249,6 +248,41 @@ export class EditorCore {
           overlayPop: "",
         });
       }
+
+      this.resetWindow();
+    };
+
+    this.resetWindow = () => {
+      let { apps, wins } = this.getState();
+      ///////
+      {
+        let win = wins.find((r) => r.type === "previewer");
+        win.top = 10;
+        win.left = window.innerWidth - win.width - 10;
+
+        this.setState({
+          apps: [...apps],
+          wins: [...wins],
+          overlayPop: "",
+        });
+      }
+      ///////
+
+      ///////
+      {
+        let win = wins.find((r) => r.type === "editor");
+        win.width = 500;
+        win.height = 375;
+        win.top = 10;
+        win.left = 10;
+
+        this.setState({
+          apps: [...apps],
+          wins: [...wins],
+          overlayPop: "",
+        });
+      }
+      ///////
     };
   }
 }
