@@ -128,7 +128,17 @@ export function EditorApp({ useStore }) {
       </div>
       <div
         className="w-full from-gray-100 to-gray-500 bg-gradient-to-l "
-        style={{ height: `2.75rem` }}
+        style={{
+          height: `2.75rem`,
+          backgroundImage: `
+    linear-gradient(
+          90deg,
+          #747474,
+          #f3f3f3,
+          #747474
+   )       
+          `,
+        }}
       >
         <BeginBar useStore={useStore}></BeginBar>
       </div>

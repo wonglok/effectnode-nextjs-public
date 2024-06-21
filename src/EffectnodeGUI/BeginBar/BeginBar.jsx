@@ -10,7 +10,7 @@ export function BeginBar({ useStore }) {
   return (
     <>
       <div className="w-full h-full flex items-center justify-between text-sm">
-        <div className=" w-44">
+        <div className=" w-44 text-white">
           {/*  */}
 
           {/*  */}
@@ -83,7 +83,7 @@ export function BeginBar({ useStore }) {
             );
           })}
         </div>
-        <div className="w-44">
+        <div className="w-44 text-white">
           <div className="flex flex-col justify-end mr-2">
             <div className="text-right">Yo!</div>
             <div

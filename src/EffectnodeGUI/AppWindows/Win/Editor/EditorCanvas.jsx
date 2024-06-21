@@ -38,7 +38,7 @@ export function EditorCanvas() {
             args={[1000, 1000]}
           ></Grid>
 
-          <Box
+          {/* <Box
             //
             onPointerEnter={() => {
               document.body.style.cursor = "pointer";
@@ -69,7 +69,7 @@ export function EditorCanvas() {
             textAlign="center"
           >
             Create Item
-          </Text>
+          </Text> */}
 
           <ambientLight args={[0xffffff, 10]}></ambientLight>
           <Environment files={hdr}></Environment>
