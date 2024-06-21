@@ -7,6 +7,8 @@ import { removeOneWorkspace, renameOneWorkspace } from "@/pages/api/workspace";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { EditorCanvas } from "@/EffectnodeGUI/AppWindows/Win/Editor/EditorCanvas";
+
 export function EditorApp({ useStore }) {
   let router = useRouter();
   let workspace = useStore((r) => r.workspace);
@@ -120,6 +122,9 @@ export function EditorApp({ useStore }) {
         }}
       >
         <div className="w-full h-full relative">
+          <div className=" absolute top-0 left-0 w-full h-full">
+            <EditorCanvas></EditorCanvas>
+          </div>
           <AppWindows useStore={useStore}></AppWindows>
           <BeginMenu useStore={useStore}></BeginMenu>
           <ThankYouList useStore={useStore}></ThankYouList>

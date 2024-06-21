@@ -354,7 +354,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           {children}
           {idx < wins.length - 1 && (
             <>
-              <div className="w-full h-full absolute top-0 left-0 backdrop-grayscale"></div>
+              <div className="w-full h-full absolute top-0 left-0 "></div>
             </>
           )}
         </div>
