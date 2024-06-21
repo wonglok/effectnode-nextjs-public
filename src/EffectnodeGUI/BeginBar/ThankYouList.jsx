@@ -7,6 +7,18 @@ export function ThankYouList({ useStore }) {
   return (
     <>
       {/*  */}
+
+      {overlayPop == "credits" && (
+        <div
+          className=" absolute top-0 left-0 w-full h-full "
+          onClick={() => {
+            useStore.setState({
+              overlayPop: "",
+            });
+          }}
+        ></div>
+      )}
+
       {overlayPop == "credits" && (
         <div
           className=" absolute right-5 shadow-2xl p-2 rounded-2xl border-gray-300 border  backdrop-blur-lg  bg-slate-200  bg-opacity-20 "
@@ -38,7 +50,7 @@ export function ThankYouList({ useStore }) {
                       Icons8
                     </a>
                   </li>
-                  <li className=" underline  list-decimal">
+                  <li className=" underline list-decimal">
                     <a
                       target="_blank"
                       className="text-blue-500"

@@ -32,9 +32,11 @@ if (mongoose?.models && mongoose?.models["Workspace" + "_Collection"]) {
   mongoose.deleteModel("Workspace" + "_Collection");
 }
 
+mongoose.models = mongoose.models || {};
+
 /** @type {Model} */
 const model =
-  mongoose.models["Workspace" + "_Collection"] ||
+  mongoose?.models["Workspace" + "_Collection"] ||
   mongoose.model("Workspace" + "_Collection", DefinitionInfo);
 
 /** @type {Model} */

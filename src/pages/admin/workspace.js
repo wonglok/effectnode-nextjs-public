@@ -8,13 +8,13 @@ let useWorkspaces = () => {
   let [workspaces, setData] = useState([]);
 
   useEffect(() => {
-    listWorkspaces(({ data }) => {
+    listWorkspaces.client(({ data }) => {
       setData(data);
     });
   }, []);
 
   let realodWorkspaces = () => {
-    listWorkspaces(({ data }) => {
+    listWorkspaces.client(({ data }) => {
       setData(data);
     });
   };
@@ -102,14 +102,11 @@ function PlusCard({ onReload }) {
               <button
                 onClick={() => {
                   //
-                  createWorkspace(
-                    {
+                  createWorkspace
+                    .client({
                       title: "Happy Space",
-                    },
-                    () => {
-                      onReload();
-                    }
-                  );
+                    })
+                    .then(onReload);
                 }}
                 className="text-white/95 text-sm p-4 py-1 border border-white rounded-lg hover:bg-gray-800 transition-colors duration-300"
               >

@@ -3,7 +3,9 @@ import { BeginMenu } from "../BeginBar/BeginMenu";
 import { ThankYouList } from "../BeginBar/ThankYouList";
 import { AppWindows } from "../AppWindows/AppWindows";
 import Link from "next/link";
+import { renameOneWorkspace } from "@/pages/api/workspace";
 export function EditorApp({ useStore }) {
+  let workspace = useStore((r) => r.workspace);
   return (
     <div className="w-full h-full ">
       <div
@@ -15,6 +17,31 @@ export function EditorApp({ useStore }) {
             <Link href={`/admin/workspace`} className="underline">
               EffectNode FX
             </Link>
+            <span className="mx-2">/</span>
+            <span
+              className="underline text-blue-500 cursor-pointer"
+              onClick={() => {
+                let newTitle = window.prompt(
+                  "Rename Workspace title",
+                  workspace.title
+                );
+                renameOneWorkspace
+                  .client({
+                    _id: workspace._id,
+                    title: newTitle,
+                  })
+                  .then(() => {
+                    useStore.setState({
+                      workspace: {
+                        ...workspace,
+                        title: newTitle,
+                      },
+                    });
+                  });
+              }}
+            >
+              {workspace.title}
+            </span>
           </div>
           <div className=""></div>
           <div className="text-white">EffectNode FX</div>

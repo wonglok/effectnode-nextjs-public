@@ -17,7 +17,6 @@ import { getID } from "./utils/getID";
 import { myApps, myWins } from "./utils/myApps";
 import { useRouter } from "next/router";
 import { getOneWorkspace } from "@/pages/api/workspace";
-// thankyouActivated //
 
 export const Editor = () => {
   let [val, setVal] = useState(
@@ -39,13 +38,19 @@ export const Editor = () => {
 
     Promise.all(
       //
-      [getOneWorkspace({ _id: spaceID }), []]
+      [getOneWorkspace.client({ _id: spaceID }), []]
     )
       //
-      .then(([{ data: workspace }, { data: items }]) => {
+      //
+      .then((array) => {
+        let [{ data: workspace }, items] = array;
+        //
+        //
         core.onChange((state, before) => {
           //
           console.log(state);
+
+          //
           localStorage.setItem(
             spaceID,
             JSON.stringify({
@@ -57,10 +62,12 @@ export const Editor = () => {
 
         try {
           let state = JSON.parse(localStorage.getItem(spaceID));
-          core.setState({
-            apps: state.apps,
-            wins: state.wins,
-          });
+          if (state && state.apps && state.wins) {
+            // core.setState({
+            //   apps: state.apps,
+            //   wins: state.wins,
+            // });
+          }
         } catch (e) {
           console.log(e);
         }
@@ -122,27 +129,6 @@ export class EditorCore {
       "items",
     ];
 
-    this.exportBackup = () => {
-      let st = JSON.parse(JSON.stringify(this.getState()));
-      let processedData = {};
-      for (let kn of this.store.saveKeys) {
-        if (st[kn]) {
-          processedData[kn] = st[kn];
-        }
-      }
-      return processedData;
-    };
-    this.restoreBackup = (state) => {
-      let st = JSON.parse(JSON.stringify(state));
-      let processedData = {};
-      for (let kn of this.store.saveKeys) {
-        if (st[kn]) {
-          processedData[kn] = st[kn];
-        }
-      }
-      this.setState(processedData);
-    };
-
     this.setState = (v = {}) => {
       this.store.setState(v);
     };
@@ -175,6 +161,27 @@ export class EditorCore {
       <EditorApp useStore={this.store} parent={this}></EditorApp>
     );
 
+    this.exportBackup = () => {
+      let st = JSON.parse(JSON.stringify(this.getState()));
+      let processedData = {};
+      for (let kn of this.store.saveKeys) {
+        if (st[kn]) {
+          processedData[kn] = st[kn];
+        }
+      }
+      return processedData;
+    };
+    this.restoreBackup = (state) => {
+      let st = JSON.parse(JSON.stringify(state));
+      let processedData = {};
+      for (let kn of this.store.saveKeys) {
+        if (st[kn]) {
+          processedData[kn] = st[kn];
+        }
+      }
+      this.setState(processedData);
+    };
+
     this.bootup = () => {
       let { apps, wins } = this.getState();
       if (!apps.some((r) => r.type === "editor")) {
@@ -192,8 +199,14 @@ export class EditorCore {
         win.appID = appID;
         win.zIndex = wins.length;
 
+        win.width = 500;
+        win.height = 375;
+
         apps.push(app);
         wins.push(win);
+
+        win.top = 10;
+        win.left = 10;
 
         this.setState({
           apps: [...apps],
@@ -216,6 +229,9 @@ export class EditorCore {
         win._id = getID();
         win.appID = appID;
         win.zIndex = wins.length;
+
+        win.top = 10;
+        win.left = window.innerWidth - win.width - 10;
 
         apps.push(app);
         wins.push(win);
