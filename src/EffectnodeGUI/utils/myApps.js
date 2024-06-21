@@ -2,7 +2,7 @@ export const myApps = [
   {
     _id: "appID",
     type: "editor",
-    appIconText: " 👨🏼‍💻 Editor",
+    appIconText: " ✨ Editor",
   },
   {
     _id: "appID",
@@ -16,7 +16,7 @@ export const myWins = [
     _id: "winID",
     appID: "appID",
     type: "editor",
-    title: ` 👨🏼‍💻 Editor`,
+    title: ` ✨ Editor`,
     top: 10,
     left: 10,
     width: 300,
@@ -33,5 +33,17 @@ export const myWins = [
     width: 300,
     height: 300,
     zIndex: 0,
+  },
+  {
+    _id: "winID",
+    appID: "appID",
+    type: "coder",
+    title: ` 👨🏼‍💻 Coder`,
+    top: 20,
+    left: 20,
+    width: 300,
+    height: 300,
+    zIndex: 0,
+    data: {},
   },
 ];

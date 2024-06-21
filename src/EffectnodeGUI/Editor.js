@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { getID } from "./utils/getID";
 import { myApps, myWins } from "./utils/myApps";
 import { useRouter } from "next/router";
-import { getOneWorkspace } from "@/pages/api/workspace";
+import { getOneWorkspace } from "@/pages/api/Workspace";
 
 export const Editor = () => {
   let [val, setVal] = useState(
@@ -52,9 +52,9 @@ export const Editor = () => {
         //
         core.onChange((state, before) => {
           //
-          console.log(state);
-
+          // console.log(state);
           //
+
           localStorage.setItem(
             spaceID,
             JSON.stringify({
@@ -67,10 +67,10 @@ export const Editor = () => {
         try {
           let state = JSON.parse(localStorage.getItem(spaceID));
           if (state && state.apps && state.wins) {
-            // core.setState({
-            //   apps: state.apps,
-            //   wins: state.wins,
-            // });
+            core.setState({
+              apps: state.apps,
+              wins: state.wins,
+            });
           }
         } catch (e) {
           console.log(e);

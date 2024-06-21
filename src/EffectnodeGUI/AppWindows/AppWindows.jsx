@@ -1,4 +1,4 @@
-import { Editor } from "./Win/Editor/Editor";
+import { EditorBox } from "./Win/EditorBox/EditorBox";
 import { WinGeneric } from "./Win/Generic/WinGeneric";
 import { Previewer } from "./Win/Previewer/Previewer";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ export function AppWindows({ useStore }) {
           >
             {win.type === "editor" && (
               <>
-                <Editor useStore={useStore}></Editor>
+                <EditorBox useStore={useStore}></EditorBox>
               </>
             )}
 

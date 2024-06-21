@@ -10,11 +10,54 @@ import {
   Sphere,
   Text,
 } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import hdr from "public/hdr/studiolighting.hdr";
-import { HemisphereLight } from "three";
+import { useEffect } from "react";
 
-export function EditorCanvas() {
+function InstallToStore({ useStore }) {
+  let camera = useThree((r) => r.camera);
+  useEffect(() => {
+    useStore.setState({
+      //
+      camera: camera,
+    });
+  }, [camera, useStore]);
+
+  let scene = useThree((r) => r.scene);
+  useEffect(() => {
+    useStore.setState({
+      //
+      scene: scene,
+    });
+  }, [scene, useStore]);
+
+  let raycaster = useThree((r) => r.raycaster);
+  useEffect(() => {
+    useStore.setState({
+      //
+      raycaster: raycaster,
+    });
+  }, [raycaster, useStore]);
+
+  let mouse = useThree((r) => r.mouse);
+  useEffect(() => {
+    useStore.setState({
+      //
+      mouse: mouse,
+    });
+  }, [mouse, useStore]);
+
+  let pointer = useThree((r) => r.pointer);
+  useEffect(() => {
+    useStore.setState({
+      //
+      pointer: pointer,
+    });
+  }, [pointer, useStore]);
+  return null;
+}
+
+export function EditorCanvas({ useStore }) {
   let zoom = 1;
   return (
     <>
@@ -22,12 +65,12 @@ export function EditorCanvas() {
         <Canvas>
           <PerspectiveCamera
             makeDefault
-            position={[0, 3.5 * zoom, 3.0 * zoom]}
+            position={[0, 3.5 * zoom, 0 * zoom]}
           ></PerspectiveCamera>
 
           <MapControls
             makeDefault
-            object-position={[0, 3.5 * zoom, 3.0 * zoom]}
+            object-position={[0, 3.5 * zoom, 0 * zoom]}
             target={[0, 0, 0]}
           ></MapControls>
 
@@ -37,6 +80,28 @@ export function EditorCanvas() {
             sectionSize={10}
             args={[1000, 1000]}
           ></Grid>
+
+          <InstallToStore useStore={useStore}></InstallToStore>
+
+          <Box
+            name="floor"
+            //
+            onPointerEnter={() => {
+              document.body.style.cursor = "pointer";
+            }}
+            //
+            onPointerLeave={() => {
+              document.body.style.cursor = "";
+            }}
+            //
+            args={[100000000000000000, 0.15, 100000000000000000]}
+            position={[0, -0.15, 0]}
+          >
+            <meshBasicMaterial
+              //
+              visible={false}
+            ></meshBasicMaterial>
+          </Box>
 
           {/* <Box
             //

@@ -1,7 +1,7 @@
 import { DashLayout } from "@/layout/DashLayout";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { createWorkspace, listWorkspaces } from "../api/workspace";
+import { createWorkspace, listWorkspaces } from "../api/Workspace";
 import moment from "moment";
 
 let useWorkspaces = () => {

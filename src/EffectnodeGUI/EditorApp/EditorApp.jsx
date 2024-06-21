@@ -3,7 +3,7 @@ import { BeginMenu } from "../BeginBar/BeginMenu";
 import { ThankYouList } from "../BeginBar/ThankYouList";
 import { AppWindows } from "../AppWindows/AppWindows";
 import Link from "next/link";
-import { removeOneWorkspace, renameOneWorkspace } from "@/pages/api/workspace";
+import { removeOneWorkspace, renameOneWorkspace } from "@/pages/api/Workspace";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -20,8 +20,9 @@ export function EditorApp({ useStore }) {
       setDate(moment().format("MMMM Do YYYY, h:mm:ss a"));
     }, 1000);
   }, []);
+
   return (
-    <div className="w-full h-full ">
+    <div className="w-full h-full">
       <div
         className="w-full from-gray-100 to-gray-500  bg-gradient-to-r"
         style={{ height: `1.85rem` }}
@@ -58,7 +59,7 @@ export function EditorApp({ useStore }) {
               {workspace?.title || "WorkSpace"}
             </span>
             <span
-              className="text-xs"
+              className="text-xs ml-1 inline-block translate-y-1"
               onClick={() => {
                 let newTitle = window.prompt(
                   "Rename Workspace title",
@@ -79,8 +80,7 @@ export function EditorApp({ useStore }) {
                   });
               }}
             >
-              {" "}
-              🖊️{" "}
+              {` 🖊️ `}
             </span>
           </div>
           <div className=""></div>
