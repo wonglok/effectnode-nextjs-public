@@ -26,14 +26,14 @@ export function EditorApp({ useStore }) {
         style={{ height: `1.85rem` }}
       >
         <div className="w-full h-full flex items-center justify-between px-2 text-sm">
-          <div>
+          <div className="flex">
             <Link href={`/admin/workspace`} className="underline">
               EffectNode FX
             </Link>
             <span className="mx-2">|</span>
 
             <span
-              className="underline text-blue-500 cursor-pointer"
+              className="underline text-blue-500 cursor-pointer inline-block"
               onClick={() => {
                 let newTitle = window.prompt(
                   "Rename Workspace title",
@@ -54,9 +54,33 @@ export function EditorApp({ useStore }) {
                   });
               }}
             >
-              {workspace.title}
+              {workspace?.title || "WorkSpace"}
             </span>
-            <span className="text-xs"> 🖊️ </span>
+            <span
+              className="text-xs"
+              onClick={() => {
+                let newTitle = window.prompt(
+                  "Rename Workspace title",
+                  workspace.title
+                );
+                renameOneWorkspace
+                  .client({
+                    _id: workspace._id,
+                    title: newTitle,
+                  })
+                  .then(() => {
+                    useStore.setState({
+                      workspace: {
+                        ...workspace,
+                        title: newTitle,
+                      },
+                    });
+                  });
+              }}
+            >
+              {" "}
+              🖊️{" "}
+            </span>
           </div>
           <div className=""></div>
           <div className="text-white">

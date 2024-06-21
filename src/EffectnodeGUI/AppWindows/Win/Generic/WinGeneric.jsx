@@ -229,6 +229,10 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
       window.removeEventListener("mouseup", hh);
     };
   }, [mouseState, win]);
+
+  //
+
+  //
   return (
     <>
       <div
@@ -262,24 +266,23 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
       >
         <div
           className="w-full  flex justify-between"
+          //
           style={{
             height: `30px`,
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             // borderBottom: `gray solid 1px`,
-            backgroundColor: `hsl(200, ${(
-              (idx / (wins.length - 1)) *
-              100
-            ).toFixed(0)}%, 80%)`,
-            //
-            // backgroundColor: 'white',
-            //
-
-            // borderBottom: 'gray solid 1px',
+            backgroundImage: `
+            linear-gradient(
+                hsl(200, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 80%),
+                hsl(200, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 50%)
+            )
+            `,
             borderTop: "gray solid 1px",
             borderLeft: "gray solid 1px",
             borderRight: "gray solid 1px",
           }}
+          //
           onMouseDown={(ev) => {
             mouseState.isDown = true;
             mouseState.winID = win._id;
@@ -309,7 +312,15 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
         >
           <div className="flex items-center h-full pl-2">
             <div
-              className="w-4 h-4 bg-red-500 rounded-full cursor-pointer"
+              className="w-4 h-4 rounded-full cursor-pointer"
+              style={{
+                backgroundImage: `
+    linear-gradient(
+        hsl(0, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 68%),
+        hsl(0, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 55%)
+    )
+                `,
+              }}
               onClick={() => {
                 //
                 useStore.setState({
@@ -320,7 +331,11 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             ></div>
           </div>
           <div className=" select-none flex items-center h-full">{topBar}</div>
-          <div></div>
+          <div>
+            {/*  */}
+
+            {/*  */}
+          </div>
         </div>
         <div
           className="w-full relative"
@@ -339,7 +354,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           {children}
           {idx < wins.length - 1 && (
             <>
-              <div className="w-full h-full absolute top-0 left-0 bg-gray-500 opacity-10"></div>
+              <div className="w-full h-full absolute top-0 left-0 backdrop-grayscale"></div>
             </>
           )}
         </div>

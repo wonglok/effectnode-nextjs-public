@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
+      "public": [
+        "./*"
+      ],
       "@/*": [
         "./src/*"
-      ],
-      "@tailus-ui/*": [
-        "/components/tailus-ui/*"
       ],
       "@lib/*": [
         "/lib/*"
