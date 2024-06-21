@@ -11,7 +11,7 @@ export function AppWindows({ useStore }) {
   return (
     <>
       {wins.map((win, idx) => {
-        console.log(win.type);
+        // console.log(win.type);
         return (
           <WinGeneric
             idx={idx}

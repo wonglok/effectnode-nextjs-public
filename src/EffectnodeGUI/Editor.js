@@ -33,6 +33,9 @@ export const Editor = () => {
     if (!spaceID) {
       return;
     }
+    if (!router) {
+      return;
+    }
 
     let core = new EditorCore();
 
@@ -43,7 +46,8 @@ export const Editor = () => {
       //
       //
       .then((array) => {
-        let [{ data: workspace }, items] = array;
+        let [workspaceResp, items] = array;
+        let workspace = workspaceResp?.data;
         //
         //
         core.onChange((state, before) => {
@@ -74,14 +78,17 @@ export const Editor = () => {
 
         core.bootup();
 
-        core.setState({
-          workspace: workspace,
-          items: items,
-        });
-
-        setVal(core.getReactElement());
+        if (workspace) {
+          core.setState({
+            workspace: workspace,
+            items: items || [],
+          });
+          setVal(core.getReactElement());
+        } else {
+          router.push(`/admin/workspace`);
+        }
       });
-  }, [spaceID]);
+  }, [router, spaceID]);
 
   return <>{val}</>;
 };
