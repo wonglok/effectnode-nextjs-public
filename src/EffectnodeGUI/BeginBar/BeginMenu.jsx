@@ -80,16 +80,16 @@ export function BeginMenu({ useStore }) {
             <div
               onClick={() => {
                 //
-                if (!apps.some((r) => r.type === "previwer")) {
+                if (!apps.some((r) => r.type === "previewer")) {
                   let appID = getID();
 
                   let app = JSON.parse(
-                    JSON.stringify(myApps.find((r) => r.type === "previwer"))
+                    JSON.stringify(myApps.find((r) => r.type === "previewer"))
                   );
                   app._id = appID;
 
                   let win = JSON.parse(
-                    JSON.stringify(myWins.find((r) => r.type === "previwer"))
+                    JSON.stringify(myWins.find((r) => r.type === "previewer"))
                   );
                   win._id = getID();
                   win.appID = appID;

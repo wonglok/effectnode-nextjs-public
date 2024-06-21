@@ -1,6 +1,6 @@
 import { Editor } from "./Win/Editor/Editor";
 import { WinGeneric } from "./Win/Generic/WinGeneric";
-import { Preview } from "./Win/Preview/Preview";
+import { Previewer } from "./Win/Previewer/Previewer";
 import { useEffect } from "react";
 
 export function AppWindows({ useStore }) {
@@ -11,6 +11,7 @@ export function AppWindows({ useStore }) {
   return (
     <>
       {wins.map((win, idx) => {
+        console.log(win.type);
         return (
           <WinGeneric
             idx={idx}
@@ -25,9 +26,9 @@ export function AppWindows({ useStore }) {
               </>
             )}
 
-            {win.type === "preview" && (
+            {win.type === "previewer" && (
               <>
-                <Preview useStore={useStore}></Preview>
+                <Previewer useStore={useStore}></Previewer>
               </>
             )}
           </WinGeneric>

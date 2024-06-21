@@ -25,21 +25,25 @@ export default async function API(req, res) {
           getOneWorkspace.server(args),
           removeOneWorkspace.server(args),
           renameOneWorkspace.server(args),
-        ]);
-        operations = operations.filter((r) => r);
 
-        if (operations.length === 0) {
-          throw {
-            type: "notfound",
-          };
-        }
-      } catch (e) {
-        console.error(e);
-        if (e.type === "notfound") {
+          //
+        ]).catch((r) => {
+          console.error(r);
+          res.status(500).send({
+            error: "process bug",
+          });
+          return [];
+        });
+        let okCounter = operations.filter((r) => r);
+
+        if (okCounter.length === 0) {
           res.status(404).send({
             error: "action not found",
           });
+          throw new Error("not found");
         }
+      } catch (e) {
+        console.error(e);
       }
     } catch (e) {
       console.error(e);
@@ -48,9 +52,8 @@ export default async function API(req, res) {
       });
     }
   } else {
-    res.status(500).send({
-      error:
-        "You must be signed in to view the protected content on this page.",
+    res.status(403).send({
+      error: "not logged in",
     });
   }
 }
@@ -64,7 +67,8 @@ export const listWorkspaces = {
         return r;
       });
 
-      return res.status(200).send({ data });
+      res.status(200).send({ data });
+      return true;
     }
   },
   client: (func = (v) => v) => {
@@ -98,7 +102,8 @@ export const createWorkspace = {
         return r;
       });
 
-      return res.status(200).send({ data });
+      res.status(200).send({ data });
+      return true;
     }
   },
   client: (data = {}, func = (v) => v) => {
@@ -134,7 +139,8 @@ export const getOneWorkspace = {
         return r;
       });
 
-      return res.status(200).send({ data });
+      res.status(200).send({ data });
+      return true;
     }
   },
   client: (data = {}, fnc = (v) => v) => {
@@ -171,11 +177,12 @@ export const removeOneWorkspace = {
         return r;
       });
 
-      return res.status(200).send({ data });
+      res.status(200).send({ data });
+      return true;
     } else {
     }
   },
-  client: (data = {}, func = (v) => v) => {
+  client: (data = { _id: false }, func = (v) => v) => {
     return fetch(`/api/workspace`, {
       method: "post",
       body: JSON.stringify({
@@ -213,7 +220,8 @@ export const renameOneWorkspace = {
         return r;
       });
 
-      return res.status(200).send({ data });
+      res.status(200).send({ data });
+      return true;
     }
   },
   client: (data = { _id: false, title: "new_name" }, func = (v) => v) => {

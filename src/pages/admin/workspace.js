@@ -56,7 +56,6 @@ export default function AdminPage() {
           </div>
         </DashLayout>
 
-        {/*  */}
         {/* <div className="">
           Signed in as {session?.user?.name || "Developer Admin"} <br />
         </div> */}
@@ -134,7 +133,7 @@ function PlusCard({ onReload }) {
 }
 
 function OneCard({ data }) {
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
@@ -158,7 +157,7 @@ function OneCard({ data }) {
               {moment(new Date(data.createdAt)).format("MMM Do YYYY")}
             </span>
 
-            {/* 
+            {/*
             <p className="mt-2 line-clamp-3 text-sm/relaxed text-white/95 mb-3">
               <textarea className=" bg-transparent w-full border border-white p-2 rounded-lg">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.

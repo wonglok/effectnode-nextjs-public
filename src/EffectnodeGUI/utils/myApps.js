@@ -6,8 +6,8 @@ export const myApps = [
   },
   {
     _id: "appID",
-    type: "previwer",
-    appIconText: " 🖼️ Previwer",
+    type: "previewer",
+    appIconText: " 🖼️ previewer",
   },
 ];
 
@@ -26,7 +26,7 @@ export const myWins = [
   {
     _id: "winID",
     appID: "appID",
-    type: "previwer",
+    type: "previewer",
     title: ` 🖼️ Previewer`,
     top: 20,
     left: 20,
