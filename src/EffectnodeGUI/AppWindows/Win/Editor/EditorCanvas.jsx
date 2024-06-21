@@ -11,7 +11,8 @@ import {
   Text,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import hdr from "public/hdr/greenwich_park_02_1k.hdr";
+import hdr from "public/hdr/studiolighting.hdr";
+import { HemisphereLight } from "three";
 
 export function EditorCanvas() {
   let zoom = 1;
@@ -33,18 +34,33 @@ export function EditorCanvas() {
           <Grid
             followCamera
             infiniteGrid
-            sectionSize={2.5}
+            sectionSize={10}
             args={[1000, 1000]}
           ></Grid>
 
-          <Box args={[1, 0.1, 1]}>
+          <Box
+            //
+            onPointerEnter={() => {
+              document.body.style.cursor = "pointer";
+            }}
+            //
+            onPointerLeave={() => {
+              document.body.style.cursor = "";
+            }}
+            //
+            args={[1, 0.15, 1]}
+            position={[0, 0.15, 0]}
+          >
             <meshStandardMaterial
+              color={"#ffffff"}
+              emissive={"#777"}
               metalness={1}
-              roughness={0.2}
+              roughness={0.5}
             ></meshStandardMaterial>
           </Box>
+
           <Text
-            position={[0, 0.15, 0.4]}
+            position={[0, 0.15 + 0.15, 0.4]}
             rotation={[Math.PI * -0.5, 0, 0]}
             fontSize={0.125}
             outlineWidth={0.005}
@@ -52,9 +68,10 @@ export function EditorCanvas() {
             color={"black"}
             textAlign="center"
           >
-            Create Object
+            Create Item
           </Text>
 
+          <ambientLight args={[0xffffff, 10]}></ambientLight>
           <Environment files={hdr}></Environment>
         </Canvas>
       </div>

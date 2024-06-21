@@ -274,8 +274,8 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // borderBottom: `gray solid 1px`,
             backgroundImage: `
             linear-gradient(
-                hsl(200, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 80%),
-                hsl(200, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 50%)
+                hsl(210, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 80%),
+                hsl(190, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 50%)
             )
             `,
             borderTop: "gray solid 1px",
