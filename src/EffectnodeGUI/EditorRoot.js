@@ -18,7 +18,7 @@ import { myApps, myWins } from "./utils/myApps";
 import { useRouter } from "next/router";
 import { getOneWorkspace } from "@/src/pages/api/Workspace";
 import { Vector3 } from "three";
-
+import localforage from "localforage";
 export const EditorRoot = () => {
   //
 
@@ -55,7 +55,7 @@ export const EditorRoot = () => {
     )
       //
       //
-      .then((array) => {
+      .then(async (array) => {
         let [
           //
           workspaceResp,
@@ -72,12 +72,12 @@ export const EditorRoot = () => {
             let st = core.exportBackup();
             console.log(st);
 
-            localStorage.setItem(spaceID, JSON.stringify(st));
+            localforage.setItem(spaceID, JSON.stringify(st));
           }, 150);
         });
 
         try {
-          let state = JSON.parse(localStorage.getItem(spaceID));
+          let state = JSON.parse(await localforage.getItem(spaceID));
           if (state) {
             //
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getID } from "../utils/getID";
 
 export function AppRunner({ useStore, spaceID }) {
@@ -21,6 +21,8 @@ export function AppRunner({ useStore, spaceID }) {
   let launcher = useMemo(() => {
     return getID();
   }, []);
+
+  let [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!spaceID) {
@@ -66,43 +68,23 @@ export function AppRunner({ useStore, spaceID }) {
               action: "reboot",
               payload: backup,
             });
-
-            let tt = 0;
-            let lastBackup = useStore.getState().editorAPI.exportBackup();
-            let cleaner = useStore.subscribe(() => {
-              clearTimeout(tt);
-              tt = setTimeout(() => {
-                let backup = useStore.getState().editorAPI.exportBackup();
-                if (
-                  lastBackup !==
-                  JSON.stringify([backup.graph.nodes.length, backup.codes])
-                ) {
-                  lastBackup = JSON.stringify([
-                    backup.graph.nodes.length,
-                    backup.codes,
-                  ]);
-
-                  let href = el.contentWindow.location.href;
-                  el.contentWindow.location.assign(href);
-                }
-              }, 500);
-
-              //
-            });
-
-            // //
-
-            cleans.push(cleaner);
-
+            setReady(true);
             //
           }
         }
       };
       window.addEventListener("message", hh);
+
+      let hh2 = () => {
+        el.contentWindow.location.reload();
+      };
+      window.addEventListener("editor-save", hh2);
+
       return () => {
         cleans.forEach((r) => {
           r();
         });
+        window.removeEventListener("editor-save", hh);
         window.removeEventListener("message", hh);
       };
     }
@@ -111,6 +93,7 @@ export function AppRunner({ useStore, spaceID }) {
       //
     };
   }, []);
+
   return (
     <>
       <div

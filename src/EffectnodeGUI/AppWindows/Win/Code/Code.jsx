@@ -20,6 +20,9 @@ export function Code({ win, useStore }) {
       return;
     }
   }, [code, spaceID, useStore, win.nodeID]);
+  /*
+  editor-save
+  */
   return (
     <>
       <div className="w-full h-full " style={{}}>
@@ -75,6 +78,12 @@ export function Code({ win, useStore }) {
               if (ev.metaKey && ev.key === "s") {
                 ev.preventDefault();
                 ev.stopPropagation();
+
+                window.dispatchEvent(
+                  new CustomEvent("editor-save", {
+                    detail: { win, node, code },
+                  })
+                );
               }
             }}
             className="w-full h-full overflow-hidden rounded-md"

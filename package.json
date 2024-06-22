@@ -15,6 +15,7 @@
     "@react-three/postprocessing": "^2.16.2",
     "glslify-loader": "^2.0.0",
     "handlebars": "^4.7.8",
+    "localforage": "^1.10.0",
     "moment": "^2.30.1",
     "mongo": "^0.1.0",
     "mongoose": "^8.4.3",

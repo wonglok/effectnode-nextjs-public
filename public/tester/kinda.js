@@ -33,10 +33,9 @@ import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { rand } from "/tester/rand.js";
 // import * as happy from "@/happy.js";
-
 // console.log(happy);
-
 // import PostProcessing from "three/addons/renderers/common/PostProcessing.js";
+
 let rAFID = 0;
 const particleCount = 512 * 512;
 
@@ -499,8 +498,11 @@ async function animate() {
 }
 
 export function close() {
-  cancelAnimationFrame(rAFID);
-  document.body.innerHTML = "";
+  // cancelAnimationFrame(rAFID);
+  // document.body.innerHTML = "";
 }
+//
+
+//
 
 //
