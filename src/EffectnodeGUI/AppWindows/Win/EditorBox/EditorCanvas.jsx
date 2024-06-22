@@ -154,6 +154,8 @@ function Content({ useStore }) {
                     );
                     win._id = getID();
                     win.appID = n._id;
+                    win.nodeID = n._id;
+                    win.title = "🧑🏼‍💻 " + n.title;
                     wins.push(win);
 
                     editorAPI.upWindow({ win });
@@ -164,6 +166,8 @@ function Content({ useStore }) {
                   } else {
                     let win = wins.find((r) => r.appID === n._id);
                     //
+                    win.title = "🧑🏼‍💻 " + n.title;
+                    win.nodeID = n._id;
                     editorAPI.upWindow({ win });
 
                     useStore.setState({

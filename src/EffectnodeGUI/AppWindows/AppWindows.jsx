@@ -20,18 +20,18 @@ export function AppWindows({ useStore }) {
           >
             {win.type === "editor" && (
               <>
-                <EditorBox useStore={useStore}></EditorBox>
+                <EditorBox win={win} useStore={useStore}></EditorBox>
               </>
             )}
 
             {win.type === "previewer" && (
               <>
-                <Previewer useStore={useStore}></Previewer>
+                <Previewer win={win} useStore={useStore}></Previewer>
               </>
             )}
             {win.type === "coder" && (
               <>
-                <Code useStore={useStore}></Code>
+                <Code win={win} useStore={useStore}></Code>
               </>
             )}
           </WinGeneric>
