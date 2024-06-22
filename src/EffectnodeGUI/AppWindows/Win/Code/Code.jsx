@@ -71,15 +71,26 @@ export function Code({ win, useStore }) {
           </span>
         </div>
         <div className="w-full " style={{ height: "calc(100% - 30px)" }}>
-          <div className="w-full h-full overflow-hidden rounded-md">
+          <div
+            onKeyDownCapture={(ev) => {
+              if (ev.metaKey && ev.key === "s") {
+                ev.preventDefault();
+                ev.stopPropagation();
+              }
+            }}
+            className="w-full h-full overflow-hidden rounded-md"
+          >
             {code && (
               <Editor
                 height={`100%`}
                 defaultLanguage="javascript"
                 defaultValue={code.code}
                 onChange={(text) => {
-                  console.log(text);
                   code.code = text;
+
+                  useStore.setState({
+                    codes: [...codes],
+                  });
                 }}
               ></Editor>
             )}
