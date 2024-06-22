@@ -20,10 +20,6 @@ import {
   storage,
   SpriteNodeMaterial,
   If,
-  mat4,
-  cos,
-  sin,
-  mat3,
 } from "three/nodes";
 
 import WebGPU from "three/addons/capabilities/WebGPU.js";
@@ -31,13 +27,14 @@ import WebGL from "three/addons/capabilities/WebGL.js";
 import WebGPURenderer from "three/addons/renderers/webgpu/WebGPURenderer.js";
 import StorageInstancedBufferAttribute from "three/addons/renderers/common/StorageInstancedBufferAttribute.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { rand } from "./rand.js";
 
 // import PostProcessing from "three/addons/renderers/common/PostProcessing.js";
-
+let rAFID = 0;
 const particleCount = 512 * 512;
 
 const gravity = uniform(-0.0098);
@@ -55,33 +52,20 @@ let mixer, clock;
 
 let computeHit;
 
-const rotateYRaw = tslFn(([rad]) => {
-  let c = cos(float(rad));
-  let s = sin(float(rad));
-  return mat3(c, 0.0, s.mul(-1), 0.0, 1.0, 0.0, s, 0.0, c);
-});
-rotateYRaw.setLayout({
-  name: "rotateYRaw",
-  type: "mat3",
-  inputs: [{ name: "rad", type: "float", qualifier: "in" }],
-});
+const timestamps = document.createElement("div");
+// document.appendChild(te)
 
-let div = document.createElement("div");
-div.id = "timestamps";
-document.body.appendChild(div);
-document.body.style.backgroundColor = "#000000";
-
-const timestamps = document.getElementById("timestamps");
-
-new GLTFLoader().load(
-  "https://snow-town-images.s3.us-west-1.amazonaws.com/tester-lok/webgl/dove-raw.glb",
-  function (gltf) {
+new FBXLoader().load("/tester/raw-guy.fbx", function (gltf) {
+  new FBXLoader().load(`/tester/mma-warmup.fbx`, (anim) => {
+    gltf.scene = gltf;
+    gltf.animations = anim.animations;
     init({ gltf });
-  }
-);
+  });
+});
 
 function init({ gltf }) {
-  scene = new THREE.Scene();
+  let group = new THREE.Group();
+  group.scale.setScalar(0.01);
   clock = new THREE.Clock();
   mixer = new THREE.AnimationMixer(gltf.scene);
   mixer.clipAction(gltf.animations[0]).play();
@@ -90,35 +74,29 @@ function init({ gltf }) {
   let skinnedMesh = false;
   gltf.scene.traverse((it) => {
     if (it.geometry) {
-      if (!skinnedMesh) {
-        skinnedMesh = it.clone(true);
+      it.material = new THREE.MeshStandardMaterial({
+        roughness: 0,
+        transparent: true,
+        opacity: 0,
+      });
+      if (it.name === "Body") {
+        if (!skinnedMesh) {
+          skinnedMesh = it;
+        }
       }
     }
   });
-  // gltf.scene.scale.setScalar(100);
 
+  //
   skinnedMesh.geometry = skinnedMesh.geometry.toNonIndexed();
-  skinnedMesh.updateMatrixWorld(true);
-  // skinnedMesh.geometry.applyMatrix4(skinnedMesh.matrixWorld);
-  skinnedMesh.geometry.deleteAttribute("tangent");
-  skinnedMesh.geometry.computeVertexNormals();
-  skinnedMesh.geometry.computeBoundingSphere();
-  skinnedMesh.geometry.computeBoundingBox();
 
-  const boundingBoxSize = new THREE.Vector3();
-  skinnedMesh.geometry.boundingBox.getSize(boundingBoxSize);
-  const light = new THREE.HemisphereLight(0xffffbb, 0xffffff, 10);
-  scene.add(light);
-
-  // console.log(boneRoot, skinnedMesh.geometry);
-
-  // skinnedMesh.material = new THREE.MeshBasicMaterial({
-  // 	transparent: true,
-  // 	opacity: 0,
-  // 	depthTest: false,
-  // 	depthWrite: false,
-  // 	blending: THREE.AdditiveBlending,
-  // });
+  skinnedMesh.material = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0,
+    depthTest: false,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
 
   let hasWebGPU = WebGPU.isAvailable();
   let hasWebGL2 = WebGL.isWebGL2Available();
@@ -140,17 +118,17 @@ function init({ gltf }) {
   const { innerWidth, innerHeight } = window;
 
   camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 1000);
-  camera.position.set(50, 50, 100);
-  camera.position.multiplyScalar(0.01);
+  camera.position.set(10, 10, 10);
 
-  scene.add(gltf.scene);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color("#000000");
+  group.add(gltf.scene);
 
+  scene.add(group);
   // textures
 
   const textureLoader = new THREE.TextureLoader();
-  const map = textureLoader.load(
-    "https://snow-town-images.s3.us-west-1.amazonaws.com/tester-lok/webgl/sprite1.png"
-  );
+  const map = textureLoader.load("/tester/sprite1.png");
 
   const createBuffer = ({ itemSize = 3, type = "vec3" }) => {
     let attr = new StorageInstancedBufferAttribute(particleCount, itemSize);
@@ -160,6 +138,9 @@ function init({ gltf }) {
       attr,
     };
   };
+
+  //
+  //
 
   const positionBuffer = createBuffer({ itemSize: 3, type: "vec3" });
   const velocityBuffer = createBuffer({ itemSize: 3, type: "vec3" });
@@ -194,14 +175,11 @@ function init({ gltf }) {
       let yo = i % localCount;
 
       let x =
-        geo.attributes.position.getX(yo) +
-        (Math.random() * 2 - 1.0) * 2.0 * boundingBoxSize.x * 0.01;
+        geo.attributes.position.getX(yo) + (Math.random() * 2 - 1.0) * 2.0;
       let y =
-        geo.attributes.position.getY(yo) +
-        (Math.random() * 2 - 1.0) * 2.0 * boundingBoxSize.y * 0.01;
+        geo.attributes.position.getY(yo) + (Math.random() * 2 - 1.0) * 2.0;
       let z =
-        geo.attributes.position.getZ(yo) +
-        (Math.random() * 2 - 1.0) * 2.0 * boundingBoxSize.z * 0.01;
+        geo.attributes.position.getZ(yo) + (Math.random() * 2 - 1.0) * 2.0;
       birthPositionBuffer.attr.setXYZ(i, x, y, z);
       birthPositionBuffer.attr.needsUpdate = true;
     }
@@ -269,33 +247,14 @@ function init({ gltf }) {
     color.assign(vec3(randX, randY, randZ));
   })().compute(particleCount);
 
-  const mouseV3 = new THREE.Vector3(0, 0, 0);
-  const mouseUni = uniform(mouseV3);
-
   const computeUpdate = tslFn(() => {
     const time = timerLocal();
     const color = colorBuffer.node.element(instanceIndex);
     const position = positionBuffer.node.element(instanceIndex);
     const velocity = velocityBuffer.node.element(instanceIndex);
 
-    const dist = mouseUni.sub(position).length();
-    const normalValue = mouseUni
-      .sub(position)
-      .normalize()
-      .mul(-0.0125)
-      .div(dist)
-      .mul(0.1);
-
-    // spinner
     // velocity.addAssign(vec3(0.0, gravity.mul(life.y), 0.0));
-
-    let vel = vec3(
-      velocity.x.mul((1 / 100) * 3).add(normalValue.x),
-      velocity.y.mul((1 / 100) * 3).add(normalValue.y),
-      velocity.z.mul((1 / 100) * 3).add(normalValue.z)
-    );
-
-    position.addAssign(vel.xyz);
+    position.addAssign(velocity);
 
     // velocity.mulAssign(friction);
 
@@ -315,7 +274,7 @@ function init({ gltf }) {
     If(life.y.lessThan(0.1), () => {
       life.xyz.assign(vec3(1.0, 1.0, 1.0));
 
-      velocity.assign(skinPosition.sub(position).normalize().mul(0.2));
+      velocity.assign(skinPosition.sub(position).normalize().mul(0.1));
 
       position.assign(skinPosition.xyz);
 
@@ -343,25 +302,15 @@ function init({ gltf }) {
     .normalize()
     .mul(0.5)
     .add(0.5)
-    .mul(2.5);
+    .mul(1.5);
 
   particleMaterial.colorNode = vec4(colorNode.r, colorNode.g, colorNode.b, 1.0)
     .mul(vec4(avgColor, avgColor, avgColor, textureNode.a))
     .mul(vec4(2.0, 2.0, 2.0, 1.0));
 
-  particleMaterial.colorNode = vec4(
-    avgColor.mul(3.33),
-    avgColor.mul(3.33),
-    avgColor.mul(2.33),
-    textureNode.a.mul(1 / 3.33)
-  );
-
   particleMaterial.positionNode = positionBuffer.node.toAttribute();
 
-  particleMaterial.scaleNode = size
-    .mul(10)
-    .mul(1 / 100)
-    .div(colorNode.length());
+  particleMaterial.scaleNode = size.mul(10).div(colorNode.length());
   particleMaterial.opacity = 1.0; //(float(0.14).add(lifeBuffer.node.toAttribute().length().mul(-1).mul(size)))
   particleMaterial.depthTest = true;
   particleMaterial.depthWrite = false;
@@ -375,22 +324,19 @@ function init({ gltf }) {
   particles.count = particleCount;
   particles.frustumCulled = false;
 
-  scene.add(particles);
+  group.add(particles);
 
   const helper = new THREE.GridHelper(60, 40, 0x303030, 0x303030);
   scene.add(helper);
 
   const geometry = new THREE.PlaneGeometry(1000, 1000);
-  // geometry.rotateX(-Math.PI / 2);
+  geometry.rotateX(-Math.PI / 2);
 
   const plane = new THREE.Mesh(
     geometry,
     new THREE.MeshBasicMaterial({ visible: false })
   );
   scene.add(plane);
-  setInterval(() => {
-    plane.lookAt(camera.position);
-  });
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -438,9 +384,7 @@ function init({ gltf }) {
       boneMatW.mul(skinWeight.w).mul(skinVertex)
     );
 
-    const skinPosition = bindMatrixInverseNode
-      .mul(skinned)
-      .xyz.mul((1 / 100 / 10) * 2.5);
+    const skinPosition = bindMatrixInverseNode.mul(skinned).xyz;
 
     // velocity.assign(skinPosition.sub(position).normalize().mul(0.1));
     position.assign(skinPosition);
@@ -448,27 +392,27 @@ function init({ gltf }) {
 
     /*
 
-				//normal
-				let skinMatrix = add(
-					skinWeight.x.mul(boneMatX),
-					skinWeight.y.mul(boneMatY),
-					skinWeight.z.mul(boneMatZ),
-					skinWeight.w.mul(boneMatW)
-				);
+					//normal
+					let skinMatrix = add(
+						skinWeight.x.mul(boneMatX),
+						skinWeight.y.mul(boneMatY),
+						skinWeight.z.mul(boneMatZ),
+						skinWeight.w.mul(boneMatW)
+					);
 
-				const myNormal = birthNormalBuffer.node.element(instanceIndex);
+					const myNormal = birthNormalBuffer.node.element(instanceIndex);
 
-				skinMatrix = bindMatrixInverseNode.mul(skinMatrix).mul(bindMatrixNode);
+					skinMatrix = bindMatrixInverseNode.mul(skinMatrix).mul(bindMatrixNode);
 
-				const skinNormal = skinMatrix.transformDirection(myNormal).xyz;
+					const skinNormal = skinMatrix.transformDirection(myNormal).xyz;
 
-				// velocity.mulAssign(-0.5)
-				// velocity.xyz.addAssign(skinNormal.mul(1.5))
+					// velocity.mulAssign(-0.5)
+					// velocity.xyz.addAssign(skinNormal.mul(1.5))
 
-				// velocity.y = velocity.y.add(float(gravity).mul(200))
-				position.assign(skinPosition);
+					// velocity.y = velocity.y.add(float(gravity).mul(200))
+					position.assign(skinPosition);
 
-				*/
+					*/
   })().compute(particleCount);
 
   function onMove(event) {
@@ -488,7 +432,6 @@ function init({ gltf }) {
 
       clickPosition.value.copy(point);
       clickPosition.value.y = -1;
-      mouseV3.copy(point);
 
       // renderer.compute(computeHit);
     }
@@ -497,8 +440,14 @@ function init({ gltf }) {
   renderer.domElement.addEventListener("pointermove", onMove);
 
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0);
+  controls.target.set(0, 1, 0);
   controls.update();
+
+  setInterval(() => {
+    gltf.scene
+      .getObjectByName("mixamorigHead")
+      .getWorldPosition(controls.target);
+  });
 
   window.addEventListener("resize", onWindowResize);
 
@@ -513,7 +462,7 @@ function init({ gltf }) {
 
   // post-processing
 
-  requestAnimationFrame(animate);
+  rAFID = requestAnimationFrame(animate);
 }
 
 function onWindowResize() {
@@ -535,5 +484,12 @@ async function animate() {
   await renderer.renderAsync(scene, camera);
 
   // throttle the logging
-  requestAnimationFrame(animate);
+  rAFID = requestAnimationFrame(animate);
 }
+
+export function close() {
+  cancelAnimationFrame(rAFID);
+  document.body.innerHTML = "";
+}
+
+//

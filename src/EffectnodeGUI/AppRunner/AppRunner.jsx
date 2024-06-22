@@ -27,10 +27,8 @@ export function AppRunner({ useStore, spaceID }) {
       return;
     }
 
-    if (
-      el.src !== `/iframe/${spaceID}?launcher=${encodeURIComponent(launcher)}`
-    ) {
-      el.src = `/iframe/${spaceID}?launcher=${encodeURIComponent(launcher)}`;
+    if (el.src !== `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`) {
+      el.src = `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`;
 
       //
 
@@ -65,14 +63,25 @@ export function AppRunner({ useStore, spaceID }) {
           if (action === "ready") {
             //
             let tt = 0;
+            let lastBackup = useStore.getState().editorAPI.exportBackup();
             let cleaner = useStore.subscribe(() => {
               clearTimeout(tt);
               tt = setTimeout(() => {
-                send({
-                  action: "reboot",
-                  payload: useStore.getState().editorAPI.exportBackup(),
-                });
-              }, 100);
+                let backup = useStore.getState().editorAPI.exportBackup();
+                if (
+                  lastBackup !==
+                  JSON.stringify([backup.graph.nodes.length, backup.codes])
+                ) {
+                  lastBackup = JSON.stringify([
+                    backup.graph.nodes.length,
+                    backup.codes,
+                  ]);
+                  send({
+                    action: "reboot",
+                    payload: backup,
+                  });
+                }
+              }, 1000);
             });
 
             //
@@ -95,10 +104,26 @@ export function AppRunner({ useStore, spaceID }) {
     return () => {
       //
     };
-  }, [launcher, spaceID, el, useStore]);
+  }, []);
   return (
     <>
-      <div ref={ref} className="w-full h-full"></div>
+      <div
+        style={{ height: `30px` }}
+        className="bg-gray-200 border-b border-gray-400 px-2 flex items-center"
+      >
+        <button
+          className=" text-xs mr-2 underline"
+          onClick={() => {
+            let href = el.contentWindow.location.href;
+            el.contentWindow.location.assign(href);
+          }}
+        >
+          ♻️ Reload
+        </button>
+      </div>
+      <div style={{ height: `calc(100% - 30px)` }}>
+        <div ref={ref} className="w-full h-full"></div>
+      </div>
     </>
   );
 }

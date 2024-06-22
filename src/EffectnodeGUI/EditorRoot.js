@@ -20,6 +20,8 @@ import { getOneWorkspace } from "@/src/pages/api/Workspace";
 import { Vector3 } from "three";
 
 export const EditorRoot = () => {
+  //
+
   let [val, setVal] = useState(
     <div className="w-full h-full flex items-center justify-center">
       <div className=" text-center">Loading...</div>
@@ -120,6 +122,8 @@ export class EditorCore {
 
     this.store = create((set, get) => {
       return {
+        editorAPI: self,
+        ///
         apps: [],
         wins: [],
 
@@ -339,10 +343,6 @@ export class EditorCore {
         eachWin.zIndex = index;
       });
     };
-
-    this.store.setState({
-      editorAPI: this,
-    });
   }
 }
 

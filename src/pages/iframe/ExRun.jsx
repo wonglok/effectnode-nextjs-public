@@ -1,0 +1,215 @@
+import { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import * as ReactDOM from "react-dom/client";
+import path, { join } from "path";
+import { transform } from "sucrase";
+export default function ExRun() {
+  let [state, setState] = useState({});
+
+  let readyRef = useRef(false);
+
+  useEffect(() => {
+    let url = new URL(location.href);
+    let launcher = url.searchParams.get("launcher");
+
+    let send = ({ action = "action", payload = {} }) => {
+      return window?.top?.postMessage(
+        {
+          //
+          launcher: launcher,
+          action: action,
+          payload: payload,
+          //
+        },
+        {
+          targetOrigin: `${location.origin}`,
+        }
+      );
+    };
+
+    let hh = (ev) => {
+      if (ev.data.launcher === launcher && ev.origin === location.origin) {
+        let payload = ev.data.payload;
+        let action = ev.data.action;
+
+        if (action === "reboot") {
+          setState(payload);
+        }
+      }
+    };
+    window.addEventListener("message", hh);
+
+    if (!readyRef.current) {
+      readyRef.current = true;
+      send({ action: "ready", payload: {} });
+    }
+
+    return () => {
+      window.removeEventListener("message", hh);
+    };
+  }, []);
+
+  useEffect(() => {
+    let { graph, codes } = state;
+
+    const rollupProm = import("rollup").then((r) => r.rollup); //2.56.3
+    rollupProm.then(async (rollup) => {
+      //
+      const localCode = `rollup://`;
+      window.GoGlobal = window.GoGlobal || {};
+      window.GoGlobal["react"] = React;
+      window.GoGlobal["react-dom"] = ReactDOM;
+
+      let runtimePatcher = (Variable, idName) => {
+        let str = ` `;
+        Object.entries(Variable).forEach(([key, val]) => {
+          if (key === "default") {
+            return;
+          }
+          str += `
+export const ${key} = window.GoGlobal["${idName}"]["${key}"];
+`;
+        });
+
+        if (Variable.default) {
+          str += `
+export default window.GoGlobal["${idName}"]["default"]
+`;
+        }
+
+        return str;
+      };
+
+      //
+      // runtimePatcher(React, "react");
+      //
+
+      let bundle = rollup({
+        input: `/tester/testrun.js`,
+        plugins: [
+          {
+            name: "FS",
+            async resolveId(source, importer) {
+              if (!importer) {
+                // console.log(importee, 'importee')
+                return source;
+              }
+
+              if (source.startsWith(localCode)) {
+                return codes.find((r) => r.title === source);
+              }
+
+              if (source.startsWith("three")) {
+                if (source === "three") {
+                  return "/jsrepo/three/build/three.module.js";
+                }
+                if (source === "three/nodes") {
+                  return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
+                }
+                if (source.startsWith("three/addons/")) {
+                  return (
+                    "/jsrepo/three/examples/jsm/" +
+                    source.replace("three/addons/", "")
+                  );
+                }
+
+                return;
+              }
+
+              if (importer) {
+                let arr = importer.split("/");
+                arr.pop();
+                let parent = arr.join("/");
+                let joined = path.join(parent, source);
+                return joined;
+              }
+            },
+            async load(id) {
+              if (id in window.GoGlobal) {
+                return `
+                  ${runtimePatcher(window.GoGlobal[id], id)}
+                `;
+              }
+
+              if (id.startsWith(`/`)) {
+                return fetch(`${id}`)
+                  .then((r) => {
+                    return r.text();
+                  })
+                  .then((content) => {
+                    let tCocde = transform(content, {
+                      transforms: ["jsx"],
+                      preserveDynamicImport: true,
+                      production: true,
+                      jsxPragma: "React.createElement",
+                      jsxFragmentPragma: "React.Fragment",
+                    }).code;
+
+                    return tCocde;
+                  });
+              }
+
+              return `
+                  console.log('[not found]', ${id});
+              `;
+            },
+          },
+        ],
+      });
+
+      let bdn = await bundle;
+      let parcel = await bdn.generate({
+        output: { format: "esm", dir: "./dist" },
+      });
+      let rawOutputs = parcel.output;
+
+      // console.log("[rawOutputs]", rawOutputs);
+      let outputs = rawOutputs;
+
+      // console.log("code!", outputs[0].code);
+
+      let blob = new Blob([outputs[0]?.code], {
+        type: "application/javascript",
+      });
+
+      let url = URL.createObjectURL(blob);
+
+      let yo = document.body.childNodes;
+      for (let item of yo) {
+        document.body.removeChild(item);
+      }
+
+      if (window.stopLoop) {
+        window.stopLoop();
+      }
+      window.remoteImport(url).then((mod) => {
+        //
+        window.stopLoop = mod.stop;
+      });
+      //
+    });
+
+    return () => {
+      let yo = document.body.childNodes;
+      for (let item of yo) {
+        document.body.removeChild(item);
+      }
+    };
+  }, [state]);
+
+  //
+
+  return (
+    <>
+      {/* {
+        graph &&
+        graph.nodes.map((n) => {
+          let code = codes.find((r) => r.nodeID === n._id);
+          return <NodeRunner code={code} node={n} key={n._id}></NodeRunner>;
+        })} */}
+    </>
+  );
+}
+
+//
+//
