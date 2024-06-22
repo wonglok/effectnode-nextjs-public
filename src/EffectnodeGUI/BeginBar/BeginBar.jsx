@@ -34,10 +34,9 @@ export function BeginBar({ useStore }) {
             ></img>
           </div>
 
-          {apps.map((app) => {
+          {wins.map((win) => {
             //
-            // let app = apps.find((r) => r._id === win.appID)
-            let win = wins.find((r) => r.appID === app._id);
+            // let win = wins.find((r) => r.appID === app._id);
             return (
               <div
                 onClick={() => {
@@ -49,12 +48,12 @@ export function BeginBar({ useStore }) {
                     let idx = wins.findIndex((w) => w._id === win._id);
                     wins.splice(idx, 1);
                     wins.push(win);
-
                     wins = wins.map((eachWin, idx) => {
                       eachWin.zIndex = idx;
                       return eachWin;
                     });
                   } else {
+                    let app = apps.find((r) => r._id === win.appID);
                     //
                     let appID = app._id;
 
@@ -75,10 +74,10 @@ export function BeginBar({ useStore }) {
                     wins: [...wins],
                   });
                 }}
-                key={app._id + "appIcon"}
+                key={win._id + "appIcon"}
                 className="bg-white text-black rounded-full overflow-hidden h-9 m-1 px-4 flex items-center justify-center cursor-pointer"
               >
-                {app.appIconText}
+                {win.title}
               </div>
             );
           })}

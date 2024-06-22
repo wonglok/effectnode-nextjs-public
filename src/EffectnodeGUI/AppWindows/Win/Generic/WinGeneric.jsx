@@ -339,7 +339,9 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               onClick={() => {
                 //
                 useStore.setState({
-                  wins: wins.filter((r) => r._id !== win._id),
+                  wins: JSON.parse(
+                    JSON.stringify(wins.filter((r) => r._id !== win._id))
+                  ),
                 });
                 //
               }}
@@ -369,13 +371,16 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           {children}
           {win.zIndex < wins.length - 1 && (
             <>
-              <div className="w-full h-full absolute top-0 left-0 "></div>
+              <div
+                className="w-full h-full absolute top-0 left-0 "
+                style={{ height: `calc(100% - 30px)` }}
+              ></div>
             </>
           )}
         </div>
 
         {mouseState.isDown && (
-          <div className="w-full h-full absolute top-0 left-0"></div>
+          <div className="w-full absolute top-0 left-0"></div>
         )}
 
         <div

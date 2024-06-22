@@ -219,11 +219,6 @@ export class EditorCore {
         win.appID = appID;
         win.zIndex = wins.length;
 
-        // win.width = 500;
-        // win.height = 375;
-        // win.top = 10;
-        // win.left = 10;
-
         apps.push(app);
         wins.push(win);
 
@@ -248,9 +243,6 @@ export class EditorCore {
         win._id = getID();
         win.appID = appID;
         win.zIndex = wins.length;
-
-        // win.top = 10;
-        // win.left = window.innerWidth - win.width - 10;
 
         apps.push(app);
         wins.push(win);

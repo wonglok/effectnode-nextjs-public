@@ -10,16 +10,23 @@ export default function HTML() {
     if (!spaceID) {
       return;
     }
+    //
+
+    console.log(spaceID);
 
     //
+
     console.log(spaceID);
+
+    //
+
     //
   }, [spaceID]);
 
   return (
     <>
-      <div className="w-full h-full bg-gray-200 rounded-md">123</div>
       {/*  */}
+      <div className="w-full h-full bg-gray-200 rounded-md">123</div>
       {/*  */}
     </>
   );

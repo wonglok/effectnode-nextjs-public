@@ -6,6 +6,57 @@ export function BeginMenu({ useStore }) {
   let wins = useStore((r) => r.wins);
   let apps = useStore((r) => r.apps);
   //
+
+  let openWindow = ({ winType }) => {
+    let { apps, wins } = useStore.getState();
+    if (!apps.some((r) => r.type === winType)) {
+      let appID = getID();
+
+      let app = JSON.parse(
+        JSON.stringify(myApps.find((r) => r.type === winType))
+      );
+      app._id = appID;
+
+      let win = JSON.parse(
+        JSON.stringify(myWins.find((r) => r.type === winType))
+      );
+      win._id = getID();
+      win.appID = appID;
+
+      apps.push(app);
+      wins.push(win);
+
+      useStore.setState({
+        apps: [...apps],
+        wins: [...wins],
+        overlayPop: "",
+      });
+    } else {
+      let app = apps.find((r) => r.type === winType);
+      let appID = app._id;
+
+      if (!wins.some((r) => r.type === winType)) {
+        let win = JSON.parse(
+          JSON.stringify(myWins.find((r) => r.type === winType))
+        );
+        win._id = getID();
+        win.appID = appID;
+
+        apps.push(app);
+        wins.push(win);
+
+        useStore.setState({
+          apps: [...apps],
+          wins: [...wins],
+          overlayPop: "",
+        });
+      }
+    }
+
+    useStore.setState({
+      overlayPop: "",
+    });
+  };
   return (
     <>
       {/*  */}
@@ -48,35 +99,7 @@ export function BeginMenu({ useStore }) {
           <div>
             <div
               onClick={() => {
-                if (!apps.some((r) => r.type === "editor")) {
-                  let appID = getID();
-
-                  let app = JSON.parse(
-                    JSON.stringify(myApps.find((r) => r.type === "editor"))
-                  );
-                  app._id = appID;
-
-                  let win = JSON.parse(
-                    JSON.stringify(myWins.find((r) => r.type === "editor"))
-                  );
-                  win._id = getID();
-                  win.appID = appID;
-                  win.zIndex = wins.length;
-
-                  apps.push(app);
-                  wins.push(win);
-
-                  useStore.setState({
-                    apps: [...apps],
-                    wins: [...wins],
-                    overlayPop: "",
-                  });
-                }
-                useStore.setState({
-                  apps: [...apps],
-                  wins: [...wins],
-                  overlayPop: "",
-                });
+                openWindow({ winType: "editor" });
               }}
               className="cursor-pointer mr-3 mb-3 select-none inline-block p-5 px-6 shadow-md hover:shadow-xl hover:bg-gray-100 active:shadow-lg transition-all duration-300 rounded-2xl border-gray-300 border "
             >
@@ -84,36 +107,7 @@ export function BeginMenu({ useStore }) {
             </div>
             <div
               onClick={() => {
-                //
-                if (!apps.some((r) => r.type === "previewer")) {
-                  let appID = getID();
-
-                  let app = JSON.parse(
-                    JSON.stringify(myApps.find((r) => r.type === "previewer"))
-                  );
-                  app._id = appID;
-
-                  let win = JSON.parse(
-                    JSON.stringify(myWins.find((r) => r.type === "previewer"))
-                  );
-                  win._id = getID();
-                  win.appID = appID;
-                  win.zIndex = wins.length;
-
-                  apps.push(app);
-                  wins.push(win);
-
-                  useStore.setState({
-                    apps: [...apps],
-                    wins: [...wins],
-                    overlayPop: "",
-                  });
-                }
-                useStore.setState({
-                  apps: [...apps],
-                  wins: [...wins],
-                  overlayPop: "",
-                });
+                openWindow({ winType: "previewer" });
               }}
               className="cursor-pointer mr-3 mb-3 select-none inline-block p-5 px-6 shadow-md hover:shadow-xl hover:bg-gray-100 active:shadow-lg transition-all duration-300 rounded-2xl border-gray-300 border "
             >
