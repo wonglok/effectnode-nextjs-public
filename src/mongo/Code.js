@@ -7,6 +7,9 @@ const DefaultValues = {
   content: {
     type: String,
   },
+  data: {
+    type: Schema.Types.Mixed,
+  },
 };
 
 /** @type {DefaultValues} */

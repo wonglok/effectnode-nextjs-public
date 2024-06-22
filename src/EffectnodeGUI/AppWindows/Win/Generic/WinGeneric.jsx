@@ -242,8 +242,8 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
       eachWin.zIndex = index;
     });
   };
-  //
 
+  //
   //
   return (
     <>

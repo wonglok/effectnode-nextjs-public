@@ -1,4 +1,4 @@
-import { createRef, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export function AppRunner({ spaceID }) {
   let ref = useRef();
@@ -8,6 +8,7 @@ export function AppRunner({ spaceID }) {
   }, []);
 
   useEffect(() => {
+    ref.current.innerHTML = "";
     ref.current.appendChild(el);
     return () => {
       el.remove();
@@ -23,9 +24,9 @@ export function AppRunner({ spaceID }) {
       el.src = `/iframe/${spaceID}`;
     }
 
-    //
-
-    return () => {};
+    return () => {
+      //
+    };
   }, [spaceID, el]);
   return (
     <>
