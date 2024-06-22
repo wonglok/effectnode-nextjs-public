@@ -90,10 +90,11 @@ export function makeCode({ nodeID, spaceID }) {
     //
     nodeID: nodeID,
     spaceID: spaceID,
-    content: "",
+    code: "",
     data: [
       {
         _id: getID(),
+        label: "speed",
         type: "range",
         min: 0,
         max: 1,
@@ -102,11 +103,13 @@ export function makeCode({ nodeID, spaceID }) {
       },
       {
         _id: getID(),
+        label: "materialColor",
         type: "color",
         value: "#ff0000",
       },
       {
         _id: getID(),
+        label: "name",
         type: "text",
         value: "hi dear",
       },

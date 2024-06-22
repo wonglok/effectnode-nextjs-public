@@ -1,8 +1,26 @@
+import { makeCode } from "@/src/EffectnodeGUI/utils/myGraphNodes";
+import Editor from "@monaco-editor/react";
+import { useEffect } from "react";
+
 export function Code({ win, useStore }) {
   let wins = useStore((r) => r.wins);
   let graph = useStore((r) => r.graph);
+  let codes = useStore((r) => r.codes);
   let nodes = graph.nodes;
   let node = nodes.find((r) => r._id === win.nodeID);
+  let code = codes.find((r) => r.nodeID === win.nodeID);
+
+  let spaceID = useStore((r) => r.spaceID);
+
+  useEffect(() => {
+    if (!spaceID) {
+      return;
+    }
+
+    if (!win.nodeID) {
+      return;
+    }
+  }, [code, spaceID, useStore, win.nodeID]);
   return (
     <>
       <div className="w-full h-full " style={{}}>
@@ -30,11 +48,42 @@ export function Code({ win, useStore }) {
               });
             }}
           >
-            Rename
+            Rename Title
+          </span>
+          <span
+            className="mx-2 underline text-red-500"
+            onClick={() => {
+              //
+              if (prompt(`remove "${node.title}" ?`, "no") === "yes") {
+                graph.nodes = graph.nodes.filter((r) => r._id !== win.nodeID);
+                useStore.setState({
+                  graph: {
+                    ...graph,
+                  },
+                  codes: codes.filter((r) => r.nodeID !== win.nodeID),
+                  wins: wins.filter((r) => r._id !== win._id),
+                });
+              }
+              //
+            }}
+          >
+            Remove Node
           </span>
         </div>
         <div className="w-full " style={{ height: "calc(100% - 30px)" }}>
-          {/*  */}
+          <div className="w-full h-full overflow-hidden rounded-md">
+            {code && (
+              <Editor
+                height={`100%`}
+                defaultLanguage="javascript"
+                defaultValue={code.code}
+                onChange={(text) => {
+                  console.log(text);
+                  code.code = text;
+                }}
+              ></Editor>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -1,4 +1,7 @@
-import { makeGraphNode } from "@/src/EffectnodeGUI/utils/myGraphNodes";
+import {
+  makeCode,
+  makeGraphNode,
+} from "@/src/EffectnodeGUI/utils/myGraphNodes";
 import { EditorCanvas } from "./EditorCanvas";
 // import { getID } from "@/src/EffectnodeGUI/utils/getID";
 // import { myWins } from "@/src/EffectnodeGUI/utils/myApps";
@@ -62,6 +65,16 @@ export function EditorBox({ useStore }) {
               graph.nodes.push(node);
               node.positon = point3.toArray();
               useStore.setState({ node: { ...node } });
+
+              let newCode = makeCode({
+                spaceID,
+                nodeID: node._id,
+              });
+
+              let codes = useStore.getState().codes || [];
+              useStore.setState({
+                codes: [...codes, newCode],
+              });
 
               //
               //

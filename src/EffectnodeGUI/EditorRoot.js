@@ -47,6 +47,8 @@ export const EditorRoot = () => {
       [
         //
         getOneWorkspace.client({ _id: spaceID }),
+
+        //
       ]
     )
       //
