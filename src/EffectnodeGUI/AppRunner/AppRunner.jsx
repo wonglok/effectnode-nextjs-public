@@ -67,28 +67,32 @@ export function AppRunner({ useStore, spaceID }) {
               payload: backup,
             });
 
-            //
-            // let tt = 0;
-            // let lastBackup = useStore.getState().editorAPI.exportBackup();
-            // let cleaner = useStore.subscribe(() => {
-            //   clearTimeout(tt);
-            //   tt = setTimeout(() => {
-            //     let backup = useStore.getState().editorAPI.exportBackup();
-            //     if (
-            //       lastBackup !==
-            //       JSON.stringify([backup.graph.nodes.length, backup.codes])
-            //     ) {
-            //       lastBackup = JSON.stringify([
-            //         backup.graph.nodes.length,
-            //         backup.codes,
-            //       ]);
-            //     }
-            //   }, 1000);
-            // });
+            let tt = 0;
+            let lastBackup = useStore.getState().editorAPI.exportBackup();
+            let cleaner = useStore.subscribe(() => {
+              clearTimeout(tt);
+              tt = setTimeout(() => {
+                let backup = useStore.getState().editorAPI.exportBackup();
+                if (
+                  lastBackup !==
+                  JSON.stringify([backup.graph.nodes.length, backup.codes])
+                ) {
+                  lastBackup = JSON.stringify([
+                    backup.graph.nodes.length,
+                    backup.codes,
+                  ]);
+
+                  let href = el.contentWindow.location.href;
+                  el.contentWindow.location.assign(href);
+                }
+              }, 500);
+
+              //
+            });
 
             // //
 
-            // cleans.push(cleaner);
+            cleans.push(cleaner);
 
             //
           }
