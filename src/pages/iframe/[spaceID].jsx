@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-
+import path, { join } from "path";
 export default function HTML() {
   let [state, setState] = useState({});
 
@@ -79,70 +79,140 @@ export default window.GoGlobal["${idName}"]["default"]
         return str;
       };
 
+      //
       // runtimePatcher(React, "react");
       //
 
       let bundle = rollup({
-        input: `./src/main.js`,
+        input: `/tester/testrun.js`,
         plugins: [
           {
             name: "FS",
             async resolveId(source, importer) {
-              if (source.includes(localCode)) {
-                source = source.replace(`${localCode}`, "");
+              if (!importer) {
+                // console.log(importee, 'importee')
+                return source;
               }
 
-              console.log(source);
+              if (source.startsWith("three")) {
+                if (source === "three") {
+                  return "/jsrepo/three/build/three.module.js";
+                }
+                if (source === "three/nodes") {
+                  return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
+                }
+                if (source.startsWith("three/addons/")) {
+                  return (
+                    "/jsrepo/three/examples/jsm/" +
+                    source.replace("three/addons/", "")
+                  );
+                }
 
-              // console.log('importee', importee.replace(`${localCode}`, ''))
-              // console.log('importer', importer)
-              // return `${cleaned}`
+                return;
+              }
 
-              return source;
+              if (importer) {
+                let arr = importer.split("/");
+                arr.pop();
+                let parent = arr.join("/");
+                let joined = path.join(parent, source);
+                // console.log(joined);
+                return joined;
+              }
+
+              // if (source.startsWith("/tester")) {
+              //   return source;
+              // }
+
+              // if (importer) {
+              //   console.log(source, importer);
+              //   return new URL(source, importer);
+              // }
+
+              //
+
+              // if (source.includes(localCode)) {
+              //   source = source.replace(`${localCode}`, "");
+              //   return source;
+              // }
+
+              // // console.log(importer, source);
+
+              // // if (source.startsWith(`three/addons/`)) {
+              // //   source = source.replace(
+              // //     `three/addons/`,
+              // //     `/jsrepo/three/examples/jsm/`
+              // //   );
+
+              // //   return source;
+              // // }
+
+              // // let exactMap = {
+              // //   ["three"]: "/jsrepo/three/build/three.module.js",
+              // //   ["three/nodes"]: "/jsrepo/three/examples/jsm/nodes/Nodes.js",
+              // // };
+              // // if (exactMap[source]) {
+              // //   return exactMap[source];
+              // // }
+
+              // return source;
             },
-            // async moduleParsed(info) {
-            //     console.log(info)
-            // },
-            //
             async load(id) {
-              console.log(id);
               if (id in window.GoGlobal) {
                 return `
                   ${runtimePatcher(window.GoGlobal[id], id)}
                 `;
               }
 
-              let map = {
-                ["three"]: "/jsrepo/three/build/three.module.js",
-                ["three/addons/"]: "/jsrepo/three/examples/jsm/",
-                ["three/nodes"]: "/jsrepo/three/examples/jsm/nodes/Nodes.js",
-              };
+              // if (id === "three") {
+              //   return fetch(`/jsrepo/three/build/three.module.js`).then(
+              //     (r) => {
+              //       return r.text();
+              //     }
+              //   );
+              // }
 
-              if (map[id]) {
-                return await fetch(map[id]).then((r) => {
+              // if (id === "three/nodes") {
+              //   return fetch(`/jsrepo/three/examples/jsm/nodes/Nodes.js`).then(
+              //     (r) => {
+              //       return r.text();
+              //     }
+              //   );
+              // }
+              // if (id.startsWith("three/addons/")) {
+              //   return fetch(
+              //     path.resolve(
+              //       `/jsrepo/three/examples/jsm/`,
+              //       `${id.replace("three/addons/", "")}`
+              //     )
+              //   ).then((r) => {
+              //     return r.text();
+              //   });
+              // }
+
+              // //three/nodes
+
+              // if (map[id]) {
+              //   return await fetch(map[id]).then((r) => {
+              //     return r.text();
+              //   });
+              // }
+
+              if (id.startsWith(`/`)) {
+                return fetch(`${id}`).then((r) => {
                   return r.text();
                 });
               }
 
-              if (id.includes("three/examples")) {
-                return fetch(`/jsrepo/${id}`).then((r) => {
-                  return r.text();
-                });
-              }
+              // if (id.startsWith("./")) {
+              //   if (id === "./loklok/rand.js") {
+              //     return fetch(`/tester/rand.js`).then((r) => r.text());
+              //   }
+              //   if (id === "./src/main.js") {
+              //     return fetch(`/tester/testrun.js`).then((r) => r.text());
+              //   }
+              // }
 
-              if (id === "./src/main.js") {
-                return `
-                  import * as THREE from 'three';
-
-                  console.log(THREE);
-
-                  // import * as React from 'react'
-                  // import * as ReactDOM from 'react-dom'
-                  // console.log(React, ReactDOM);
-                `;
-              }
-
-              //
               // if (id.indexOf(`/home/web/`) === 0) {
               //   let data = memfs.fs.readFileSync(id, "utf-8");
               //   return data;
@@ -195,12 +265,12 @@ export default window.GoGlobal["${idName}"]["default"]
       });
       let rawOutputs = parcel.output;
 
-      console.log("[rawOutputs]", rawOutputs);
+      // console.log("[rawOutputs]", rawOutputs);
       let outputs = rawOutputs;
 
-      console.log("code!", outputs[0].code);
+      // console.log("code!", outputs[0].code);
 
-      let blob = new Blob([outputs[0].code], {
+      let blob = new Blob([outputs[0]?.code], {
         type: "application/javascript",
       });
 
@@ -213,6 +283,10 @@ export default window.GoGlobal["${idName}"]["default"]
       });
       //
     });
+
+    return () => {
+      document.body.innerHTML = "";
+    };
   }, [state]);
 
   //

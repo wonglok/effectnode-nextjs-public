@@ -13,6 +13,20 @@ export default function Document() {
         `,
         }}
       ></script>
+      <script
+        type="importmap"
+        dangerouslySetInnerHTML={{
+          __html: `
+        {
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/",
+					"three/nodes": "./jsm/nodes/Nodes.js"
+				}
+			}
+        `,
+        }}
+      ></script>
       <body className="effectnode-app-container">
         <Main />
         <NextScript />
