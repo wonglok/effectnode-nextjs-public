@@ -1,8 +1,8 @@
-import { GraphNode } from "@/mongo/GraphNode";
+import { Code } from "@/src/mongo/Code";
 
 export default async function API(req, res) {
-  let { auhtConfig } = await import("@/auth/auth");
-  let { getDBConnection } = await import("@/mongo/mongo");
+  let { auhtConfig } = await import("@/src/auth/auth");
+  let { getDBConnection } = await import("@/src/mongo/mongo");
   let { getServerSession } = await import("next-auth/next");
 
   const session = await getServerSession(req, res, auhtConfig);
@@ -20,12 +20,12 @@ export default async function API(req, res) {
       try {
         let args = { req, res, action, payload };
         let operations = await Promise.all([
-          listGraphNodes.server(args),
-          createGraphNode.server(args),
-          getOneGraphNode.server(args),
-          removeOneGraphNode.server(args),
-          renameOneGraphNode.server(args),
-
+          //
+          listCodes.server(args),
+          createCode.server(args),
+          getOneCode.server(args),
+          removeOneCode.server(args),
+          renameOneCode.server(args),
           //
         ]).catch((r) => {
           console.error(r);
@@ -58,11 +58,11 @@ export default async function API(req, res) {
   }
 }
 
-export const listGraphNodes = {
+export const listCodes = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "listGraphNodes" && req.method === "POST") {
+    if (action === "listCodes" && req.method === "POST") {
       //
-      let data = await GraphNode.find({}).then((r) => {
+      let data = await Code.find({}).then((r) => {
         console.log(r);
         return r;
       });
@@ -72,11 +72,11 @@ export const listGraphNodes = {
     }
   },
   client: (func = (v) => v) => {
-    return fetch(`/api/GraphNode`, {
+    return fetch(`/api/Code`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "listGraphNodes",
+        action: "listCodes",
         payload: {},
       }),
     })
@@ -93,11 +93,11 @@ export const listGraphNodes = {
   },
 };
 
-export const createGraphNode = {
+export const createCode = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "createGraphNode" && req.method === "POST") {
+    if (action === "createCode" && req.method === "POST") {
       //
-      let data = await GraphNode.create({}).then((r) => {
+      let data = await Code.create({}).then((r) => {
         console.log(r);
         return r;
       });
@@ -107,11 +107,11 @@ export const createGraphNode = {
     }
   },
   client: (data = {}, func = (v) => v) => {
-    return fetch(`/api/GraphNode`, {
+    return fetch(`/api/Code`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "createGraphNode",
+        action: "createCode",
         payload: data,
       }),
     })
@@ -128,11 +128,11 @@ export const createGraphNode = {
   },
 };
 
-export const getOneGraphNode = {
+export const getOneCode = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "getOneGraphNode" && req.method === "POST") {
+    if (action === "getOneCode" && req.method === "POST") {
       //
-      let data = await GraphNode.findOne({
+      let data = await Code.findOne({
         _id: payload._id,
       }).then((r) => {
         console.log(r);
@@ -144,11 +144,11 @@ export const getOneGraphNode = {
     }
   },
   client: (data = {}, fnc = (v) => v) => {
-    return fetch(`/api/GraphNode`, {
+    return fetch(`/api/Code`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "getOneGraphNode",
+        action: "getOneCode",
         payload: data,
       }),
     })
@@ -165,12 +165,12 @@ export const getOneGraphNode = {
   },
 };
 
-export const removeOneGraphNode = {
+export const removeOneCode = {
   server: async ({ req, res, action, payload }) => {
     //
-    if (action === "removeOneGraphNode" && req.method === "POST") {
+    if (action === "removeOneCode" && req.method === "POST") {
       //
-      let data = await GraphNode.findOneAndDelete({
+      let data = await Code.findOneAndDelete({
         _id: payload._id,
       }).then((r) => {
         console.log(r);
@@ -183,11 +183,11 @@ export const removeOneGraphNode = {
     }
   },
   client: (data = { _id: false }, func = (v) => v) => {
-    return fetch(`/api/GraphNode`, {
+    return fetch(`/api/Code`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "removeOneGraphNode",
+        action: "removeOneCode",
         payload: data,
       }),
     })
@@ -204,11 +204,11 @@ export const removeOneGraphNode = {
   },
 };
 
-export const renameOneGraphNode = {
+export const renameOneCode = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "renameOneGraphNode" && req.method === "POST") {
+    if (action === "renameOneCode" && req.method === "POST") {
       //
-      let data = await GraphNode.findOneAndUpdate(
+      let data = await Code.findOneAndUpdate(
         {
           _id: payload._id,
         },
@@ -226,11 +226,11 @@ export const renameOneGraphNode = {
   },
   client: (data = { _id: false, title: "new_name" }, func = (v) => v) => {
     return (
-      fetch(`/api/GraphNode`, {
+      fetch(`/api/Code`, {
         method: "post",
         body: JSON.stringify({
           //
-          action: "renameOneGraphNode",
+          action: "renameOneCode",
           payload: data,
         }),
       })

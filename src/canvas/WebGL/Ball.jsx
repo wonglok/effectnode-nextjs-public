@@ -8,12 +8,11 @@ export function Ball() {
   return (
     <Canvas className="w-full h-full">
       <color attach="background" args={["#000000"]}></color>
-      {/* <FastClothCompo></FastClothCompo> */}
       <PerspectiveCamera makeDefault position={[0, 0, 150]}></PerspectiveCamera>
       <EnergyArtCompo></EnergyArtCompo>
       <EffectComposer multisampling={0} enableNormalPass={false}>
         <Bloom
-          intensity={0.25}
+          intensity={5.5}
           luminanceThreshold={0.15}
           mipmapBlur={true}
         ></Bloom>

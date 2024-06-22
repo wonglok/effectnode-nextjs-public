@@ -1,4 +1,4 @@
-import { Workspace } from "@/src/mongo/Workspace";
+import { Graph } from "@/src/mongo/Graph";
 
 export default async function API(req, res) {
   let { auhtConfig } = await import("@/src/auth/auth");
@@ -21,11 +21,12 @@ export default async function API(req, res) {
         let args = { req, res, action, payload };
         let operations = await Promise.all([
           //
-          listWorkspaces.server(args),
-          createWorkspace.server(args),
-          getOneWorkspace.server(args),
-          removeOneWorkspace.server(args),
-          renameOneWorkspace.server(args),
+
+          listGraphs.server(args),
+          createGraph.server(args),
+          getOneGraph.server(args),
+          removeOneGraph.server(args),
+          renameOneGraph.server(args),
           //
         ]).catch((r) => {
           console.error(r);
@@ -58,11 +59,11 @@ export default async function API(req, res) {
   }
 }
 
-export const listWorkspaces = {
+export const listGraphs = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "listWorkspaces" && req.method === "POST") {
+    if (action === "listGraphs" && req.method === "POST") {
       //
-      let data = await Workspace.find({}).then((r) => {
+      let data = await Graph.find({}).then((r) => {
         console.log(r);
         return r;
       });
@@ -72,11 +73,11 @@ export const listWorkspaces = {
     }
   },
   client: (func = (v) => v) => {
-    return fetch(`/api/Workspace`, {
+    return fetch(`/api/Graph`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "listWorkspaces",
+        action: "listGraphs",
         payload: {},
       }),
     })
@@ -93,11 +94,11 @@ export const listWorkspaces = {
   },
 };
 
-export const createWorkspace = {
+export const createGraph = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "createWorkspace" && req.method === "POST") {
+    if (action === "createGraph" && req.method === "POST") {
       //
-      let data = await Workspace.create({}).then((r) => {
+      let data = await Graph.create({}).then((r) => {
         console.log(r);
         return r;
       });
@@ -107,11 +108,11 @@ export const createWorkspace = {
     }
   },
   client: (data = {}, func = (v) => v) => {
-    return fetch(`/api/Workspace`, {
+    return fetch(`/api/Graph`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "createWorkspace",
+        action: "createGraph",
         payload: data,
       }),
     })
@@ -128,11 +129,11 @@ export const createWorkspace = {
   },
 };
 
-export const getOneWorkspace = {
+export const getOneGraph = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "getOneWorkspace" && req.method === "POST") {
+    if (action === "getOneGraph" && req.method === "POST") {
       //
-      let data = await Workspace.findOne({
+      let data = await Graph.findOne({
         _id: payload._id,
       }).then((r) => {
         console.log(r);
@@ -144,11 +145,11 @@ export const getOneWorkspace = {
     }
   },
   client: (data = {}, fnc = (v) => v) => {
-    return fetch(`/api/Workspace`, {
+    return fetch(`/api/Graph`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "getOneWorkspace",
+        action: "getOneGraph",
         payload: data,
       }),
     })
@@ -165,12 +166,12 @@ export const getOneWorkspace = {
   },
 };
 
-export const removeOneWorkspace = {
+export const removeOneGraph = {
   server: async ({ req, res, action, payload }) => {
     //
-    if (action === "removeOneWorkspace" && req.method === "POST") {
+    if (action === "removeOneGraph" && req.method === "POST") {
       //
-      let data = await Workspace.findOneAndDelete({
+      let data = await Graph.findOneAndDelete({
         _id: payload._id,
       }).then((r) => {
         console.log(r);
@@ -183,11 +184,11 @@ export const removeOneWorkspace = {
     }
   },
   client: (data = { _id: false }, func = (v) => v) => {
-    return fetch(`/api/Workspace`, {
+    return fetch(`/api/Graph`, {
       method: "post",
       body: JSON.stringify({
         //
-        action: "removeOneWorkspace",
+        action: "removeOneGraph",
         payload: data,
       }),
     })
@@ -204,11 +205,11 @@ export const removeOneWorkspace = {
   },
 };
 
-export const renameOneWorkspace = {
+export const renameOneGraph = {
   server: async ({ req, res, action, payload }) => {
-    if (action === "renameOneWorkspace" && req.method === "POST") {
+    if (action === "renameOneGraph" && req.method === "POST") {
       //
-      let data = await Workspace.findOneAndUpdate(
+      let data = await Graph.findOneAndUpdate(
         {
           _id: payload._id,
         },
@@ -226,11 +227,11 @@ export const renameOneWorkspace = {
   },
   client: (data = { _id: false, title: "new_name" }, func = (v) => v) => {
     return (
-      fetch(`/api/Workspace`, {
+      fetch(`/api/Graph`, {
         method: "post",
         body: JSON.stringify({
           //
-          action: "renameOneWorkspace",
+          action: "renameOneGraph",
           payload: data,
         }),
       })

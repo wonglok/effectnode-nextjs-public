@@ -1,6 +1,6 @@
 import { EditorCanvas } from "./EditorCanvas";
-// import { getID } from "@/EffectnodeGUI/utils/getID";
-// import { myWins } from "@/EffectnodeGUI/utils/myApps";
+// import { getID } from "@/src/EffectnodeGUI/utils/getID";
+// import { myWins } from "@/src/EffectnodeGUI/utils/myApps";
 import { useEffect, useMemo } from "react";
 import { Vector3 } from "three";
 

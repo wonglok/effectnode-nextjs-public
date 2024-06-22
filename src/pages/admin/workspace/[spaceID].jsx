@@ -1,7 +1,7 @@
-import { Editor } from "@/EffectnodeGUI/Editor";
+import { EditorRoot } from "@/src/EffectnodeGUI/EditorRoot";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-export default function EditorPage() {
+export default function Page() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
@@ -15,7 +15,7 @@ export default function EditorPage() {
   if (session) {
     return (
       <>
-        <Editor></Editor>
+        <EditorRoot></EditorRoot>
       </>
     );
   }

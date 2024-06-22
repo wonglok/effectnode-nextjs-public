@@ -231,6 +231,18 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
   }, [mouseState, win]);
 
   //
+  let upWindow = () => {
+    let cloned = JSON.parse(JSON.stringify(wins));
+    let idx = cloned.findIndex((w) => w._id === win._id);
+    cloned.splice(idx, 1);
+    cloned.push(win);
+
+    wins.forEach((eachWin) => {
+      let index = cloned.findIndex((e) => e._id === eachWin._id);
+      eachWin.zIndex = index;
+    });
+  };
+  //
 
   //
   return (
@@ -249,14 +261,12 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           borderTopRightRadius: "10px",
         }}
         onMouseDown={() => {
-          let idx = wins.findIndex((w) => w._id === win._id);
-          wins.splice(idx, 1);
-          wins.push(win);
+          upWindow();
 
-          wins = wins.map((eachWin, idx) => {
-            eachWin.zIndex = idx;
-            return eachWin;
-          });
+          // wins = wins.map((eachWin, idx) => {
+          //   eachWin.zIndex = idx;
+          //   return eachWin;
+          // });
 
           useStore.setState({
             apps: [...apps],
@@ -274,8 +284,12 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // borderBottom: `gray solid 1px`,
             backgroundImage: `
             linear-gradient(
-                hsl(210, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 80%),
-                hsl(190, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 50%)
+                hsl(210, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(
+                  0
+                )}%, 80%),
+                hsl(190, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(
+                  0
+                )}%, 50%)
             )
             `,
             borderTop: "gray solid 1px",
@@ -294,14 +308,15 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            let idx = wins.findIndex((w) => w._id === win._id);
-            wins.splice(idx, 1);
-            wins.push(win);
+            // let idx = wins.findIndex((w) => w._id === win._id);
+            // wins.splice(idx, 1);
+            // wins.push(win);
+            upWindow();
 
-            wins = wins.map((eachWin, idx) => {
-              eachWin.zIndex = idx;
-              return eachWin;
-            });
+            // wins = wins.map((eachWin, idx) => {
+            //   eachWin.zIndex = idx;
+            //   return eachWin;
+            // });
 
             useStore.setState({
               apps: [...apps],
@@ -316,8 +331,8 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               style={{
                 backgroundImage: `
     linear-gradient(
-        hsl(0, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 68%),
-        hsl(0, ${((idx / (wins.length - 1)) * 100).toFixed(0)}%, 55%)
+        hsl(0, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(0)}%, 68%),
+        hsl(0, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(0)}%, 55%)
     )
                 `,
               }}
@@ -352,7 +367,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           }}
         >
           {children}
-          {idx < wins.length - 1 && (
+          {win.zIndex < wins.length - 1 && (
             <>
               <div className="w-full h-full absolute top-0 left-0 "></div>
             </>
@@ -373,14 +388,15 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             });
 
             //
-            let idx = wins.findIndex((w) => w._id === win._id);
-            wins.splice(idx, 1);
-            wins.push(win);
+            // let idx = wins.findIndex((w) => w._id === win._id);
+            // wins.splice(idx, 1);
+            // wins.push(win);
+            upWindow();
 
-            wins = wins.map((eachWin, idx) => {
-              eachWin.zIndex = idx;
-              return eachWin;
-            });
+            // wins = wins.map((eachWin, idx) => {
+            //   // eachWin.zIndex = idx;
+            //   return eachWin;
+            // });
 
             useStore.setState({
               apps: [...apps],
@@ -403,14 +419,16 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            let idx = wins.findIndex((w) => w._id === win._id);
-            wins.splice(idx, 1);
-            wins.push(win);
+            upWindow();
 
-            wins = wins.map((eachWin, idx) => {
-              eachWin.zIndex = idx;
-              return eachWin;
-            });
+            // let idx = wins.findIndex((w) => w._id === win._id);
+            // wins.splice(idx, 1);
+            // wins.push(win);
+
+            // wins = wins.map((eachWin, idx) => {
+            //   eachWin.zIndex = idx;
+            //   return eachWin;
+            // });
 
             useStore.setState({
               apps: [...apps],
@@ -433,14 +451,16 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            let idx = wins.findIndex((w) => w._id === win._id);
-            wins.splice(idx, 1);
-            wins.push(win);
+            // let idx = wins.findIndex((w) => w._id === win._id);
+            // wins.splice(idx, 1);
+            // wins.push(win);
 
-            wins = wins.map((eachWin, idx) => {
-              eachWin.zIndex = idx;
-              return eachWin;
-            });
+            upWindow();
+
+            // wins = wins.map((eachWin, idx) => {
+            //   eachWin.zIndex = idx;
+            //   return eachWin;
+            // });
 
             useStore.setState({
               apps: [...apps],
@@ -463,14 +483,16 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            let idx = wins.findIndex((w) => w._id === win._id);
-            wins.splice(idx, 1);
-            wins.push(win);
+            // let idx = wins.findIndex((w) => w._id === win._id);
+            // wins.splice(idx, 1);
+            // wins.push(win);
 
-            wins = wins.map((eachWin, idx) => {
-              eachWin.zIndex = idx;
-              return eachWin;
-            });
+            upWindow();
+
+            // wins = wins.map((eachWin, idx) => {
+            //   eachWin.zIndex = idx;
+            //   return eachWin;
+            // });
 
             useStore.setState({
               apps: [...apps],

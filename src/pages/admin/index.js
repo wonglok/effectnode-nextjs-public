@@ -1,4 +1,4 @@
-import { DashLayout } from "@/layout/DashLayout";
+import { DashLayout } from "@/src/layout/DashLayout";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function AdminPage() {

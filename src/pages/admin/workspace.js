@@ -1,4 +1,4 @@
-import { DashLayout } from "@/layout/DashLayout";
+import { DashLayout } from "@/src/layout/DashLayout";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { createWorkspace, listWorkspaces } from "../api/Workspace";

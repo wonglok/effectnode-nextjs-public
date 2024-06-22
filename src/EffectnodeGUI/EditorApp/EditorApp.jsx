@@ -3,7 +3,10 @@ import { BeginMenu } from "../BeginBar/BeginMenu";
 import { ThankYouList } from "../BeginBar/ThankYouList";
 import { AppWindows } from "../AppWindows/AppWindows";
 import Link from "next/link";
-import { removeOneWorkspace, renameOneWorkspace } from "@/pages/api/Workspace";
+import {
+  removeOneWorkspace,
+  renameOneWorkspace,
+} from "@/src/pages/api/Workspace";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";

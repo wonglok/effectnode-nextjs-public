@@ -1,4 +1,4 @@
-import { Ball } from "@/canvas/WebGL/Ball";
+import { Ball } from "@/src/canvas/WebGL/Ball";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -35,7 +35,7 @@ export function DashLayout({ session, title = "Dashboard", children }) {
                 </Link>
               </div>
               <div className="mt-8 text-center">
-                <div className="m-auto h-10 w-10 object-cover lg:h-28 lg:w-28 rounded-full overflow-hidden">
+                <div className="m-auto  w-40 h-40  max-w-full rounded-full overflow-hidden">
                   <Ball></Ball>
                 </div>
                 <h5 className="mt-4 hidden text-xl font-semibold text-gray-600 lg:block dark:text-gray-300">

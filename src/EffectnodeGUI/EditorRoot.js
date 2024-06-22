@@ -16,9 +16,9 @@ import { useEffect, useRef, useState } from "react";
 import { getID } from "./utils/getID";
 import { myApps, myWins } from "./utils/myApps";
 import { useRouter } from "next/router";
-import { getOneWorkspace } from "@/pages/api/Workspace";
+import { getOneWorkspace } from "@/src/pages/api/Workspace";
 
-export const Editor = () => {
+export const EditorRoot = () => {
   let [val, setVal] = useState(
     <div className="w-full h-full flex items-center justify-center">
       <div className=" text-center">Loading...</div>
@@ -39,16 +39,23 @@ export const Editor = () => {
 
     let core = new EditorCore();
 
+    core.setState({ spaceID });
+
     Promise.all(
       //
-      [getOneWorkspace.client({ _id: spaceID }), []]
+      [getOneWorkspace.client({ _id: spaceID })]
     )
       //
       //
       .then((array) => {
-        let [workspaceResp, items] = array;
-        let workspace = workspaceResp?.data;
+        let [
+          //
+          workspaceResp,
+        ] = array;
+
         //
+        let workspace = workspaceResp?.data;
+
         //
         core.onChange((state, before) => {
           //
@@ -81,7 +88,6 @@ export const Editor = () => {
         if (workspace) {
           core.setState({
             workspace: workspace,
-            items: items || [],
           });
           setVal(core.getReactElement());
         } else {
@@ -107,14 +113,21 @@ export class EditorCore {
       return {
         apps: [],
         wins: [],
+
+        //
+        spaceID: false,
         workspace: false,
-        items: [],
+
+        //
+        graph: false,
+        codes: [],
 
         //
         overlayPop: "",
         set,
         get,
 
+        //
         mouseState: {
           winID: "",
           func: "moveWin",
@@ -127,14 +140,6 @@ export class EditorCore {
         },
       };
     });
-
-    this.store.saveKeys = [
-      //
-      "apps",
-      "wins",
-      "workspace",
-      "items",
-    ];
 
     this.setState = (v = {}) => {
       this.store.setState(v);
@@ -168,10 +173,18 @@ export class EditorCore {
       <EditorApp useStore={this.store} parent={this}></EditorApp>
     );
 
+    this.saveKeys = [
+      //
+      "apps",
+      "wins",
+      "graph",
+      "codes",
+    ];
+
     this.exportBackup = () => {
       let st = JSON.parse(JSON.stringify(this.getState()));
       let processedData = {};
-      for (let kn of this.store.saveKeys) {
+      for (let kn of this.saveKeys) {
         if (st[kn]) {
           processedData[kn] = st[kn];
         }
@@ -181,7 +194,7 @@ export class EditorCore {
     this.restoreBackup = (state) => {
       let st = JSON.parse(JSON.stringify(state));
       let processedData = {};
-      for (let kn of this.store.saveKeys) {
+      for (let kn of this.saveKeys) {
         if (st[kn]) {
           processedData[kn] = st[kn];
         }
@@ -257,8 +270,10 @@ export class EditorCore {
       ///////
       {
         let win = wins.find((r) => r.type === "previewer");
-        win.top = 10;
-        win.left = window.innerWidth - win.width - 10;
+        if (win) {
+          win.top = 10;
+          win.left = window.innerWidth - win.width - 10;
+        }
 
         this.setState({
           apps: [...apps],
@@ -271,10 +286,12 @@ export class EditorCore {
       ///////
       {
         let win = wins.find((r) => r.type === "editor");
-        win.width = 500;
-        win.height = 375;
-        win.top = 10;
-        win.left = 10;
+        if (win) {
+          win.width = 500;
+          win.height = 375;
+          win.top = 10;
+          win.left = 10;
+        }
 
         this.setState({
           apps: [...apps],
