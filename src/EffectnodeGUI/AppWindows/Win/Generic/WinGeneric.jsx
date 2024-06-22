@@ -4,8 +4,8 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
   let apps = useStore((r) => r.apps);
   let wins = useStore((r) => r.wins);
   let mouseState = useStore((r) => r.mouseState);
+  let editorAPI = useStore((r) => r.editorAPI);
 
-  // console.log(win.top)
   useEffect(() => {
     if (!mouseState) {
       return;
@@ -18,6 +18,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
         mouseState.winID === win._id &&
         mouseState.func === "moveWin"
       ) {
+        //
         mouseState.now = [ev.pageX, ev.pageY];
 
         mouseState.delta = [
@@ -223,6 +224,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
         mouseState: { ...mouseState },
       });
     };
+
     window.addEventListener("mouseup", hh);
 
     return () => {
@@ -231,17 +233,17 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
   }, [mouseState, win]);
 
   //
-  let upWindow = () => {
-    let cloned = JSON.parse(JSON.stringify(wins));
-    let idx = cloned.findIndex((w) => w._id === win._id);
-    cloned.splice(idx, 1);
-    cloned.push(win);
+  // let upWindow = () => {
+  //   let cloned = JSON.parse(JSON.stringify(wins));
+  //   let idx = cloned.findIndex((w) => w._id === win._id);
+  //   cloned.splice(idx, 1);
+  //   cloned.push(win);
 
-    wins.forEach((eachWin) => {
-      let index = cloned.findIndex((e) => e._id === eachWin._id);
-      eachWin.zIndex = index;
-    });
-  };
+  //   wins.forEach((eachWin) => {
+  //     let index = cloned.findIndex((e) => e._id === eachWin._id);
+  //     eachWin.zIndex = index;
+  //   });
+  // };
 
   //
   //
@@ -261,7 +263,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           borderTopRightRadius: "10px",
         }}
         onMouseDown={() => {
-          upWindow();
+          editorAPI.upWindow({ win });
 
           // wins = wins.map((eachWin, idx) => {
           //   eachWin.zIndex = idx;
@@ -311,7 +313,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // let idx = wins.findIndex((w) => w._id === win._id);
             // wins.splice(idx, 1);
             // wins.push(win);
-            upWindow();
+            editorAPI.upWindow({ win });
 
             // wins = wins.map((eachWin, idx) => {
             //   eachWin.zIndex = idx;
@@ -401,7 +403,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // let idx = wins.findIndex((w) => w._id === win._id);
             // wins.splice(idx, 1);
             // wins.push(win);
-            upWindow();
+            editorAPI.upWindow({ win });
 
             // wins = wins.map((eachWin, idx) => {
             //   // eachWin.zIndex = idx;
@@ -429,7 +431,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            upWindow();
+            editorAPI.upWindow({ win });
 
             // let idx = wins.findIndex((w) => w._id === win._id);
             // wins.splice(idx, 1);
@@ -465,7 +467,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // wins.splice(idx, 1);
             // wins.push(win);
 
-            upWindow();
+            editorAPI.upWindow({ win });
 
             // wins = wins.map((eachWin, idx) => {
             //   eachWin.zIndex = idx;
@@ -497,7 +499,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // wins.splice(idx, 1);
             // wins.push(win);
 
-            upWindow();
+            editorAPI.upWindow({ win });
 
             // wins = wins.map((eachWin, idx) => {
             //   eachWin.zIndex = idx;

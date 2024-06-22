@@ -4,12 +4,17 @@ const DefaultValues = {
   spaceID: {
     type: String,
   },
+  nodeID: {
+    type: String,
+  },
   content: {
     type: String,
   },
-  data: {
-    type: Schema.Types.Mixed,
-  },
+  data: [
+    {
+      type: Schema.Types.Mixed,
+    },
+  ],
 };
 
 /** @type {DefaultValues} */

@@ -17,6 +17,7 @@ import { getID } from "./utils/getID";
 import { myApps, myWins } from "./utils/myApps";
 import { useRouter } from "next/router";
 import { getOneWorkspace } from "@/src/pages/api/Workspace";
+import { Vector3 } from "three";
 
 export const EditorRoot = () => {
   let [val, setVal] = useState(
@@ -43,7 +44,10 @@ export const EditorRoot = () => {
 
     Promise.all(
       //
-      [getOneWorkspace.client({ _id: spaceID })]
+      [
+        //
+        getOneWorkspace.client({ _id: spaceID }),
+      ]
     )
       //
       //
@@ -57,27 +61,30 @@ export const EditorRoot = () => {
         let workspace = workspaceResp?.data;
 
         //
+        let toout = 0;
         core.onChange((state, before) => {
-          //
-          // console.log(state);
-          //
+          clearTimeout(toout);
+          toout = setTimeout(() => {
+            let st = core.exportBackup();
+            console.log(st);
 
-          localStorage.setItem(
-            spaceID,
-            JSON.stringify({
-              apps: state.apps,
-              wins: state.wins,
-            })
-          );
+            localStorage.setItem(spaceID, JSON.stringify(st));
+          }, 150);
         });
 
         try {
           let state = JSON.parse(localStorage.getItem(spaceID));
-          if (state && state.apps && state.wins) {
-            core.setState({
-              apps: state.apps,
-              wins: state.wins,
-            });
+          if (state) {
+            //
+
+            core.restoreBackup(state);
+
+            //
+            // && state.apps && state.wins
+            // core.setState({
+            //   apps: state.apps,
+            //   wins: state.wins,
+            // });
           }
         } catch (e) {
           console.log(e);
@@ -119,8 +126,29 @@ export class EditorCore {
         workspace: false,
 
         //
-        graph: false,
+        graph: {
+          nodes: [],
+          edges: [],
+        },
         codes: [],
+        //
+
+        //////
+        graphCursorState: {
+          nodeID: "",
+          socketID: "",
+          func: "moveNode",
+          isDown: false,
+
+          controls: false,
+          ts: new Vector3(),
+          last: new Vector3(),
+          now: new Vector3(),
+          delta: new Vector3(),
+          accu: new Vector3(),
+          timer: 0,
+        },
+        ///////
 
         //
         overlayPop: "",
@@ -175,10 +203,13 @@ export class EditorCore {
 
     this.saveKeys = [
       //
-      "apps",
-      "wins",
+      "spaceID",
       "graph",
       "codes",
+
+      //
+      "apps",
+      "wins",
     ];
 
     this.exportBackup = () => {
@@ -293,7 +324,26 @@ export class EditorCore {
       }
       ///////
     };
+
+    this.upWindow = ({ win }) => {
+      let { wins } = this.getState();
+      let cloned = JSON.parse(JSON.stringify(wins));
+      let idx = cloned.findIndex((w) => w._id === win._id);
+      cloned.splice(idx, 1);
+      cloned.push(win);
+
+      wins.forEach((eachWin) => {
+        let index = cloned.findIndex((e) => e._id === eachWin._id);
+        eachWin.zIndex = index;
+      });
+    };
+
+    this.store.setState({
+      editorAPI: this,
+    });
   }
 }
+
+//
 
 //

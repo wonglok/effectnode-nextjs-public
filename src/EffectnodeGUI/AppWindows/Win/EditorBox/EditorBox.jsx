@@ -1,12 +1,16 @@
+import { makeGraphNode } from "@/src/EffectnodeGUI/utils/myGraphNodes";
 import { EditorCanvas } from "./EditorCanvas";
 // import { getID } from "@/src/EffectnodeGUI/utils/getID";
 // import { myWins } from "@/src/EffectnodeGUI/utils/myApps";
 import { useEffect, useMemo } from "react";
-import { Vector3 } from "three";
+import { Object3D, Vector3 } from "three";
 
 export function EditorBox({ useStore }) {
   let wins = useStore((r) => r.wins);
   let apps = useStore((r) => r.apps);
+
+  let graph = useStore((r) => r.graph);
+  let spaceID = useStore((r) => r.spaceID);
 
   let raycaster = useStore((r) => r.raycaster);
   let pointer = useStore((r) => r.pointer);
@@ -19,11 +23,15 @@ export function EditorBox({ useStore }) {
     if (!raycaster) {
       return;
     }
+    let empty = new Object3D();
     let center = new Vector3(0.0, 0.0);
     let ttt = setInterval(() => {
       raycaster.setFromCamera(center, camera);
       let results =
-        raycaster.intersectObject(scene.getObjectByName("floor"), false) || [];
+        raycaster.intersectObject(
+          scene.getObjectByName("floor") || empty,
+          false
+        ) || [];
       if (results) {
         let first = results[0];
         if (first) {
@@ -34,7 +42,7 @@ export function EditorBox({ useStore }) {
           point3.copy(first.point);
         }
       }
-    }, 300);
+    }, 100);
 
     return () => {
       clearInterval(ttt);
@@ -51,7 +59,11 @@ export function EditorBox({ useStore }) {
           <span
             className=" underline cursor-pointer px-2"
             onClick={() => {
-              //
+              let node = makeGraphNode({ spaceID: spaceID });
+              graph.nodes.push(node);
+              node.positon = point3.toArray();
+              useStore.setState({ node: { ...node } });
+
               //
               //
               //

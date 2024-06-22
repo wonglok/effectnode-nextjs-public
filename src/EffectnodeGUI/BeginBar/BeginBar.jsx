@@ -5,6 +5,7 @@ import { getID } from "../utils/getID";
 export function BeginBar({ useStore }) {
   let apps = useStore((r) => r.apps);
   let wins = useStore((r) => r.wins);
+  let editorAPI = useStore((r) => r.editorAPI);
   let overlayPop = useStore((r) => r.overlayPop);
 
   return (
@@ -13,6 +14,14 @@ export function BeginBar({ useStore }) {
         <div className=" w-44 text-white">
           {/*  */}
 
+          <div
+            onClick={() => {
+              editorAPI.resetWindow();
+            }}
+            className="bg-white text-black rounded-full overflow-hidden py-1 m-1 px-1 flex items-center justify-center cursor-pointer"
+          >
+            Reset Window
+          </div>
           {/*  */}
         </div>
         <div className="flex justify-start">
@@ -45,13 +54,7 @@ export function BeginBar({ useStore }) {
                   });
 
                   if (win) {
-                    let idx = wins.findIndex((w) => w._id === win._id);
-                    wins.splice(idx, 1);
-                    wins.push(win);
-                    wins = wins.map((eachWin, idx) => {
-                      eachWin.zIndex = idx;
-                      return eachWin;
-                    });
+                    editorAPI.upWindow({ win });
                   } else {
                     let app = apps.find((r) => r._id === win.appID);
                     //
@@ -64,9 +67,11 @@ export function BeginBar({ useStore }) {
                     );
                     win._id = getID();
                     win.appID = appID;
-                    win.zIndex = wins.length;
+                    // win.zIndex = wins.length;
 
                     wins.push(win);
+
+                    editorAPI.upWindow({ win });
                   }
 
                   useStore.setState({
