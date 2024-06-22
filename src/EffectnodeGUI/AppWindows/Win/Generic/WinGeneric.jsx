@@ -1,6 +1,13 @@
 import { useEffect } from "react";
 
-export function WinGeneric({ useStore, idx, win, topBar, children }) {
+export function WinGeneric({
+  enableCover = false,
+  useStore,
+  idx,
+  win,
+  topBar,
+  children,
+}) {
   let apps = useStore((r) => r.apps);
   let wins = useStore((r) => r.wins);
   let mouseState = useStore((r) => r.mouseState);
@@ -245,11 +252,10 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
   //   });
   // };
 
-  //
-  //
-
   let active = win.zIndex === wins.length - 1;
   let percentage = active ? 1 : 0;
+
+  //
   return (
     <>
       <div
@@ -370,14 +376,14 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           }}
         >
           {children}
-          {/* {win.zIndex < wins.length - 1 && (
+          {enableCover && win.zIndex < wins.length - 1 && (
             <>
               <div
                 className="w-full h-full absolute top-0 left-0 "
                 style={{ height: `calc(100% - 30px)` }}
               ></div>
             </>
-          )} */}
+          )}
         </div>
 
         {mouseState.isDown && (
@@ -398,16 +404,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
               mouseState: { ...mouseState },
             });
 
-            //
-            // let idx = wins.findIndex((w) => w._id === win._id);
-            // wins.splice(idx, 1);
-            // wins.push(win);
             editorAPI.upWindow({ win });
-
-            // wins = wins.map((eachWin, idx) => {
-            //   // eachWin.zIndex = idx;
-            //   return eachWin;
-            // });
 
             useStore.setState({
               apps: [...apps],

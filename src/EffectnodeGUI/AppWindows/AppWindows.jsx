@@ -12,6 +12,7 @@ export function AppWindows({ useStore }) {
       {wins.map((win, idx) => {
         return (
           <WinGeneric
+            enableCover={win.type === "previewer"}
             idx={idx}
             win={win}
             useStore={useStore}
