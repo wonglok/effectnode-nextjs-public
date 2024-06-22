@@ -62,9 +62,9 @@ export function EditorBox({ useStore }) {
             className=" underline cursor-pointer px-2"
             onClick={() => {
               let node = makeGraphNode({ spaceID: spaceID });
+              node.position = point3.toArray();
+
               graph.nodes.push(node);
-              node.positon = point3.toArray();
-              useStore.setState({ node: { ...node } });
 
               let newCode = makeCode({
                 spaceID,
@@ -73,25 +73,9 @@ export function EditorBox({ useStore }) {
 
               let codes = useStore.getState().codes || [];
               useStore.setState({
+                graph: { ...graph },
                 codes: [...codes, newCode],
               });
-
-              //
-              //
-              //
-              // let editorApp = apps.find((r) => r.type === "editor");
-              // let win = myWins.find(tpye === "coder");
-              // win._id = getID();
-              // win.appID = editorApp._id;
-              // win.data = {
-              //   itemID: "",
-              // };
-              // useStore.setState({
-              //   wins: [...wins, win],
-              // });
-              //
-              //
-              //
             }}
           >
             Create Item

@@ -16,6 +16,7 @@ import {
 import { Canvas, useThree } from "@react-three/fiber";
 import hdr from "public/hdr/studiolighting.hdr";
 import { useEffect } from "react";
+//sucrase
 
 function InstallToStore({ useStore }) {
   let camera = useThree((r) => r.camera);
@@ -127,6 +128,7 @@ function Content({ useStore }) {
       </Box>
 
       {nodes.map((n) => {
+        console.log(n.position);
         return (
           <group
             name={n._id}
@@ -136,7 +138,7 @@ function Content({ useStore }) {
             position={n.position}
             key={n._id}
           >
-            <RoundedBox
+            <Box
               //
               onPointerUp={({ point }) => {
                 //
@@ -176,6 +178,7 @@ function Content({ useStore }) {
                     //
                   }
 
+                  //
                   //
                   //
                 }
@@ -221,7 +224,9 @@ function Content({ useStore }) {
                 metalness={0.8}
                 color={"#cccccc"}
               ></meshStandardMaterial>
-            </RoundedBox>
+            </Box>
+            <SocketInputs node={n}></SocketInputs>
+            <SocketOutputs node={n}></SocketOutputs>
             <Text
               userData={{
                 type: "text",
@@ -244,6 +249,49 @@ function Content({ useStore }) {
     </>
   );
 }
+
+function SocketInputs({ node }) {
+  let inputs = node.inputs || [];
+  // console.log(inputs);
+
+  return (
+    <group position={[-(inputs.length / 2) * (0.2 + 0.1 / 2), 0, -0.65]}>
+      {inputs.map((inp, iii) => {
+        return (
+          <Box key={inp._id} position={[iii * (0.2 + 0.1), 0, 0]} scale={0.2}>
+            <meshStandardMaterial
+              roughness={0.3}
+              metalness={0.8}
+              color={"#44ffff"}
+            ></meshStandardMaterial>
+          </Box>
+        );
+      })}
+    </group>
+  );
+}
+
+function SocketOutputs({ node }) {
+  let outputs = node.outputs || [];
+  // console.log(outputs);
+
+  return (
+    <group position={[-(outputs.length / 2) * (0.2 + 0.1 / 2), 0, 0.65]}>
+      {outputs.map((inp, iii) => {
+        return (
+          <Box key={inp._id} position={[iii * (0.2 + 0.1), 0, 0]} scale={0.2}>
+            <meshStandardMaterial
+              roughness={0.3}
+              metalness={0.8}
+              color={"#44ff44"}
+            ></meshStandardMaterial>
+          </Box>
+        );
+      })}
+    </group>
+  );
+}
+
 export function EditorCanvas({ useStore }) {
   let zoom = 1;
   //
@@ -296,6 +344,7 @@ export function EditorCanvas({ useStore }) {
     </>
   );
 }
+
 export function Editor() {
   return (
     <>
