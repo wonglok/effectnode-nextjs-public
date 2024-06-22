@@ -32,13 +32,16 @@ export function EditorBox({ useStore }) {
           scene.getObjectByName("floor") || empty,
           false
         ) || [];
+
       if (results) {
         let first = results[0];
         if (first) {
           first.point.y = 0;
+
           //
           // console.log(first.point);
           //
+
           point3.copy(first.point);
         }
       }

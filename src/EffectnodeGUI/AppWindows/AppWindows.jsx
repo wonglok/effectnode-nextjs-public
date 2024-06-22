@@ -1,3 +1,4 @@
+import { Code } from "./Win/Code/Code";
 import { EditorBox } from "./Win/EditorBox/EditorBox";
 import { WinGeneric } from "./Win/Generic/WinGeneric";
 import { Previewer } from "./Win/Previewer/Previewer";
@@ -26,6 +27,11 @@ export function AppWindows({ useStore }) {
             {win.type === "previewer" && (
               <>
                 <Previewer useStore={useStore}></Previewer>
+              </>
+            )}
+            {win.type === "coder" && (
+              <>
+                <Code useStore={useStore}></Code>
               </>
             )}
           </WinGeneric>
