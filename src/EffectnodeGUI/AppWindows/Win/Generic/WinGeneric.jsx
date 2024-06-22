@@ -387,7 +387,12 @@ export function WinGeneric({
         </div>
 
         {mouseState.isDown && (
-          <div className="w-full absolute top-0 left-0"></div>
+          <div
+            className="w-full absolute top-0 left-0"
+            onMouseMove={(ev) => {
+              ev.stopPropagation();
+            }}
+          ></div>
         )}
 
         <div

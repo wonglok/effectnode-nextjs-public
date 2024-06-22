@@ -140,7 +140,6 @@ export default window.GoGlobal["${idName}"]["default"]
 
                 console.log(str);
                 return `
-
                   console.log(123);
                   ${str}
                 

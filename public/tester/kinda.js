@@ -86,6 +86,10 @@ function init({ gltf }) {
         if (!skinnedMesh) {
           skinnedMesh = it;
         }
+      } else {
+        if (it.geometry) {
+          it.visible = false;
+        }
       }
     }
   });
@@ -121,7 +125,7 @@ function init({ gltf }) {
   const { innerWidth, innerHeight } = window;
 
   camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 1000);
-  camera.position.set(0, 4, 4);
+  camera.position.set(1.5, 2, 4);
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#000000");
@@ -313,7 +317,7 @@ function init({ gltf }) {
 
   particleMaterial.positionNode = positionBuffer.node.toAttribute();
 
-  particleMaterial.scaleNode = size.mul(10).div(colorNode.length());
+  particleMaterial.scaleNode = size.mul(50).div(colorNode.length());
   particleMaterial.opacity = 1.0; //(float(0.14).add(lifeBuffer.node.toAttribute().length().mul(-1).mul(size)))
   particleMaterial.depthTest = true;
   particleMaterial.depthWrite = false;
@@ -450,7 +454,11 @@ function init({ gltf }) {
     gltf.scene
       .getObjectByName("mixamorigHead")
       .getWorldPosition(controls.target);
+
+    controls.update();
   });
+
+  //
 
   window.addEventListener("resize", onWindowResize);
 
