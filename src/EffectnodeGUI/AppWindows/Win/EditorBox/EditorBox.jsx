@@ -38,10 +38,6 @@ export function EditorBox({ useStore }) {
         if (first) {
           first.point.y = 0;
 
-          //
-          // console.log(first.point);
-          //
-
           point3.copy(first.point);
         }
       }

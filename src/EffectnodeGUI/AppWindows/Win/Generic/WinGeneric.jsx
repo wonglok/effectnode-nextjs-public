@@ -247,6 +247,9 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
 
   //
   //
+
+  let active = win.zIndex === wins.length - 1;
+  let percentage = active ? 1 : 0;
   return (
     <>
       <div
@@ -262,7 +265,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           borderTopLeftRadius: "10px",
           borderTopRightRadius: "10px",
         }}
-        onMouseDown={() => {
+        onPointerDown={() => {
           editorAPI.upWindow({ win });
 
           // wins = wins.map((eachWin, idx) => {
@@ -286,12 +289,8 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             // borderBottom: `gray solid 1px`,
             backgroundImage: `
             linear-gradient(
-                hsl(210, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(
-                  0
-                )}%, 80%),
-                hsl(190, ${((win.zIndex / (wins.length - 1)) * 100).toFixed(
-                  0
-                )}%, 50%)
+                hsl(210, ${(percentage * 100).toFixed(0)}%, 80%),
+                hsl(190, ${(percentage * 100).toFixed(0)}%, 50%)
             )
             `,
             borderTop: "gray solid 1px",
