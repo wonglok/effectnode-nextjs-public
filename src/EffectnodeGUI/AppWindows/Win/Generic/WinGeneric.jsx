@@ -370,14 +370,14 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
           }}
         >
           {children}
-          {win.zIndex < wins.length - 1 && (
+          {/* {win.zIndex < wins.length - 1 && (
             <>
               <div
                 className="w-full h-full absolute top-0 left-0 "
                 style={{ height: `calc(100% - 30px)` }}
               ></div>
             </>
-          )}
+          )} */}
         </div>
 
         {mouseState.isDown && (
