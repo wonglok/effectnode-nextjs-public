@@ -199,7 +199,7 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
     return () => {
       window.removeEventListener("mousemove", hh);
     };
-  }, [mouseState, win]);
+  }, [mouseState, useStore, win, wins]);
 
   useEffect(() => {
     if (!mouseState) {
@@ -373,6 +373,11 @@ export function WinGeneric({ useStore, idx, win, topBar, children }) {
             </>
           )}
         </div>
+
+        {mouseState.isDown && (
+          <div className="w-full h-full absolute top-0 left-0"></div>
+        )}
+
         <div
           className="w-7 h-7 bg-gray-500 absolute -bottom-3 -right-3 rounded-full hover:opacity-100 opacity-0 duration-300 transition-opacity cursor-se-resize"
           onMouseDown={(ev) => {

@@ -4,6 +4,8 @@ export function AppRunner({ spaceID }) {
   let ref = useRef();
   let el = useMemo(() => {
     let el = document.createElement("iframe");
+    el.classList.add("w-full");
+    el.classList.add("h-full");
     return el;
   }, []);
 
