@@ -52,10 +52,14 @@ export default function ExRun() {
   useEffect(() => {
     let { graph, codes } = state;
 
+    if (!codes) {
+      return;
+    }
+
     const rollupProm = import("rollup").then((r) => r.rollup); //2.56.3
     rollupProm.then(async (rollup) => {
       //
-      const localCode = `rollup://`;
+      const localCode = `effectnode://`;
       window.GoGlobal = window.GoGlobal || {};
       window.GoGlobal["react"] = React;
       window.GoGlobal["react-dom"] = ReactDOM;
@@ -85,7 +89,7 @@ export default window.GoGlobal["${idName}"]["default"]
       //
 
       let bundle = rollup({
-        input: `/tester/testrun.js`,
+        input: `effectnode.js`,
         plugins: [
           {
             name: "FS",
@@ -95,8 +99,8 @@ export default window.GoGlobal["${idName}"]["default"]
                 return source;
               }
 
-              if (source.startsWith(localCode)) {
-                return codes.find((r) => r.title === source);
+              if (source.startsWith("@/")) {
+                return source.replace("@/", localCode);
               }
 
               if (source.startsWith("three")) {
@@ -125,6 +129,49 @@ export default window.GoGlobal["${idName}"]["default"]
               }
             },
             async load(id) {
+              if (id === "effectnode.js") {
+                let str = ``;
+
+                graph.nodes.forEach((nd) => {
+                  //
+                  str += `import "${nd.title}";`;
+                  //
+                });
+
+                console.log(str);
+                return `
+
+                  console.log(123);
+                  ${str}
+                
+                `;
+              }
+
+              if (graph.nodes.some((r) => r.title === id)) {
+                let node = graph.nodes.find(
+                  (r) =>
+                    r.title ===
+                    id
+                      .replace(localCode, "")
+                      .replace(".js", "")
+                      .replace(".jsx", "")
+                );
+
+                let content = codes.find((r) => r.nodeID === node._id)?.code;
+
+                let tCocde = transform(content, {
+                  transforms: ["jsx"],
+                  preserveDynamicImport: true,
+                  production: true,
+                  jsxPragma: "React.createElement",
+                  jsxFragmentPragma: "React.Fragment",
+                }).code;
+
+                return `
+                  ${tCocde}
+                `;
+              }
+
               if (id in window.GoGlobal) {
                 return `
                   ${runtimePatcher(window.GoGlobal[id], id)}
@@ -156,36 +203,41 @@ export default window.GoGlobal["${idName}"]["default"]
           },
         ],
       });
+      //
 
-      let bdn = await bundle;
-      let parcel = await bdn.generate({
-        output: { format: "esm", dir: "./dist" },
-      });
-      let rawOutputs = parcel.output;
+      try {
+        let bdn = await bundle;
+        let parcel = await bdn.generate({
+          output: { format: "esm", dir: "./dist" },
+        });
+        let rawOutputs = parcel.output;
 
-      // console.log("[rawOutputs]", rawOutputs);
-      let outputs = rawOutputs;
+        // console.log("[rawOutputs]", rawOutputs);
+        let outputs = rawOutputs;
 
-      // console.log("code!", outputs[0].code);
+        // console.log("code!", outputs[0].code);
 
-      let blob = new Blob([outputs[0]?.code], {
-        type: "application/javascript",
-      });
+        let blob = new Blob([outputs[0]?.code], {
+          type: "application/javascript",
+        });
 
-      let url = URL.createObjectURL(blob);
+        let url = URL.createObjectURL(blob);
 
-      let yo = document.body.childNodes;
-      for (let item of yo) {
-        document.body.removeChild(item);
+        let yo = document.body.childNodes;
+        for (let item of yo) {
+          document.body.removeChild(item);
+        }
+
+        if (window.stopLoop) {
+          window.stopLoop();
+        }
+        window.remoteImport(url).then((mod) => {
+          //
+          window.stopLoop = mod.stop;
+        });
+      } catch (er) {
+        console.error(er);
       }
-
-      if (window.stopLoop) {
-        window.stopLoop();
-      }
-      window.remoteImport(url).then((mod) => {
-        //
-        window.stopLoop = mod.stop;
-      });
       //
     });
 
