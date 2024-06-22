@@ -61,32 +61,34 @@ export function AppRunner({ useStore, spaceID }) {
           // console.log("[action]", action);
 
           if (action === "ready") {
-            //
-            let tt = 0;
-            let lastBackup = useStore.getState().editorAPI.exportBackup();
-            let cleaner = useStore.subscribe(() => {
-              clearTimeout(tt);
-              tt = setTimeout(() => {
-                let backup = useStore.getState().editorAPI.exportBackup();
-                if (
-                  lastBackup !==
-                  JSON.stringify([backup.graph.nodes.length, backup.codes])
-                ) {
-                  lastBackup = JSON.stringify([
-                    backup.graph.nodes.length,
-                    backup.codes,
-                  ]);
-                  send({
-                    action: "reboot",
-                    payload: backup,
-                  });
-                }
-              }, 1000);
+            let backup = useStore.getState().editorAPI.exportBackup();
+            send({
+              action: "reboot",
+              payload: backup,
             });
 
             //
+            // let tt = 0;
+            // let lastBackup = useStore.getState().editorAPI.exportBackup();
+            // let cleaner = useStore.subscribe(() => {
+            //   clearTimeout(tt);
+            //   tt = setTimeout(() => {
+            //     let backup = useStore.getState().editorAPI.exportBackup();
+            //     if (
+            //       lastBackup !==
+            //       JSON.stringify([backup.graph.nodes.length, backup.codes])
+            //     ) {
+            //       lastBackup = JSON.stringify([
+            //         backup.graph.nodes.length,
+            //         backup.codes,
+            //       ]);
+            //     }
+            //   }, 1000);
+            // });
 
-            cleans.push(cleaner);
+            // //
+
+            // cleans.push(cleaner);
 
             //
           }

@@ -13,199 +13,203 @@ export function WinGeneric({
   let mouseState = useStore((r) => r.mouseState);
   let editorAPI = useStore((r) => r.editorAPI);
 
+  let onMouseMove = (ev) => {
+    if (!mouseState) {
+      return;
+    }
+    //
+    if (
+      mouseState.isDown &&
+      mouseState.winID === win._id &&
+      mouseState.func === "moveWin"
+    ) {
+      //
+      mouseState.now = [ev.pageX, ev.pageY];
+
+      mouseState.delta = [
+        //
+        mouseState.now[0] - mouseState.last[0],
+        mouseState.now[1] - mouseState.last[1],
+      ];
+      mouseState.last = [
+        //
+        ev.pageX,
+        ev.pageY,
+      ];
+
+      mouseState.accu = [
+        //
+        mouseState.accu[0] + mouseState.delta[0],
+        mouseState.accu[1] + mouseState.delta[1],
+      ];
+
+      win.top += mouseState.delta[1];
+      win.left += mouseState.delta[0];
+
+      useStore.setState({
+        mouseState: {
+          ...mouseState,
+        },
+        wins: [...wins],
+      });
+    }
+
+    if (
+      mouseState.isDown &&
+      mouseState.winID === win._id &&
+      mouseState.func === "resizeWinBR"
+    ) {
+      mouseState.now = [ev.pageX, ev.pageY];
+
+      mouseState.delta = [
+        //
+        mouseState.now[0] - mouseState.last[0],
+        mouseState.now[1] - mouseState.last[1],
+      ];
+      mouseState.last = [ev.pageX, ev.pageY];
+
+      mouseState.accu = [
+        //
+        mouseState.accu[0] + mouseState.delta[0],
+        mouseState.accu[1] + mouseState.delta[1],
+      ];
+
+      if (!isNaN(mouseState.delta[0])) {
+        win.width += mouseState.delta[0];
+      }
+      if (!isNaN(mouseState.delta[1])) {
+        win.height += mouseState.delta[1];
+      }
+
+      useStore.setState({
+        mouseState: {
+          ...mouseState,
+        },
+        wins: [...wins],
+      });
+    }
+
+    if (
+      mouseState.isDown &&
+      mouseState.winID === win._id &&
+      mouseState.func === "resizeWinTR"
+    ) {
+      mouseState.now = [ev.pageX, ev.pageY];
+
+      mouseState.delta = [
+        //
+        mouseState.now[0] - mouseState.last[0],
+        mouseState.now[1] - mouseState.last[1],
+      ];
+      mouseState.last = [ev.pageX, ev.pageY];
+
+      mouseState.accu = [
+        //
+        mouseState.accu[0] + mouseState.delta[0],
+        mouseState.accu[1] + mouseState.delta[1],
+      ];
+
+      if (!isNaN(mouseState.delta[0])) {
+        win.width += mouseState.delta[0];
+      }
+      if (!isNaN(mouseState.delta[1])) {
+        win.height += -mouseState.delta[1];
+        win.top += mouseState.delta[1];
+      }
+
+      useStore.setState({
+        mouseState: {
+          ...mouseState,
+        },
+        wins: [...wins],
+      });
+    }
+
+    if (
+      mouseState.isDown &&
+      mouseState.winID === win._id &&
+      mouseState.func === "resizeWinBL"
+    ) {
+      mouseState.now = [ev.pageX, ev.pageY];
+
+      mouseState.delta = [
+        //
+        mouseState.now[0] - mouseState.last[0],
+        mouseState.now[1] - mouseState.last[1],
+      ];
+      mouseState.last = [ev.pageX, ev.pageY];
+
+      mouseState.accu = [
+        //
+        mouseState.accu[0] + mouseState.delta[0],
+        mouseState.accu[1] + mouseState.delta[1],
+      ];
+
+      if (!isNaN(mouseState.delta[0])) {
+        win.width += mouseState.delta[0] * -1;
+        win.left += mouseState.delta[0];
+      }
+      if (!isNaN(mouseState.delta[1])) {
+        win.height += mouseState.delta[1];
+      }
+
+      useStore.setState({
+        mouseState: {
+          ...mouseState,
+        },
+        wins: [...wins],
+      });
+    }
+    //
+    if (
+      mouseState.isDown &&
+      mouseState.winID === win._id &&
+      mouseState.func === "resizeWinTL"
+    ) {
+      mouseState.now = [ev.pageX, ev.pageY];
+
+      mouseState.delta = [
+        //
+        mouseState.now[0] - mouseState.last[0],
+        mouseState.now[1] - mouseState.last[1],
+      ];
+      mouseState.last = [ev.pageX, ev.pageY];
+
+      mouseState.accu = [
+        //
+        mouseState.accu[0] + mouseState.delta[0],
+        mouseState.accu[1] + mouseState.delta[1],
+      ];
+
+      if (!isNaN(mouseState.delta[0])) {
+        win.width += mouseState.delta[0] * -1;
+        win.left += mouseState.delta[0];
+      }
+      if (!isNaN(mouseState.delta[1])) {
+        win.top += mouseState.delta[1];
+        win.height += mouseState.delta[1] * -1;
+      }
+
+      useStore.setState({
+        mouseState: {
+          ...mouseState,
+        },
+        wins: [...wins],
+      });
+    }
+    //
+    //
+  };
+
   useEffect(() => {
     if (!mouseState) {
       return;
     }
 
-    let hh = (ev) => {
-      //
-      if (
-        mouseState.isDown &&
-        mouseState.winID === win._id &&
-        mouseState.func === "moveWin"
-      ) {
-        //
-        mouseState.now = [ev.pageX, ev.pageY];
-
-        mouseState.delta = [
-          //
-          mouseState.now[0] - mouseState.last[0],
-          mouseState.now[1] - mouseState.last[1],
-        ];
-        mouseState.last = [
-          //
-          ev.pageX,
-          ev.pageY,
-        ];
-
-        mouseState.accu = [
-          //
-          mouseState.accu[0] + mouseState.delta[0],
-          mouseState.accu[1] + mouseState.delta[1],
-        ];
-
-        win.top += mouseState.delta[1];
-        win.left += mouseState.delta[0];
-
-        useStore.setState({
-          mouseState: {
-            ...mouseState,
-          },
-          wins: [...wins],
-        });
-      }
-
-      if (
-        mouseState.isDown &&
-        mouseState.winID === win._id &&
-        mouseState.func === "resizeWinBR"
-      ) {
-        mouseState.now = [ev.pageX, ev.pageY];
-
-        mouseState.delta = [
-          //
-          mouseState.now[0] - mouseState.last[0],
-          mouseState.now[1] - mouseState.last[1],
-        ];
-        mouseState.last = [ev.pageX, ev.pageY];
-
-        mouseState.accu = [
-          //
-          mouseState.accu[0] + mouseState.delta[0],
-          mouseState.accu[1] + mouseState.delta[1],
-        ];
-
-        if (!isNaN(mouseState.delta[0])) {
-          win.width += mouseState.delta[0];
-        }
-        if (!isNaN(mouseState.delta[1])) {
-          win.height += mouseState.delta[1];
-        }
-
-        useStore.setState({
-          mouseState: {
-            ...mouseState,
-          },
-          wins: [...wins],
-        });
-      }
-
-      if (
-        mouseState.isDown &&
-        mouseState.winID === win._id &&
-        mouseState.func === "resizeWinTR"
-      ) {
-        mouseState.now = [ev.pageX, ev.pageY];
-
-        mouseState.delta = [
-          //
-          mouseState.now[0] - mouseState.last[0],
-          mouseState.now[1] - mouseState.last[1],
-        ];
-        mouseState.last = [ev.pageX, ev.pageY];
-
-        mouseState.accu = [
-          //
-          mouseState.accu[0] + mouseState.delta[0],
-          mouseState.accu[1] + mouseState.delta[1],
-        ];
-
-        if (!isNaN(mouseState.delta[0])) {
-          win.width += mouseState.delta[0];
-        }
-        if (!isNaN(mouseState.delta[1])) {
-          win.height += -mouseState.delta[1];
-          win.top += mouseState.delta[1];
-        }
-
-        useStore.setState({
-          mouseState: {
-            ...mouseState,
-          },
-          wins: [...wins],
-        });
-      }
-
-      if (
-        mouseState.isDown &&
-        mouseState.winID === win._id &&
-        mouseState.func === "resizeWinBL"
-      ) {
-        mouseState.now = [ev.pageX, ev.pageY];
-
-        mouseState.delta = [
-          //
-          mouseState.now[0] - mouseState.last[0],
-          mouseState.now[1] - mouseState.last[1],
-        ];
-        mouseState.last = [ev.pageX, ev.pageY];
-
-        mouseState.accu = [
-          //
-          mouseState.accu[0] + mouseState.delta[0],
-          mouseState.accu[1] + mouseState.delta[1],
-        ];
-
-        if (!isNaN(mouseState.delta[0])) {
-          win.width += mouseState.delta[0] * -1;
-          win.left += mouseState.delta[0];
-        }
-        if (!isNaN(mouseState.delta[1])) {
-          win.height += mouseState.delta[1];
-        }
-
-        useStore.setState({
-          mouseState: {
-            ...mouseState,
-          },
-          wins: [...wins],
-        });
-      }
-      //
-      if (
-        mouseState.isDown &&
-        mouseState.winID === win._id &&
-        mouseState.func === "resizeWinTL"
-      ) {
-        mouseState.now = [ev.pageX, ev.pageY];
-
-        mouseState.delta = [
-          //
-          mouseState.now[0] - mouseState.last[0],
-          mouseState.now[1] - mouseState.last[1],
-        ];
-        mouseState.last = [ev.pageX, ev.pageY];
-
-        mouseState.accu = [
-          //
-          mouseState.accu[0] + mouseState.delta[0],
-          mouseState.accu[1] + mouseState.delta[1],
-        ];
-
-        if (!isNaN(mouseState.delta[0])) {
-          win.width += mouseState.delta[0] * -1;
-          win.left += mouseState.delta[0];
-        }
-        if (!isNaN(mouseState.delta[1])) {
-          win.top += mouseState.delta[1];
-          win.height += mouseState.delta[1] * -1;
-        }
-
-        useStore.setState({
-          mouseState: {
-            ...mouseState,
-          },
-          wins: [...wins],
-        });
-      }
-      //
-      //
-    };
-    window.addEventListener("mousemove", hh);
+    window.addEventListener("mousemove", onMouseMove);
 
     return () => {
-      window.removeEventListener("mousemove", hh);
+      window.removeEventListener("mousemove", onMouseMove);
     };
   }, [mouseState, useStore, win, wins]);
 
@@ -390,7 +394,10 @@ export function WinGeneric({
           <div
             className="w-full absolute top-0 left-0"
             onMouseMove={(ev) => {
-              ev.stopPropagation();
+              // ev.nativeEvent
+              onMouseMove(ev.nativeEvent);
+              // ev.stopPropagation();
+              // ev.preventDefault();
             }}
           ></div>
         )}
