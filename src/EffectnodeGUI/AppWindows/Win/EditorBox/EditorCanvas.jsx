@@ -128,7 +128,7 @@ function Content({ useStore }) {
       </Box>
 
       {nodes.map((n) => {
-        console.log(n.position);
+        // console.log(n.position);
         return (
           <group
             name={n._id}

@@ -33,7 +33,6 @@ export function AppRunner({ useStore, spaceID }) {
       el.src = `/iframe/${spaceID}?launcher=${encodeURIComponent(launcher)}`;
 
       //
-      //
 
       let send = ({ action = "action", payload = {} }) => {
         return el?.contentWindow?.postMessage(
@@ -60,8 +59,8 @@ export function AppRunner({ useStore, spaceID }) {
           let payload = ev.data.payload;
           let action = ev.data.action;
 
-          console.log("[payload]", payload);
-          console.log("[action]", action);
+          // console.log("[payload]", payload);
+          // console.log("[action]", action);
 
           if (action === "ready") {
             //
@@ -75,6 +74,9 @@ export function AppRunner({ useStore, spaceID }) {
                 });
               }, 100);
             });
+
+            //
+
             cleans.push(cleaner);
 
             //

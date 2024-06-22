@@ -12,8 +12,6 @@ export function BeginBar({ useStore }) {
     <>
       <div className="w-full h-full flex items-center justify-between text-sm">
         <div className=" w-44 text-white">
-          {/*  */}
-
           <div
             onClick={() => {
               editorAPI.resetWindow();
@@ -46,9 +44,12 @@ export function BeginBar({ useStore }) {
           {wins.map((win) => {
             //
             // let win = wins.find((r) => r.appID === app._id);
+            //
+
             return (
               <div
                 onClick={() => {
+                  //
                   useStore.setState({
                     overlayPop: "",
                   });
@@ -67,6 +68,7 @@ export function BeginBar({ useStore }) {
                     );
                     win._id = getID();
                     win.appID = appID;
+
                     // win.zIndex = wins.length;
 
                     wins.push(win);
