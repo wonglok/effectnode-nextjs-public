@@ -91,6 +91,7 @@ function Content({ useStore }) {
           if (graphCursorState.isDown) {
             graphCursorState.isDown = false;
             controls.enabled = true;
+            graphCursorState.func = "";
 
             useStore.setState({
               graphCursorState: {
@@ -251,9 +252,7 @@ function Content({ useStore }) {
 
       {graphCursorState.func === "createEdge" && (
         <>
-          <DisplayCreateEdge
-            start={graphCursorState.ts.toArray()}
-          ></DisplayCreateEdge>
+          <DisplayCreateEdge useStore={useStore}></DisplayCreateEdge>
         </>
       )}
 
@@ -263,7 +262,7 @@ function Content({ useStore }) {
 }
 
 export function EditorCanvas({ useStore }) {
-  let zoom = 1;
+  let zoom = 1.5;
   //
   return (
     <>

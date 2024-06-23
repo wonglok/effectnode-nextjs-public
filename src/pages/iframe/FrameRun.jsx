@@ -5,7 +5,7 @@ import { create } from "zustand";
 export default function FrameRun() {
   let [state, setState] = useState({});
 
-  let [send, setSend] = useState(() => {
+  let [sendParent, setSend] = useState(() => {
     return () => {};
   });
 
@@ -29,6 +29,7 @@ export default function FrameRun() {
         }
       );
     };
+
     setSend(() => {
       return send;
     });
@@ -55,74 +56,63 @@ export default function FrameRun() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   let { graph, codes } = state;
-
-  //   if (!codes) {
-  //     return;
-  //   }
-
-  //   // getCompile({
-  //   //   graph,
-  //   //   codes,
-  //   // }).then((mod) => {
-  //   //   //
-  //   //   console.log(mod);
-  //   // });
-
-  //   return () => {
-  //     //
-  //     //
-  //   };
-  // }, [state]);
-
-  //
-
   let { graph, codes } = state;
-
   let useCore = React.useMemo(() => {
     if (!graph) {
       return false;
     }
     return create(() => {
       return {
+        sendParent,
         graph,
         nodes: graph.nodes,
         edges: graph.edges,
         codes,
       };
     });
-  }, [codes, graph]);
+  }, [codes, graph, sendParent]);
 
   useEffect(() => {
     if (!useCore) {
       return;
     }
+
     return useCore.subscribe((now, before) => {
       console.log(now, before);
     });
   }, [useCore]);
+  let works = React.useMemo(() => {
+    return new Map();
+  }, []);
+  useEffect(() => {
+    let rAFID = 0;
+    let rAF = () => {
+      rAFID = requestAnimationFrame(rAF);
+      //
+      for (let val of works.values()) {
+        for (let fnc of val) {
+          if (typeof fnc === "function") {
+            fnc();
+          }
+        }
+      }
+      //
+    };
+    rAFID = requestAnimationFrame(rAF);
+    return () => {
+      cancelAnimationFrame(rAFID);
+    };
+  }, [works]);
 
   return (
     <>
-      {/* {
-        graph &&
-        graph.nodes.map((n) => {
-          let code = codes.find((r) => r.nodeID === n._id);
-          return <NodeRunner code={code} node={n} key={n._id}></NodeRunner>;
-        })} */}
-
       {graph && useCore && (
         <>
-          {/*  */}
-
           {graph.nodes.map((it) => {
-            //
             let code = codes.find((r) => r.nodeID === it._id);
-
-            //
             return (
               <RunnerNode
+                works={works}
                 useCore={useCore}
                 node={it}
                 code={code}
@@ -130,17 +120,17 @@ export default function FrameRun() {
               ></RunnerNode>
             );
           })}
-
-          {/*  */}
         </>
       )}
     </>
   );
 }
 
-function RunnerNode({ useCore, code, node }) {
+function RunnerNode({ works, useCore, code, node }) {
   let [display, mountReact] = useState(null);
   useEffect(() => {
+    let localWork = [];
+    works.set(node._id, localWork);
     let cleans = [];
 
     compileNode({ bootCode: code.code })
@@ -150,20 +140,12 @@ function RunnerNode({ useCore, code, node }) {
           .then((value) => {
             URL.revokeObjectURL(output.url);
 
-            //
-            //
-            //
-
             if (value.setup) {
-              //
-              //
-              //
-              //
-
               value.setup({
+                data: code.data,
                 useCore,
                 onLoop: (fnc) => {
-                  works.push(fnc);
+                  localWork.push(fnc);
                 },
                 onClean: (fnc) => {
                   cleans.push(fnc);
@@ -171,7 +153,7 @@ function RunnerNode({ useCore, code, node }) {
                 renderOnce: (item) => {
                   mountReact(item);
                 },
-                onChange: (fnc) => {
+                onChangeCore: (fnc) => {
                   cleans.push(useCore.subscribe(fnc));
                 },
               });
@@ -190,10 +172,10 @@ function RunnerNode({ useCore, code, node }) {
       });
 
     return () => {
+      works.delete(node._id);
       cleans.forEach((r) => r());
     };
-    // console.log(code, node);
-  }, [code, node, useCore]);
+  }, [code, node, useCore, works]);
 
   //
   return <>{display}</>;
