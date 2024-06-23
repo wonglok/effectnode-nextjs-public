@@ -12,6 +12,7 @@ export function EditorBox({ useStore }) {
   let wins = useStore((r) => r.wins);
   let apps = useStore((r) => r.apps);
 
+  let codes = useStore((r) => r.codes) || [];
   let graph = useStore((r) => r.graph);
   let spaceID = useStore((r) => r.spaceID);
 
@@ -64,14 +65,17 @@ export function EditorBox({ useStore }) {
               let node = makeGraphNode({ spaceID: spaceID });
               node.position = point3.toArray();
 
-              graph.nodes.push(node);
-
               let newCode = makeCode({
                 spaceID,
                 nodeID: node._id,
               });
 
-              let codes = useStore.getState().codes || [];
+              if (graph.nodes.length === 0) {
+                node.title = "main";
+                newCode.title = "main";
+              }
+
+              graph.nodes.push(node);
               useStore.setState({
                 graph: { ...graph },
                 codes: [...codes, newCode],

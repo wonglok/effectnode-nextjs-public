@@ -32,7 +32,7 @@ export default function FrameRun() {
         let payload = ev.data.payload;
         let action = ev.data.action;
 
-        if (action === "reboot") {
+        if (action === "launchApp") {
           setState(payload);
         }
       }
@@ -58,146 +58,146 @@ export default function FrameRun() {
 
     const rollupProm = import("rollup").then((r) => r.rollup); //2.56.3
     rollupProm.then(async (rollup) => {
-      //
-      const localCode = `effectnode://`;
-      window.GoGlobal = window.GoGlobal || {};
-      window.GoGlobal["react"] = React;
-      window.GoGlobal["react-dom"] = ReactDOM;
+      try {
+        //
+        //
+        const localCode = `effectnode://`;
+        window.GlobalVariable = window.GlobalVariable || {};
+        window.GlobalVariable["react"] = React;
+        window.GlobalVariable["react-dom"] = ReactDOM;
 
-      let runtimePatcher = (Variable, idName) => {
-        let str = ` `;
-        Object.entries(Variable).forEach(([key, val]) => {
-          if (key === "default") {
-            return;
+        let runtimePatcher = (Variable, idName) => {
+          let str = ` `;
+          Object.entries(Variable).forEach(([key, val]) => {
+            if (key === "default") {
+              return;
+            }
+            str += `
+export const ${key} = window.GlobalVariable["${idName}"]["${key}"];
+`;
+          });
+
+          if (Variable.default) {
+            str += `
+export default window.GlobalVariable["${idName}"]["default"]
+`;
           }
-          str += `
-export const ${key} = window.GoGlobal["${idName}"]["${key}"];
-`;
-        });
 
-        if (Variable.default) {
-          str += `
-export default window.GoGlobal["${idName}"]["default"]
-`;
-        }
+          return str;
+        };
 
-        return str;
-      };
-
-      //
-      // runtimePatcher(React, "react");
-      //
-
-      let bundle = rollup({
-        input: `effectnode.js`,
-        plugins: [
-          {
-            name: "FS",
-            async resolveId(source, importer) {
-              if (!importer) {
-                // console.log(importee, 'importee')
-                return source;
-              }
-
-              if (source.startsWith("@/")) {
-                return source.replace("@/", localCode);
-              }
-
-              if (source.startsWith("three")) {
-                if (source === "three") {
-                  return "/jsrepo/three/build/three.module.js";
+        //
+        // runtimePatcher(React, "react");
+        //
+        let bundle = rollup({
+          input: `effectnode.js`,
+          plugins: [
+            {
+              name: "FS",
+              async resolveId(source, importer) {
+                if (!importer) {
+                  // console.log(importee, 'importee')
+                  return source;
                 }
-                if (source === "three/nodes") {
-                  return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
-                }
-                if (source.startsWith("three/addons/")) {
-                  return (
-                    "/jsrepo/three/examples/jsm/" +
-                    source.replace("three/addons/", "")
-                  );
-                }
-                return;
-              }
 
-              if (importer) {
-                let arr = importer.split("/");
-                arr.pop();
-                let parent = arr.join("/");
-                let joined = path.join(parent, source);
-                return joined;
-              }
-            },
-            async load(id) {
-              if (id === "effectnode.js") {
-                let str = ``;
-                graph.nodes.forEach((nd) => {
-                  str += `import "${nd.title}";`;
-                });
+                if (source.startsWith("@/")) {
+                  return source.replace("@/", localCode);
+                }
 
-                return `
-                  ${str}
+                if (source.startsWith("three")) {
+                  if (source === "three") {
+                    return "/jsrepo/three/build/three.module.js";
+                  }
+                  if (source === "three/nodes") {
+                    return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
+                  }
+                  if (source.startsWith("three/addons/")) {
+                    return (
+                      "/jsrepo/three/examples/jsm/" +
+                      source.replace("three/addons/", "")
+                    );
+                  }
+                  return;
+                }
+
+                if (importer) {
+                  let arr = importer.split("/");
+                  arr.pop();
+                  let parent = arr.join("/");
+                  let joined = path.join(parent, source);
+                  return joined;
+                }
+              },
+              async load(id) {
+                if (id === "effectnode.js") {
+                  let str = ``;
+                  graph.nodes.forEach((nd) => {
+                    str += `import "${nd.title}";`;
+                  });
+
+                  return `
+                  import "main";
                 `;
-              }
+                }
 
-              if (graph.nodes.some((r) => r.title === id)) {
-                let node = graph.nodes.find(
-                  (r) =>
-                    r.title ===
-                    id
-                      .replace(localCode, "")
-                      .replace(".js", "")
-                      .replace(".jsx", "")
-                );
+                if (graph.nodes.some((r) => r.title === id)) {
+                  let node = graph.nodes.find(
+                    (r) =>
+                      r.title ===
+                      id
+                        .replace(localCode, "")
+                        .replace(".js", "")
+                        .replace(".jsx", "")
+                  );
 
-                let content = codes.find((r) => r.nodeID === node._id)?.code;
+                  let content = codes.find((r) => r.nodeID === node._id)?.code;
 
-                let tCocde = transform(content, {
-                  transforms: ["jsx"],
-                  preserveDynamicImport: true,
-                  production: true,
-                  jsxPragma: "React.createElement",
-                  jsxFragmentPragma: "React.Fragment",
-                }).code;
+                  let tCocde = transform(content, {
+                    transforms: ["jsx"],
+                    preserveDynamicImport: true,
+                    production: true,
+                    jsxPragma: "React.createElement",
+                    jsxFragmentPragma: "React.Fragment",
+                  }).code;
 
-                return `
+                  return `
                   ${tCocde}
                 `;
-              }
+                }
 
-              if (id in window.GoGlobal) {
-                return `
-                  ${runtimePatcher(window.GoGlobal[id], id)}
+                if (id in window.GlobalVariable) {
+                  return `
+                  ${runtimePatcher(window.GlobalVariable[id], id)}
                 `;
-              }
+                }
 
-              if (id.startsWith(`/`)) {
-                return fetch(`${id}`)
-                  .then((r) => {
-                    return r.text();
-                  })
-                  .then((content) => {
-                    let tCocde = transform(content, {
-                      transforms: ["jsx"],
-                      preserveDynamicImport: true,
-                      production: true,
-                      jsxPragma: "React.createElement",
-                      jsxFragmentPragma: "React.Fragment",
-                    }).code;
+                if (id.startsWith(`/`)) {
+                  return fetch(`${id}`)
+                    .then((r) => {
+                      return r.text();
+                    })
+                    .then((content) => {
+                      let tCocde = transform(content, {
+                        transforms: ["jsx"],
+                        preserveDynamicImport: true,
+                        production: true,
+                        jsxPragma: "React.createElement",
+                        jsxFragmentPragma: "React.Fragment",
+                      }).code;
 
-                    return tCocde;
-                  });
-              }
+                      return tCocde;
+                    });
+                }
 
-              return `
+                return `
                   console.log('[not found]', ${id});
               `;
+              },
             },
-          },
-        ],
-      });
-      //
+          ],
+        });
+        //
 
-      try {
         let bdn = await bundle;
         let parcel = await bdn.generate({
           output: { format: "esm", dir: "./dist" },
@@ -230,7 +230,6 @@ export default window.GoGlobal["${idName}"]["default"]
       } catch (er) {
         console.error(er);
       }
-      //
     });
 
     return () => {

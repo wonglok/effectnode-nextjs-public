@@ -22,8 +22,6 @@ export function AppRunner({ useStore, spaceID }) {
     return getID();
   }, []);
 
-  let [ready, setReady] = useState(false);
-
   useEffect(() => {
     if (!spaceID) {
       return;
