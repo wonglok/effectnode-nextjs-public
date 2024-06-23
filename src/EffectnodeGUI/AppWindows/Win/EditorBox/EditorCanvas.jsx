@@ -18,6 +18,7 @@ import hdr from "public/hdr/studiolighting.hdr";
 import { useEffect } from "react";
 import { SocketInputs, SocketOutputs } from "./Sockets/Sockets";
 import { DisplayCreateEdge } from "./Edge/DisplayCreateEdge";
+import { DisplayAllEdges } from "./Edge/DisplayAllEdges";
 //sucrase
 
 function InstallToStore({ useStore }) {
@@ -256,7 +257,9 @@ function Content({ useStore }) {
         </>
       )}
 
-      <group></group>
+      <group>
+        <DisplayAllEdges useStore={useStore}></DisplayAllEdges>
+      </group>
     </>
   );
 }

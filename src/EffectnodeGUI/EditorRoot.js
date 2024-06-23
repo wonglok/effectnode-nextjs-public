@@ -84,6 +84,7 @@ export const EditorRoot = () => {
             core.restoreBackup(state);
 
             //
+
             // && state.apps && state.wins
             // core.setState({
             //   apps: state.apps,

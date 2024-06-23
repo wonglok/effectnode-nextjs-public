@@ -160,6 +160,7 @@ export function WinGeneric({
         wins: [...wins],
       });
     }
+
     //
     if (
       mouseState.isDown &&
@@ -197,7 +198,6 @@ export function WinGeneric({
         wins: [...wins],
       });
     }
-    //
     //
   };
 

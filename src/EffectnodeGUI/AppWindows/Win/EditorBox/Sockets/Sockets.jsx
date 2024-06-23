@@ -3,6 +3,8 @@ import { SocketOne } from "./SocketOne";
 export function SocketInputs({ node, useStore }) {
   let inputs = node.inputs || [];
 
+  //
+
   return (
     <group position={[-(inputs.length / 2) * (0.2 + 0.1 / 2), 0, -0.65]}>
       {inputs.map((inp, iii) => {
@@ -10,6 +12,7 @@ export function SocketInputs({ node, useStore }) {
           <group key={inp._id} position={[iii * (0.2 + 0.1), 0, 0]} scale={0.2}>
             <SocketOne
               node={node}
+              socket={inp}
               useStore={useStore}
               type={"input"}
             ></SocketOne>
@@ -25,11 +28,16 @@ export function SocketOutputs({ node, useStore }) {
 
   return (
     <group position={[-(outputs.length / 2) * (0.2 + 0.1 / 2), 0, 0.65]}>
-      {outputs.map((inp, iii) => {
+      {outputs.map((outp, iii) => {
         return (
-          <group key={inp._id} position={[iii * (0.2 + 0.1), 0, 0]} scale={0.2}>
+          <group
+            key={outp._id}
+            position={[iii * (0.2 + 0.1), 0, 0]}
+            scale={0.2}
+          >
             <SocketOne
               node={node}
+              socket={outp}
               useStore={useStore}
               type={"output"}
             ></SocketOne>
