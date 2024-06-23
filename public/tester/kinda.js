@@ -395,27 +395,27 @@ function init({ gltf }) {
 
     /*
 
-					//normal
-					let skinMatrix = add(
-						skinWeight.x.mul(boneMatX),
-						skinWeight.y.mul(boneMatY),
-						skinWeight.z.mul(boneMatZ),
-						skinWeight.w.mul(boneMatW)
-					);
+          //normal
+          let skinMatrix = add(
+            skinWeight.x.mul(boneMatX),
+            skinWeight.y.mul(boneMatY),
+            skinWeight.z.mul(boneMatZ),
+            skinWeight.w.mul(boneMatW)
+          );
 
-					const myNormal = birthNormalBuffer.node.element(instanceIndex);
+          const myNormal = birthNormalBuffer.node.element(instanceIndex);
 
-					skinMatrix = bindMatrixInverseNode.mul(skinMatrix).mul(bindMatrixNode);
+          skinMatrix = bindMatrixInverseNode.mul(skinMatrix).mul(bindMatrixNode);
 
-					const skinNormal = skinMatrix.transformDirection(myNormal).xyz;
+          const skinNormal = skinMatrix.transformDirection(myNormal).xyz;
 
-					// velocity.mulAssign(-0.5)
-					// velocity.xyz.addAssign(skinNormal.mul(1.5))
+          // velocity.mulAssign(-0.5)
+          // velocity.xyz.addAssign(skinNormal.mul(1.5))
 
-					// velocity.y = velocity.y.add(float(gravity).mul(200))
-					position.assign(skinPosition);
+          // velocity.y = velocity.y.add(float(gravity).mul(200))
+          position.assign(skinPosition);
 
-					*/
+          */
   })().compute(particleCount);
 
   function onMove(event) {
@@ -496,7 +496,6 @@ async function animate() {
   // throttle the logging
 }
 
-export function close() {}
 //
 
 //

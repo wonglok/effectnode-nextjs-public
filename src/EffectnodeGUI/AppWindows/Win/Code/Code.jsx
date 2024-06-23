@@ -108,7 +108,9 @@ export function Code({ win, useStore }) {
                       prettierPluginHtml,
                     ],
                   });
+                  //
                   editor.setValue(result.formatted);
+                  //
                   editor.setPosition(beforePosition);
 
                   code.code = result.formatted;
