@@ -300,6 +300,8 @@ export class EditorCore {
     this.resetWindow = () => {
       let { apps, wins } = this.getState();
       ///////
+
+      ///////
       {
         let win = wins.find((r) => r.type === "previewer");
         if (win) {
