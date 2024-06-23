@@ -1,4 +1,3 @@
-import { copyJSON } from "public";
 import { useEffect, useRef, useState } from "react";
 import { Pane } from "tweakpane";
 
