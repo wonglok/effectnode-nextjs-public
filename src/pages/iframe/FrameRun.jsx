@@ -139,7 +139,7 @@ export default function FrameRun() {
 }
 
 function RunnerNode({ useCore, code, node }) {
-  let [display, renderReact] = useState(null);
+  let [display, mountReact] = useState(null);
   useEffect(() => {
     let cleans = [];
 
@@ -159,22 +159,20 @@ function RunnerNode({ useCore, code, node }) {
               //
               //
               //
-              //
 
               value.setup({
                 useCore,
+                onLoop: (fnc) => {
+                  works.push(fnc);
+                },
                 onClean: (fnc) => {
                   cleans.push(fnc);
                 },
-                renderReact: (fnc) => {
-                  renderReact(fnc());
+                renderOnce: (item) => {
+                  mountReact(item);
                 },
-                onChangeRender: (fnc) => {
-                  cleans.push(
-                    useCore.subscribe((st, b4) => {
-                      renderReact(fnc({ now: st, before: b4 }));
-                    })
-                  );
+                onChange: (fnc) => {
+                  cleans.push(useCore.subscribe(fnc));
                 },
               });
 
