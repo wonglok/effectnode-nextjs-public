@@ -117,6 +117,7 @@ export function EditorApp({ useStore }) {
           </div>
         </div>
       </div>
+      {/*  */}
       <div
         className="w-full bg-white"
         style={{

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getID } from "../utils/getID";
 
 export function AppRunner({ useStore, spaceID }) {
@@ -29,70 +29,81 @@ export function AppRunner({ useStore, spaceID }) {
       return;
     }
 
+    if (!el) {
+      return;
+    }
+
     if (el.src !== `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`) {
       el.src = `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`;
-
-      //
-
-      let send = ({ action = "action", payload = {} }) => {
-        return el?.contentWindow?.postMessage(
-          {
-            //
-            launcher: launcher,
-            action: action,
-            payload: payload,
-            //
-          },
-          {
-            targetOrigin: `${location.origin}`,
-          }
-        );
-      };
-      //
-      //
-      let cleans = [];
-      let hh = (ev) => {
-        //
-        if (ev.data.launcher === launcher && ev.origin === location.origin) {
-          //
-          //
-          let payload = ev.data.payload;
-          let action = ev.data.action;
-
-          // console.log("[payload]", payload);
-          // console.log("[action]", action);
-
-          if (action === "ready") {
-            let backup = useStore.getState().editorAPI.exportBackup();
-            send({
-              action: "reboot",
-              payload: backup,
-            });
-            setReady(true);
-            //
-          }
-        }
-      };
-      window.addEventListener("message", hh);
-
-      let hh2 = () => {
-        el.contentWindow.location.reload();
-      };
-      window.addEventListener("editor-save", hh2);
-
-      return () => {
-        cleans.forEach((r) => {
-          r();
-        });
-        window.removeEventListener("editor-save", hh);
-        window.removeEventListener("message", hh);
-      };
     }
 
     return () => {
       //
     };
-  }, []);
+  }, [launcher, el, spaceID]);
+
+  let send = useCallback(
+    ({ action = "action", payload = {} }) => {
+      return el?.contentWindow?.postMessage(
+        {
+          //
+          launcher: launcher,
+          action: action,
+          payload: payload,
+          //
+        },
+        {
+          targetOrigin: `${location.origin}`,
+        }
+      );
+    },
+    [el?.contentWindow, launcher]
+  );
+
+  useEffect(() => {
+    let reloadHandler = () => {
+      el?.contentWindow?.location?.reload();
+    };
+
+    window.addEventListener("editor-save", reloadHandler);
+
+    return () => {
+      window.removeEventListener("editor-save", reloadHandler);
+    };
+  }, [el?.contentWindow?.location]);
+
+  useEffect(() => {
+    let hh = (ev) => {
+      //
+      if (
+        ev?.data?.launcher === launcher &&
+        ev.origin === location.origin &&
+        ev.data
+      ) {
+        //
+        //
+        let payload = ev.data.payload;
+        let action = ev.data.action;
+
+        // console.log("[payload]", payload);
+        // console.log("[action]", action);
+
+        if (action === "ready") {
+          let backup = useStore.getState().editorAPI.exportBackup();
+          send({
+            action: "reboot",
+            payload: backup,
+          });
+        }
+      }
+    };
+
+    window.addEventListener("message", hh);
+
+    return () => {
+      window.removeEventListener("message", hh);
+    };
+  }, [launcher, send, useStore]);
 
   return (
     <>
