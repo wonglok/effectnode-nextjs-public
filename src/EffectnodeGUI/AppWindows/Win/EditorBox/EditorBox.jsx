@@ -9,8 +9,8 @@ import { useEffect, useMemo } from "react";
 import { Object3D, Vector3 } from "three";
 
 export function EditorBox({ useStore }) {
-  let wins = useStore((r) => r.wins);
-  let apps = useStore((r) => r.apps);
+  // let wins = useStore((r) => r.wins);
+  // let apps = useStore((r) => r.apps);
 
   let codes = useStore((r) => r.codes) || [];
   let graph = useStore((r) => r.graph);
@@ -62,20 +62,29 @@ export function EditorBox({ useStore }) {
           <span
             className=" underline cursor-pointer px-2"
             onClick={() => {
-              let node = makeGraphNode({ spaceID: spaceID });
-              node.position = point3.toArray();
+              let newNode = makeGraphNode({ spaceID: spaceID });
+              newNode.position = point3.toArray();
 
               let newCode = makeCode({
                 spaceID,
-                nodeID: node._id,
+                nodeID: newNode._id,
               });
 
               if (graph.nodes.length === 0) {
-                node.title = "main";
+                newNode.title = "main";
                 newCode.title = "main";
+              } else {
+                let title = window.prompt(
+                  "Please name the module...",
+                  "newNode"
+                );
+                if (title) {
+                  newNode.title = title;
+                  newCode.title = title;
+                }
               }
 
-              graph.nodes.push(node);
+              graph.nodes.push(newNode);
               useStore.setState({
                 graph: { ...graph },
                 codes: [...codes, newCode],
