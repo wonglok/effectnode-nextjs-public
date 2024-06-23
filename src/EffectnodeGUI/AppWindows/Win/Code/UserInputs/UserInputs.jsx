@@ -1,3 +1,4 @@
+import { getID } from "@/src/EffectnodeGUI/utils/getID";
 import { useEffect, useRef, useState } from "react";
 import { Pane } from "tweakpane";
 
@@ -9,6 +10,10 @@ export function UserInputs({ useStore, code, codes, graph }) {
     <>
       {/*  */}
       <div className="h-2"></div>
+      <div className="mx-2 mb-2">
+        <AddInputs code={code} codes={codes} useStore={useStore}></AddInputs>
+      </div>
+
       {data.map((dat) => {
         return (
           <div key={dat._id}>
@@ -17,7 +22,7 @@ export function UserInputs({ useStore, code, codes, graph }) {
               <>
                 <Gear
                   codes={codes}
-                  editor={
+                  gear={
                     <RangeGear
                       code={code}
                       codes={codes}
@@ -92,6 +97,93 @@ export function UserInputs({ useStore, code, codes, graph }) {
       })}
 
       {/*  */}
+    </>
+  );
+}
+
+function AddInputs({ useStore, code, codes }) {
+  let refValue = useRef();
+
+  useEffect(() => {
+    const pane = new Pane({ container: refValue.current });
+
+    let templates = [
+      {
+        _id: getID(),
+        label: "speed",
+        type: "range",
+        min: 0,
+        max: 1,
+        step: 0.01,
+        value: 0,
+      },
+      {
+        _id: getID(),
+        label: "baseColor",
+        type: "color",
+        value: "#ff0000",
+      },
+      {
+        _id: getID(),
+        label: "name",
+        type: "text",
+        value: "hi dear",
+      },
+    ];
+
+    let idx = 0;
+
+    pane
+      .addBlade({
+        view: "list",
+        label: "Add New Input",
+        options: templates.map((tt, idx) => {
+          return {
+            text: tt.type,
+            value: idx,
+          };
+        }),
+
+        // [
+        //   { text: "loading", value: "LDG" },
+        //   { text: "menu", value: "MNU" },
+        //   { text: "field", value: "FLD" },
+        // ],
+        value: 0,
+      })
+      .on("change", (ev) => {
+        idx = ev.value;
+        btn.title = `Add: ${templates[idx].type}`;
+      });
+
+    const btn = pane.addButton({
+      title: `Add: range`,
+      label: "input type", // optional
+    });
+
+    btn.on("click", () => {
+      //
+      code.data.push({
+        ...templates[idx],
+        _id: getID(),
+      });
+      useStore.setState({
+        codes: [...codes],
+      });
+      //
+      //
+    });
+
+    ///////
+
+    return () => {
+      pane.dispose();
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={refValue}></div>
     </>
   );
 }
