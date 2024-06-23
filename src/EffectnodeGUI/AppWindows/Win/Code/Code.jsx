@@ -1,5 +1,9 @@
 import Editor from "@monaco-editor/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import * as prettier from "prettier/standalone";
+import prettierPluginBabel from "prettier/plugins/babel";
+import prettierPluginEstree from "prettier/plugins/estree";
+import prettierPluginHtml from "prettier/plugins/html";
 
 export function Code({ win, useStore }) {
   let wins = useStore((r) => r.wins);
@@ -10,7 +14,7 @@ export function Code({ win, useStore }) {
   let code = codes.find((r) => r.nodeID === win.nodeID);
 
   let spaceID = useStore((r) => r.spaceID);
-
+  let [editor, setEditor] = useState(false);
   useEffect(() => {
     if (!spaceID) {
       return;
@@ -19,6 +23,8 @@ export function Code({ win, useStore }) {
     if (!win.nodeID) {
       return;
     }
+
+    useStore.setState({ showCode: true });
   }, [code, spaceID, useStore, win.nodeID]);
   /*
   editor-save
@@ -84,6 +90,34 @@ export function Code({ win, useStore }) {
                     detail: { win, node, code },
                   })
                 );
+
+                let runRun = async () => {
+                  let indexPos = editor
+                    .getModel()
+                    .getOffsetAt(editor.getPosition());
+
+                  let beforePosition = editor.getPosition();
+
+                  // console.log(editor);
+                  let result = await prettier.formatWithCursor(code.code, {
+                    cursorOffset: indexPos,
+                    parser: "babel",
+                    plugins: [
+                      prettierPluginBabel,
+                      prettierPluginEstree,
+                      prettierPluginHtml,
+                    ],
+                  });
+                  editor.setValue(result.formatted);
+                  editor.setPosition(beforePosition);
+
+                  code.code = result.formatted;
+
+                  useStore.setState({
+                    codes: [...codes],
+                  });
+                };
+                runRun();
               }
             }}
             className="w-full h-full overflow-hidden rounded-md"
@@ -92,7 +126,12 @@ export function Code({ win, useStore }) {
               <Editor
                 height={`100%`}
                 defaultLanguage="javascript"
-                defaultValue={code.code}
+                defaultValue={`${code.code}`}
+                onMount={(editor, monaco) => {
+                  //
+
+                  setEditor(editor);
+                }}
                 onChange={(text) => {
                   code.code = text;
 

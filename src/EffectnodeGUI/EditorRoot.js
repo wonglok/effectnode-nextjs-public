@@ -112,6 +112,8 @@ export const EditorRoot = () => {
 
 export class EditorCore {
   constructor() {
+    //
+
     let self = this;
 
     this.cleans = [];

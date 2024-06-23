@@ -32,9 +32,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { rand } from "/tester/rand.js";
-// import * as happy from "@/happy.js";
-// console.log(happy);
-// import PostProcessing from "three/addons/renderers/common/PostProcessing.js";
 
 let rAFID = 0;
 const particleCount = 512 * 512;
@@ -52,7 +49,7 @@ let controls, stats;
 let computeParticles;
 let mixer, clock;
 
-let computeHit;
+let computeSkinning;
 
 const timestamps = document.createElement("div");
 // document.appendChild(te)
@@ -358,7 +355,7 @@ function init({ gltf }) {
 
   renderer.compute(computeInit);
 
-  computeHit = tslFn(() => {
+  computeSkinning = tslFn(() => {
     // const birth = birthPositionBuffer.node.element(instanceIndex);
     const position = processedPositionBuffer.node.element(instanceIndex);
     // const velocity = velocityBuffer.node.element(instanceIndex);
@@ -439,7 +436,7 @@ function init({ gltf }) {
       clickPosition.value.copy(point);
       clickPosition.value.y = -1;
 
-      // renderer.compute(computeHit);
+      // renderer.compute(computeSkinning);
     }
   }
 
@@ -449,10 +446,11 @@ function init({ gltf }) {
   controls.target.set(0, 1, 0);
   controls.update();
 
+  let v3 = new THREE.Vector3();
   setInterval(() => {
-    gltf.scene
-      .getObjectByName("mixamorigHead")
-      .getWorldPosition(controls.target);
+    gltf.scene.getObjectByName("mixamorigHead").getWorldPosition(v3);
+
+    controls.target.lerp(v3, 0.05);
 
     controls.update();
   });
@@ -485,22 +483,20 @@ function onWindowResize() {
 }
 
 async function animate() {
+  rAFID = requestAnimationFrame(animate);
+
   stats.update();
 
   mixer.update(clock.getDelta());
 
   await renderer.computeAsync(computeParticles);
-  await renderer.computeAsync(computeHit);
+  await renderer.computeAsync(computeSkinning);
   await renderer.renderAsync(scene, camera);
 
   // throttle the logging
-  rAFID = requestAnimationFrame(animate);
 }
 
-export function close() {
-  // cancelAnimationFrame(rAFID);
-  // document.body.innerHTML = "";
-}
+export function close() {}
 //
 
 //
