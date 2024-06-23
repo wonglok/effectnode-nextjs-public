@@ -9,6 +9,7 @@ import { useEffect, useMemo } from "react";
 import { Object3D, Vector3 } from "three";
 
 export function EditorBox({ useStore }) {
+  //
   // let wins = useStore((r) => r.wins);
   // let apps = useStore((r) => r.apps);
 
@@ -42,6 +43,7 @@ export function EditorBox({ useStore }) {
         if (first) {
           first.point.y = 0;
 
+          //
           point3.copy(first.point);
         }
       }

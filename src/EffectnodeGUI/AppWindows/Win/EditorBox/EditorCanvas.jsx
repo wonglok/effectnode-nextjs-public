@@ -17,6 +17,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import hdr from "public/hdr/studiolighting.hdr";
 import { useEffect } from "react";
 import { SocketInputs, SocketOutputs } from "./Sockets/Sockets";
+import { DisplayCreateEdge } from "./Edge/DisplayCreateEdge";
 //sucrase
 
 function InstallToStore({ useStore }) {
@@ -247,6 +248,14 @@ function Content({ useStore }) {
           </group>
         );
       })}
+
+      {graphCursorState.func === "createEdge" && (
+        <>
+          <DisplayCreateEdge
+            start={graphCursorState.ts.toArray()}
+          ></DisplayCreateEdge>
+        </>
+      )}
 
       <group></group>
     </>

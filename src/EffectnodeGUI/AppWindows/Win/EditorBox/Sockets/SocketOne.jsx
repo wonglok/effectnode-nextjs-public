@@ -9,9 +9,12 @@ export function SocketOne({ type, node, useStore }) {
       <Box
         onPointerDown={({ point }) => {
           //
+
+          // console.log(node._id);
+
           graphCursorState.nodeID = node._id;
           graphCursorState.isDown = true;
-          graphCursorState.func = "makeEdge";
+          graphCursorState.func = "createEdge";
           graphCursorState.ts.copy(point);
           graphCursorState.now.copy(point);
           graphCursorState.last.copy(point);

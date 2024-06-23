@@ -4,6 +4,7 @@ import * as prettier from "prettier/standalone";
 import prettierPluginBabel from "prettier/plugins/babel";
 import prettierPluginEstree from "prettier/plugins/estree";
 import prettierPluginHtml from "prettier/plugins/html";
+import { UserInputs } from "./UserInputs/UserInputs";
 
 export function Code({ win, useStore }) {
   let wins = useStore((r) => r.wins);
@@ -15,20 +16,18 @@ export function Code({ win, useStore }) {
 
   let spaceID = useStore((r) => r.spaceID);
   let [editor, setEditor] = useState(false);
+
   useEffect(() => {
     if (!spaceID) {
       return;
     }
-
     if (!win.nodeID) {
       return;
     }
 
     useStore.setState({ showCode: true });
   }, [code, spaceID, useStore, win.nodeID]);
-  /*
-  editor-save
-  */
+
   return (
     <>
       <div className="w-full h-full " style={{}}>
@@ -39,9 +38,7 @@ export function Code({ win, useStore }) {
           <span
             className="mx-2 underline"
             onClick={() => {
-              //
-              //   console.log(newTitle);
-              //
+              //-
 
               let newTitle = prompt(
                 `new title: ${node.title}`,
@@ -64,8 +61,10 @@ export function Code({ win, useStore }) {
             className="mx-2 underline text-red-500"
             onClick={() => {
               //
-              if (prompt(`remove "${node.title}" ?`, "no") === "yes") {
+              if (prompt(`remove "${node.title}" permanent?`, "no") === "yes") {
+                //
                 graph.nodes = graph.nodes.filter((r) => r._id !== win.nodeID);
+
                 useStore.setState({
                   graph: {
                     ...graph,
@@ -126,25 +125,41 @@ export function Code({ win, useStore }) {
             }}
             className="w-full h-full overflow-hidden rounded-md"
           >
-            {code && (
-              <Editor
-                height={`100%`}
-                defaultLanguage="javascript"
-                defaultValue={`${code.code}`}
-                onMount={(editor, monaco) => {
-                  //
+            <div className="flex w-full h-full">
+              <div className="h-full" style={{ width: `calc(100% - 200px)` }}>
+                {code && (
+                  <Editor
+                    height={`100%`}
+                    defaultLanguage="javascript"
+                    defaultValue={`${code.code}`}
+                    onMount={(editor, monaco) => {
+                      //
 
-                  setEditor(editor);
-                }}
-                onChange={(text) => {
-                  code.code = text;
+                      setEditor(editor);
+                    }}
+                    onChange={(text) => {
+                      code.code = text;
 
-                  useStore.setState({
-                    codes: [...codes],
-                  });
-                }}
-              ></Editor>
-            )}
+                      useStore.setState({
+                        codes: [...codes],
+                      });
+                    }}
+                  ></Editor>
+                )}
+              </div>
+              <div className="h-full" style={{ width: `calc(200px)` }}>
+                {/*  */}
+
+                {code && (
+                  <UserInputs
+                    useStore={useStore}
+                    graph={graph}
+                    codes={codes}
+                    code={code}
+                  ></UserInputs>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

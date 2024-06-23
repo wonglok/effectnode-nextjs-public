@@ -1,4 +1,3 @@
-import { Box } from "@react-three/drei";
 import { SocketOne } from "./SocketOne";
 
 export function SocketInputs({ node, useStore }) {

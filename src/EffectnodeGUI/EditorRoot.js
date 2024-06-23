@@ -221,13 +221,14 @@ export class EditorCore {
     ];
 
     this.exportBackup = () => {
-      let st = JSON.parse(JSON.stringify(this.getState()));
+      let st = this.getState();
       let processedData = {};
       for (let kn of this.saveKeys) {
         if (st[kn]) {
-          processedData[kn] = st[kn];
+          processedData[kn] = JSON.parse(JSON.stringify(st[kn]));
         }
       }
+
       return processedData;
     };
     this.restoreBackup = (state) => {
