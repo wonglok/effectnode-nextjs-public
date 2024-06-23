@@ -3,16 +3,17 @@ import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
 
-export const compileNode = async ({ bootCode = "" }) => {
+export const getCompile = ({ graph, codes }) => {
   return new Promise(async (resolve) => {
     const rollupProm = import("rollup").then((r) => r.rollup); //2.56.3
     rollupProm.then(async (rollup) => {
       try {
         //
         //
-        window.GlobalImport = window.GlobalImport || {};
-        window.GlobalImport["react"] = React;
-        window.GlobalImport["react-dom"] = ReactDOM;
+        const localCode = `effectnode://`;
+        window.GlobalVariable = window.GlobalVariable || {};
+        window.GlobalVariable["react"] = React;
+        window.GlobalVariable["react-dom"] = ReactDOM;
 
         let runtimePatcher = (Variable, idName) => {
           let str = ` `;
@@ -22,19 +23,22 @@ export const compileNode = async ({ bootCode = "" }) => {
             }
 
             str += `
-    export const ${key} = window.GlobalImport["${idName}"]["${key}"];
-    `;
+export const ${key} = window.GlobalVariable["${idName}"]["${key}"];
+`;
           });
 
           if (Variable.default) {
             str += `
-    export default window.GlobalImport["${idName}"]["default"]
-    `;
+export default window.GlobalVariable["${idName}"]["default"]
+`;
           }
 
           return str;
         };
 
+        //
+        // runtimePatcher(React, "react");
+        //
         let bundle = rollup({
           input: `effectnode.bootloader.js`,
           plugins: [
@@ -46,19 +50,26 @@ export const compileNode = async ({ bootCode = "" }) => {
                   return source;
                 }
 
+                if (source.startsWith("@/")) {
+                  return source.replace("@/", localCode);
+                }
+
                 if (source.startsWith("three")) {
                   if (source === "three") {
                     return "/jsrepo/three/build/three.module.js";
                   }
+
                   if (source === "three/nodes") {
                     return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
                   }
+
                   if (source.startsWith("three/addons/")) {
                     return (
                       "/jsrepo/three/examples/jsm/" +
                       source.replace("three/addons/", "")
                     );
                   }
+
                   return;
                 }
                 //
@@ -73,7 +84,31 @@ export const compileNode = async ({ bootCode = "" }) => {
               },
               async load(id) {
                 if (id === "effectnode.bootloader.js") {
-                  let tCocde = transform(bootCode, {
+                  let str = ``;
+                  graph.nodes.forEach((nd) => {
+                    str += `import("${nd.title}");`;
+                  });
+
+                  return `
+                        ${str}
+                    `;
+                }
+
+                if (graph.nodes.some((r) => r.title === id)) {
+                  console.log("id", id);
+
+                  let node = graph.nodes.find(
+                    (r) =>
+                      r.title ===
+                      id
+                        .replace(localCode, "")
+                        .replace(".js", "")
+                        .replace(".jsx", "")
+                  );
+
+                  let content = codes.find((r) => r.nodeID === node._id)?.code;
+
+                  let tCocde = transform(content, {
                     transforms: ["jsx"],
                     preserveDynamicImport: true,
                     production: true,
@@ -84,10 +119,10 @@ export const compileNode = async ({ bootCode = "" }) => {
                   return tCocde;
                 }
 
-                if (id in window.GlobalImport) {
+                if (id in window.GlobalVariable) {
                   return `
-                      ${runtimePatcher(window.GlobalImport[id], id)}
-                    `;
+                  ${runtimePatcher(window.GlobalVariable[id], id)}
+                `;
                 }
 
                 if (id.startsWith(`/`)) {
@@ -109,8 +144,8 @@ export const compileNode = async ({ bootCode = "" }) => {
                 }
 
                 return `
-                    console.log('[not found]', ${id});
-                `;
+                  console.log('[not found]', ${id});
+              `;
               },
             },
           ],
@@ -118,11 +153,9 @@ export const compileNode = async ({ bootCode = "" }) => {
         //
 
         let bdn = await bundle;
-
         let parcel = await bdn.generate({
           output: { format: "esm", dir: "./dist" },
         });
-
         let rawOutputs = parcel.output;
 
         let outputs = rawOutputs;
@@ -140,3 +173,7 @@ export const compileNode = async ({ bootCode = "" }) => {
     });
   });
 };
+
+//   getCompilePromise().then((output) => {
+//     console.log(output);
+//   });
