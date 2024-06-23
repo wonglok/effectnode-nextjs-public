@@ -3,7 +3,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path, { join } from "path";
 import { transform } from "sucrase";
-export default function ExRun() {
+export default function FrameRun() {
   let [state, setState] = useState({});
 
   let readyRef = useRef(false);
@@ -131,18 +131,13 @@ export default window.GoGlobal["${idName}"]["default"]
             async load(id) {
               if (id === "effectnode.js") {
                 let str = ``;
-
                 graph.nodes.forEach((nd) => {
-                  //
                   str += `import "${nd.title}";`;
-                  //
                 });
 
-                console.log(str);
+                // console.log(str);
                 return `
-                  console.log(123);
                   ${str}
-                
                 `;
               }
 

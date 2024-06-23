@@ -33,8 +33,10 @@ export function AppRunner({ useStore, spaceID }) {
       return;
     }
 
-    if (el.src !== `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`) {
-      el.src = `/iframe/ExRun?launcher=${encodeURIComponent(launcher)}`;
+    if (
+      el.src !== `/iframe/FrameRun?launcher=${encodeURIComponent(launcher)}`
+    ) {
+      el.src = `/iframe/FrameRun?launcher=${encodeURIComponent(launcher)}`;
     }
 
     return () => {
