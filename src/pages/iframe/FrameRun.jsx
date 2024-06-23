@@ -116,7 +116,6 @@ export default window.GoGlobal["${idName}"]["default"]
                     source.replace("three/addons/", "")
                   );
                 }
-
                 return;
               }
 
@@ -135,7 +134,6 @@ export default window.GoGlobal["${idName}"]["default"]
                   str += `import "${nd.title}";`;
                 });
 
-                // console.log(str);
                 return `
                   ${str}
                 `;
