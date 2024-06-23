@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
+import * as Vue from "vue";
 
 export const compileNode = async ({ bootCode = "" }) => {
   return new Promise(async (resolve) => {
@@ -13,6 +14,7 @@ export const compileNode = async ({ bootCode = "" }) => {
         window.GlobalImport = window.GlobalImport || {};
         window.GlobalImport["react"] = React;
         window.GlobalImport["react-dom"] = ReactDOM;
+        window.GlobalImport["vue"] = Vue;
 
         let runtimePatcher = (Variable, idName) => {
           let str = ` `;
@@ -23,13 +25,13 @@ export const compileNode = async ({ bootCode = "" }) => {
 
             str += `
     export const ${key} = window.GlobalImport["${idName}"]["${key}"];
-    `;
+`;
           });
 
           if (Variable.default) {
             str += `
     export default window.GlobalImport["${idName}"]["default"]
-    `;
+`;
           }
 
           return str;
@@ -115,7 +117,6 @@ export const compileNode = async ({ bootCode = "" }) => {
             },
           ],
         });
-        //
 
         let bdn = await bundle;
 

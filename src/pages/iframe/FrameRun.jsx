@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import * as ReactDOM from "react-dom/client";
-import path, { join } from "path";
-import { transform } from "sucrase";
-import { getCompile } from "./getCompile";
 import { compileNode } from "./compileNode";
-import { ref, watchEffect } from "vue";
-
+import { create } from "zustand";
 export default function FrameRun() {
   let [state, setState] = useState({});
+
+  let [send, setSend] = useState(() => {
+    return () => {};
+  });
 
   let readyRef = useRef(false);
 
@@ -30,6 +29,9 @@ export default function FrameRun() {
         }
       );
     };
+    setSend(() => {
+      return send;
+    });
 
     let hh = (ev) => {
       if (ev.data.launcher === launcher && ev.origin === location.origin) {
@@ -78,22 +80,29 @@ export default function FrameRun() {
 
   let { graph, codes } = state;
 
-  let [core, setCore] = useState();
+  let useCore = React.useMemo(() => {
+    if (!graph) {
+      return false;
+    }
+    return create(() => {
+      return {
+        graph,
+        nodes: graph.nodes,
+        edges: graph.edges,
+        codes,
+      };
+    });
+  }, [codes, graph]);
 
   useEffect(() => {
-    let { graph, codes } = state;
-
-    if (!codes || !graph) {
+    if (!useCore) {
       return;
     }
+    return useCore.subscribe((now, before) => {
+      console.log(now, before);
+    });
+  }, [useCore]);
 
-    //
-
-    //
-    //
-    //
-    //
-  }, [state]);
   return (
     <>
       {/* {
@@ -103,9 +112,7 @@ export default function FrameRun() {
           return <NodeRunner code={code} node={n} key={n._id}></NodeRunner>;
         })} */}
 
-      {/*  */}
-
-      {graph && (
+      {graph && useCore && (
         <>
           {/*  */}
 
@@ -114,7 +121,14 @@ export default function FrameRun() {
             let code = codes.find((r) => r.nodeID === it._id);
 
             //
-            return <RunnerNode node={it} code={code} key={it._id}></RunnerNode>;
+            return (
+              <RunnerNode
+                useCore={useCore}
+                node={it}
+                code={code}
+                key={it._id}
+              ></RunnerNode>
+            );
           })}
 
           {/*  */}
@@ -124,39 +138,65 @@ export default function FrameRun() {
   );
 }
 
-function RunnerNode({ code, node }) {
-  let [api, setAPI] = useState({});
+function RunnerNode({ useCore, code, node }) {
+  let [display, renderReact] = useState(null);
   useEffect(() => {
+    let cleans = [];
+
     compileNode({ bootCode: code.code })
       .then((output) => {
-        window.remoteImport(output.url).then((value) => {
-          URL.revokeObjectURL(output.url);
+        window
+          .remoteImport(output.url)
+          .then((value) => {
+            URL.revokeObjectURL(output.url);
 
-          // console.log("[module]", value);
+            //
+            //
+            //
 
-          if (value.setup) {
-            value.setup({
-              happy: 123,
-            });
-          }
+            if (value.setup) {
+              //
+              //
+              //
+              //
+              //
 
-          //
-          // console.log(Object.keys(value));
-          //
+              value.setup({
+                useCore,
+                onClean: (fnc) => {
+                  cleans.push(fnc);
+                },
+                renderReact: (fnc) => {
+                  renderReact(fnc());
+                },
+                onChangeRender: (fnc) => {
+                  cleans.push(
+                    useCore.subscribe((st, b4) => {
+                      renderReact(fnc({ now: st, before: b4 }));
+                    })
+                  );
+                },
+              });
 
-          //
-          // setAPI({
-          //   display: null,
-          // });
-          //
-        });
+              //////////////
+            }
+
+            ////////////
+          })
+          .catch((r) => {
+            console.error(r);
+          });
       })
       .catch((r) => {
         console.error(r);
       });
+
+    return () => {
+      cleans.forEach((r) => r());
+    };
     // console.log(code, node);
-  }, [code, node]);
+  }, [code, node, useCore]);
 
   //
-  return <>{api.display}</>;
+  return <>{display}</>;
 }
