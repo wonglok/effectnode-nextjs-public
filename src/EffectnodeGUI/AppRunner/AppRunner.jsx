@@ -93,7 +93,7 @@ export function AppRunner({ useStore, spaceID }) {
         if (action === "ready") {
           let backup = useStore.getState().editorAPI.exportBackup();
           send({
-            action: "reboot",
+            action: "launchApp",
             payload: backup,
           });
         }
