@@ -30,6 +30,7 @@
     "sucrase": "^3.35.0",
     "three": "^0.165.0",
     "tweakpane": "^4.0.3",
+    "vue": "^3.4.30",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

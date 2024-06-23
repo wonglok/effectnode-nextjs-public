@@ -164,7 +164,7 @@ function AddInputs({ useStore, code, codes }) {
     btn.on("click", () => {
       //
       code.data.push({
-        ...templates[idx],
+        ...JSON.parse(JSON.stringify(templates[idx])),
         _id: getID(),
       });
       useStore.setState({
@@ -290,6 +290,7 @@ function RangeGear({ useStore, code, codes, dat }) {
       });
     });
 
+    dat.min = dat.min || 0;
     pane
       .addBinding(dat, "min", {
         step: 0.01,
@@ -302,6 +303,9 @@ function RangeGear({ useStore, code, codes, dat }) {
         });
       });
 
+    //
+
+    dat.max = dat.max || 1;
     pane
       .addBinding(dat, "max", {
         step: 0.01,
@@ -314,6 +318,7 @@ function RangeGear({ useStore, code, codes, dat }) {
         });
       });
 
+    dat.step = dat.step || 0.01;
     pane
       .addBinding(dat, "step", {
         step: 0.01,

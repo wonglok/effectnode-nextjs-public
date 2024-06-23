@@ -269,6 +269,10 @@ export class EditorCore {
         });
       }
 
+      //
+      //
+      //
+
       if (!apps.some((r) => r.type === "previewer")) {
         let appID = getID();
 

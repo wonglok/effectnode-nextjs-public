@@ -5,6 +5,8 @@ import path, { join } from "path";
 import { transform } from "sucrase";
 import { getCompile } from "./getCompile";
 import { compileNode } from "./compileNode";
+import { ref, watchEffect } from "vue";
+
 export default function FrameRun() {
   let [state, setState] = useState({});
 
@@ -51,26 +53,26 @@ export default function FrameRun() {
     };
   }, []);
 
-  useEffect(() => {
-    let { graph, codes } = state;
+  // useEffect(() => {
+  //   let { graph, codes } = state;
 
-    if (!codes) {
-      return;
-    }
+  //   if (!codes) {
+  //     return;
+  //   }
 
-    getCompile({
-      graph,
-      codes,
-    }).then((mod) => {
-      //
-      console.log(mod);
-    });
+  //   // getCompile({
+  //   //   graph,
+  //   //   codes,
+  //   // }).then((mod) => {
+  //   //   //
+  //   //   console.log(mod);
+  //   // });
 
-    return () => {
-      //
-      //
-    };
-  }, [state]);
+  //   return () => {
+  //     //
+  //     //
+  //   };
+  // }, [state]);
 
   //
 
@@ -79,11 +81,19 @@ export default function FrameRun() {
   let [core, setCore] = useState();
 
   useEffect(() => {
+    let { graph, codes } = state;
+
+    if (!codes || !graph) {
+      return;
+    }
+
+    //
+
     //
     //
     //
     //
-  }, []);
+  }, [state]);
   return (
     <>
       {/* {
@@ -117,22 +127,34 @@ export default function FrameRun() {
 function RunnerNode({ code, node }) {
   let [api, setAPI] = useState({});
   useEffect(() => {
-    compileNode({ bootCode: code.code }).then((output) => {
-      window.remoteImport(output.url).then((value) => {
-        URL.revokeObjectURL(output.url);
+    compileNode({ bootCode: code.code })
+      .then((output) => {
+        window.remoteImport(output.url).then((value) => {
+          URL.revokeObjectURL(output.url);
 
-        //
-        // console.log(Object.keys(value));
-        //
+          // console.log("[module]", value);
 
-        //
-        // setAPI({
-        //   display: null,
-        // });
-        //
+          if (value.setup) {
+            value.setup({
+              happy: 123,
+            });
+          }
+
+          //
+          // console.log(Object.keys(value));
+          //
+
+          //
+          // setAPI({
+          //   display: null,
+          // });
+          //
+        });
+      })
+      .catch((r) => {
+        console.error(r);
       });
-    });
-    console.log(code, node);
+    // console.log(code, node);
   }, [code, node]);
 
   //
