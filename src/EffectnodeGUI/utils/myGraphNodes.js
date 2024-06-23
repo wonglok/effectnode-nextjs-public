@@ -103,7 +103,7 @@ export function makeCode({ nodeID, spaceID }) {
       },
       {
         _id: getID(),
-        label: "materialColor",
+        label: "baseColor",
         type: "color",
         value: "#ff0000",
       },
