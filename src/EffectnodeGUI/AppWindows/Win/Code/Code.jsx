@@ -48,12 +48,14 @@ export function Code({ win, useStore }) {
                 `${node.title}`
               );
 
-              node.title = newTitle;
-              win.title = `🧑🏼‍💻 ${newTitle}`;
+              if (newTitle) {
+                node.title = newTitle;
+                win.title = `🧑🏼‍💻 ${newTitle}`;
 
-              useStore.setState({
-                wins: [...wins],
-              });
+                useStore.setState({
+                  wins: [...wins],
+                });
+              }
             }}
           >
             Rename Title

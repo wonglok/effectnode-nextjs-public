@@ -59,36 +59,41 @@ export function EditorBox({ useStore }) {
           className="w-full bg-gray-200 border-b border-gray-400 text-sm flex items-center "
           style={{ height: `calc(25px)` }}
         >
+          {/*  */}
           <span
             className=" underline cursor-pointer px-2"
             onClick={() => {
-              let newNode = makeGraphNode({ spaceID: spaceID });
-              newNode.position = point3.toArray();
+              let newNodeItem = makeGraphNode({ spaceID: spaceID });
+              newNodeItem.position = point3.toArray();
 
-              let newCode = makeCode({
+              let newCodeFile = makeCode({
                 spaceID,
-                nodeID: newNode._id,
+                nodeID: newNodeItem._id,
               });
 
               if (graph.nodes.length === 0) {
-                newNode.title = "main";
-                newCode.title = "main";
+                newNodeItem.title = "main";
+                newCodeFile.title = "main";
               } else {
                 let title = window.prompt(
                   "Please name the module...",
-                  "newNode"
+                  "newNodeItem"
                 );
                 if (title) {
-                  newNode.title = title;
-                  newCode.title = title;
+                  newNodeItem.title = title;
+                  newCodeFile.title = title;
                 }
               }
 
-              graph.nodes.push(newNode);
+              graph.nodes.push(newNodeItem);
               useStore.setState({
                 graph: { ...graph },
-                codes: [...codes, newCode],
+                codes: [...codes, newCodeFile],
               });
+
+              window.dispatchEvent(
+                new CustomEvent("editor-save", { detail: {} })
+              );
             }}
           >
             Create Item
