@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { compileNode } from "./loader/compileNode";
 import { create } from "zustand";
+import { getID } from "../../utils/getID";
 export default function FrameRun() {
   let useCore = React.useMemo(() => {
     return create(() => {
@@ -106,6 +107,10 @@ export default function FrameRun() {
     };
   }, [works]);
 
+  let spaceID = React.useMemo(() => {
+    return getID();
+  }, []);
+
   return (
     <>
       {graph && useCore && (
@@ -114,6 +119,7 @@ export default function FrameRun() {
             let code = codes.find((r) => r.nodeID === it._id);
             return (
               <RunnerNode
+                spaceID={spaceID}
                 edges={graph.edges}
                 codes={codes}
                 nodes={nodes}
@@ -132,7 +138,7 @@ export default function FrameRun() {
   );
 }
 
-function RunnerNode({ nodes, modules, works, useCore, code, node }) {
+function RunnerNode({ spaceID, nodes, modules, works, useCore, code, node }) {
   //
   let [display, mountReact] = useState(null);
 
@@ -141,7 +147,7 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
     works.set(node._id, localWork);
     let cleans = [];
 
-    compileNode({ bootCode: code.code })
+    compileNode({ nodes, modules, bootCode: code.code, spaceID })
       .then((output) => {
         window
           .remoteImport(output.url)
