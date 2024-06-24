@@ -2,10 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
-// import * as R3F from "@react-three/fiber";
-// import * as Drei from "@react-three/drei";
-// import * as R3FPost from "@react-three/postprocessing";
-// import * as NativePost from "postprocessing";
+import * as R3F from "@react-three/fiber";
+import * as Drei from "@react-three/drei";
+import * as R3FPost from "@react-three/postprocessing";
+import * as NativePost from "postprocessing";
 import tunnel from "tunnel-rat";
 
 export const compileNode = async ({
@@ -28,10 +28,10 @@ export const compileNode = async ({
         //
         Vars["react"] = React;
         Vars["react-dom"] = ReactDOM;
-        // Vars["@react-three/fiber"] = R3F;
-        // Vars["@react-three/drei"] = Drei;
-        // Vars["@react-three/postprocessing"] = R3FPost;
-        // Vars["postprocessing"] = NativePost;
+        Vars["@react-three/fiber"] = R3F;
+        Vars["@react-three/drei"] = Drei;
+        Vars["@react-three/postprocessing"] = R3FPost;
+        Vars["postprocessing"] = NativePost;
         Vars["tunnel-rat"] = tunnel;
 
         window[nameSpaceID].NodeModules = modules;
