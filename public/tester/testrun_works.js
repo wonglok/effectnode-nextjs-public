@@ -19,6 +19,7 @@ import {
   vec3,
   storage,
   SpriteNodeMaterial,
+  MeshStandardNodeMaterial,
   If,
 } from "three/nodes";
 
@@ -33,10 +34,9 @@ import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { rand } from "/tester/rand.js";
 // import * as happy from "@/happy.js";
-
 // console.log(happy);
-
 // import PostProcessing from "three/addons/renderers/common/PostProcessing.js";
+
 let rAFID = 0;
 const particleCount = 512 * 512;
 

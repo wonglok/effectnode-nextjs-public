@@ -6,6 +6,7 @@ import * as R3F from "@react-three/fiber";
 import * as Drei from "@react-three/drei";
 import * as R3FPost from "@react-three/postprocessing";
 import * as NativePost from "postprocessing";
+import tunnel from "tunnel-rat";
 
 export const compileNode = async ({
   nameSpaceID,
@@ -23,16 +24,18 @@ export const compileNode = async ({
         //
 
         window[nameSpaceID] = window[nameSpaceID] || {};
+        window[nameSpaceID].GV = window[nameSpaceID].GV || {};
 
-        window[nameSpaceID].GlobalImport =
-          window[nameSpaceID].GlobalImport || {};
-        window[nameSpaceID].GlobalImport["react"] = React;
-        window[nameSpaceID].GlobalImport["react-dom"] = ReactDOM;
-        window[nameSpaceID].GlobalImport["@react-three/fiber"] = R3F;
-        window[nameSpaceID].GlobalImport["@react-three/drei"] = Drei;
-        window[nameSpaceID].GlobalImport["@react-three/postprocessing"] =
-          R3FPost;
-        window[nameSpaceID].GlobalImport["postprocessing"] = NativePost;
+        let Vars = window[nameSpaceID].GV;
+
+        //
+        Vars["react"] = React;
+        Vars["react-dom"] = ReactDOM;
+        Vars["@react-three/fiber"] = R3F;
+        Vars["@react-three/drei"] = Drei;
+        Vars["@react-three/postprocessing"] = R3FPost;
+        Vars["postprocessing"] = NativePost;
+        Vars["tunnel-rat"] = tunnel;
 
         window[nameSpaceID].NodeModules = modules;
 
@@ -44,13 +47,13 @@ export const compileNode = async ({
             }
 
             str += `
-    export const ${key} = window["${nameSpaceID}"].GlobalImport["${idName}"]["${key}"];
+    export const ${key} = window["${nameSpaceID}"].GV["${idName}"]["${key}"];
 `;
           });
 
           if (Variable.default) {
             str += `
-    export default window["${nameSpaceID}"].GlobalImport["${idName}"]["default"]
+    export default window["${nameSpaceID}"].GV["${idName}"]["default"]
 `;
           }
 
@@ -152,8 +155,8 @@ export const compileNode = async ({
                   });
                 }
 
-                if (id in window[nameSpaceID].GlobalImport) {
-                  return `${runtimePatcher(window[nameSpaceID].GlobalImport[id], id)}`;
+                if (id in window[nameSpaceID].GV) {
+                  return `${runtimePatcher(window[nameSpaceID].GV[id], id)}`;
                 }
 
                 if (id.startsWith(`/`)) {

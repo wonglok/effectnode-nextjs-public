@@ -7,22 +7,10 @@ export function Previewer({ useStore }) {
     return useStore.getState().editorAPI.exportBackup();
   }, [useStore]);
 
-  let [state, setState] = useState(false);
-
-  useEffect(() => {
-    return useStore.subscribe((now, before) => {
-      if (now.codes !== before.codes) {
-        //
-        setState(getState());
-        //
-      }
-    });
-  }, [useStore, getState]);
   return (
     <>
       {spaceID && (
         <AppRunner
-          state={state}
           useStore={useStore}
           getState={getState}
           spaceID={spaceID}

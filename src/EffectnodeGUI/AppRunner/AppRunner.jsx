@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getID } from "../utils/getID";
 
 export function AppRunner({
+  useCore,
   getState = () => {
     console.log("not implemented!!!");
   },
-  state = false,
   spaceID,
 }) {
   let ref = useRef();
@@ -43,6 +43,8 @@ export function AppRunner({
       el.src = `/iframe/FrameRun?launcher=${encodeURIComponent(launcher)}`;
     }
 
+    console.log(launcher);
+
     return () => {
       //
     };
@@ -67,15 +69,18 @@ export function AppRunner({
   );
 
   useEffect(() => {
-    if (!state) {
+    if (!useCore) {
       return;
     }
 
-    send({
-      action: "pushLatestState",
-      payload: state,
+    return useCore.subscribe(() => {
+      let st = useCore.getState().editorAPI.exportBackup();
+      send({
+        action: "pushLatestState",
+        payload: st,
+      });
     });
-  }, [send, state]);
+  }, [send, useCore]);
 
   useEffect(() => {
     let reloadHandler = () => {
@@ -87,7 +92,7 @@ export function AppRunner({
     return () => {
       window.removeEventListener("editor-save", reloadHandler);
     };
-  }, [el?.contentWindow?.location]);
+  }, []);
 
   useEffect(() => {
     let hh = (ev) => {
@@ -113,14 +118,14 @@ export function AppRunner({
           });
         }
 
-        if (action === "requestLatestState") {
-          let state = getState(); // useStore.getState().editorAPI.exportBackup();
+        // if (action === "requestLatestState") {
+        //   let state = getState(); // useStore.getState().editorAPI.exportBackup();
 
-          send({
-            action: "respondLatestState",
-            payload: state,
-          });
-        }
+        //   send({
+        //     action: "respondLatestState",
+        //     payload: state,
+        //   });
+        // }
       }
     };
 

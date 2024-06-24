@@ -215,6 +215,12 @@ export function Code({ win, useStore }) {
                   );
 
                   code.code = prettyVal.formatted;
+
+                  window.dispatchEvent(
+                    new CustomEvent("editor-save", {
+                      detail: {},
+                    })
+                  );
                 }
                 // Cmd + p opens the command palette
                 if (alt(e) && e.keyCode == 80) {
@@ -225,12 +231,6 @@ export function Code({ win, useStore }) {
                 if (alt(e) && e.keyCode == 68) {
                   e.preventDefault();
                 }
-
-                window.dispatchEvent(
-                  new CustomEvent("editor-save", {
-                    detail: {},
-                  })
-                );
 
                 useStore.setState({
                   codes: [...codes],
