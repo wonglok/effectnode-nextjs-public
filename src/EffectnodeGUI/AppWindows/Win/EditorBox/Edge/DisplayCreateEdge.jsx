@@ -25,13 +25,9 @@ export function DisplayCreateEdge({ useStore }) {
     }
   });
 
+  //
+
   return <RenderLine start={start} end={end}></RenderLine>;
 }
-
-//
-
-//
-
-//
 
 //
