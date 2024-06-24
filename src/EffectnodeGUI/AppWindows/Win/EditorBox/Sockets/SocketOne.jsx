@@ -65,9 +65,9 @@ export function SocketOne({ idx, type, socket, node, useStore }) {
             return;
           }
 
-          let start = graphCursorState.ts;
-          let end = point.end;
-          console.log(start, end);
+          // let start = graphCursorState.ts;
+          // let end = point.end;
+          // console.log(start, end);
 
           graphCursorState.socketB = socket;
 

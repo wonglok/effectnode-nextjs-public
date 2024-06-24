@@ -3,6 +3,7 @@ import { RenderLine } from "./RenderLine";
 import { Vector3 } from "three";
 
 export function DisplayAllEdges({ useStore }) {
+  let graphCursorState = useStore((r) => r.graphCursorState);
   let graph = useStore((r) => r.graph);
   let edges = graph.edges;
   //
@@ -11,9 +12,6 @@ export function DisplayAllEdges({ useStore }) {
 
   //   console.log(edges);
 
-  useFrame(() => {
-    //
-  });
   //
 
   //

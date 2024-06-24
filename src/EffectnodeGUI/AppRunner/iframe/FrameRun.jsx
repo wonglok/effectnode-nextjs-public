@@ -162,6 +162,7 @@ function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
                         let codes = useCore.getState().codes;
                         let code = codes.find((r) => r.nodeID === node._id);
                         let item = code.data.find((r) => r.label === key);
+
                         if (item) {
                           return item.value;
                         }

@@ -4,12 +4,17 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 
 import { CatmullRomCurve3, Color, Vector3 } from "three";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CubicBezierLine, QuadraticBezierLine } from "@react-three/drei";
 // import { Box } from "@react-three/drei";
 
 export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
+  let refDash = useRef();
+
+  useFrame(() => {
+    refDash.current.material.uniforms.dashOffset.value += -1 * 0.3;
+  });
   // //
   // const mat = useMemo(() => {
   //   return getMat();
@@ -60,6 +65,7 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   return (
     <>
       <CubicBezierLine
+        ref={refDash}
         start={[start[0], start[1], start[2]]}
         midA={[
           //

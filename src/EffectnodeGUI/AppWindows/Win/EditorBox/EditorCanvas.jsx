@@ -121,6 +121,15 @@ function Content({ useStore }) {
               }
             }
 
+            // reload for curves
+            if (graphCursorState.func === "moveNode") {
+              useStore.setState({
+                graph: {
+                  ...graph,
+                },
+              });
+            }
+
             //
           }
         }}
