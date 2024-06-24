@@ -24,8 +24,13 @@ export function Code({ win, useStore }) {
     if (!win.nodeID) {
       return;
     }
+    //
+
+    //
 
     useStore.setState({ showCode: true });
+
+    //
   }, [code, spaceID, useStore, win.nodeID]);
 
   return (
