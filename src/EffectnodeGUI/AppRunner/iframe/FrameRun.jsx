@@ -81,7 +81,10 @@ export default function FrameRun() {
   }, []);
 
   useEffect(() => {
+    //
     let rAFID = 0;
+
+    //
     let rAF = () => {
       rAFID = requestAnimationFrame(rAF);
       //
