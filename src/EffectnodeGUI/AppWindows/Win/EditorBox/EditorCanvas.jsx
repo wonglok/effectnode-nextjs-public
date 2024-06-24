@@ -230,8 +230,11 @@ function Content({ useStore }) {
               }}
               //
               position={[0, 0.3 / 2, 0]}
-              args={[1, 0.3, 1]}
+              //
+              args={[2, 0.3, 0.5]}
+              //
               scale={[1, 0.3, 1]}
+              //
               radius={0.3 / 2}
             >
               <meshStandardMaterial

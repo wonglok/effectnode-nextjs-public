@@ -6,7 +6,7 @@ export function SocketInputs({ node, useStore }) {
   //
 
   return (
-    <group position={[-(inputs.length / 2) * (0.2 + 0.1 / 2), 0, -0.65]}>
+    <group position={[-(inputs.length / 2) * (0.2 + 0.1 / 2), 0, -0.3 - 0.15]}>
       {inputs.map((inp, iii) => {
         return (
           <group key={inp._id} position={[iii * (0.2 + 0.1), 0, 0]} scale={0.2}>
@@ -28,7 +28,7 @@ export function SocketOutputs({ node, useStore }) {
   let outputs = node.outputs || [];
 
   return (
-    <group position={[-(outputs.length / 2) * (0.2 + 0.1 / 2), 0, 0.65]}>
+    <group position={[-(outputs.length / 2) * (0.2 + 0.1 / 2), 0, 0.3 + 0.15]}>
       {outputs.map((outp, iii) => {
         return (
           <group
