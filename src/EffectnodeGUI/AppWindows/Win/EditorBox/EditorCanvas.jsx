@@ -151,7 +151,7 @@ function Content({ useStore }) {
             position={n.position}
             key={n._id}
           >
-            <Box
+            <RoundedBox
               //
               onPointerUp={({ point }) => {
                 //
@@ -229,15 +229,17 @@ function Content({ useStore }) {
                 document.body.style.cursor = "";
               }}
               //
-              args={[1, 0.15, 1]}
-              position={[0, 0.15, 0]}
+              position={[0, 0.3 / 2, 0]}
+              args={[1, 0.3, 1]}
+              scale={[1, 0.3, 1]}
+              radius={0.3 / 2}
             >
               <meshStandardMaterial
-                roughness={0.3}
+                roughness={0.2}
                 metalness={0.8}
                 color={"#cccccc"}
               ></meshStandardMaterial>
-            </Box>
+            </RoundedBox>
 
             <SocketInputs useStore={useStore} node={n}></SocketInputs>
             <SocketOutputs useStore={useStore} node={n}></SocketOutputs>
@@ -246,7 +248,7 @@ function Content({ useStore }) {
               userData={{
                 type: "text",
               }}
-              position={[0, 0.15 + 0.15, 0.0]}
+              position={[0, 0.2, 0.0]}
               rotation={[Math.PI * -0.5, 0, 0]}
               fontSize={0.125}
               outlineWidth={0.005}
