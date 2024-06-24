@@ -66,7 +66,17 @@ export function Code({ win, useStore }) {
               //
               if (prompt(`remove "${node.title}" permanent?`, "no") === "yes") {
                 //
-                graph.nodes = graph.nodes.filter((r) => r._id !== win.nodeID);
+                graph.nodes = graph.nodes.filter(
+                  //
+                  (r) => r._id !== win.nodeID
+                );
+
+                graph.edges = graph.edges.filter(
+                  (r) => r.input.nodeID !== win.nodeID
+                );
+                graph.edges = graph.edges.filter(
+                  (r) => r.output.nodeID !== win.nodeID
+                );
 
                 useStore.setState({
                   graph: {
@@ -104,15 +114,20 @@ export function Code({ win, useStore }) {
 
                   let beforeState = editor.saveViewState();
                   // console.log(editor);
-                  let result = await prettier.formatWithCursor(code.code, {
-                    cursorOffset: indexPos,
-                    parser: "babel",
-                    plugins: [
-                      prettierPluginBabel,
-                      prettierPluginEstree,
-                      prettierPluginHtml,
-                    ],
-                  });
+                  let result = await prettier
+                    .formatWithCursor(code.code, {
+                      cursorOffset: indexPos,
+                      parser: "babel",
+                      plugins: [
+                        prettierPluginBabel,
+                        prettierPluginEstree,
+                        prettierPluginHtml,
+                      ],
+                    })
+                    .catch((r) => {
+                      console.error(r);
+                      return code.code;
+                    });
 
                   //
                   // editor.setValue(result.formatted);
@@ -120,7 +135,7 @@ export function Code({ win, useStore }) {
                   editor.setPosition(beforePosition);
                   editor.restoreViewState(beforeState);
 
-                  code.code = result.formatted;
+                  // code.code = result.formatted;
 
                   useStore.setState({
                     codes: [...codes],
