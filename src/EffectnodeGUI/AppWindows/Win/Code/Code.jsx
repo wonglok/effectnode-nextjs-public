@@ -136,9 +136,7 @@ export function Code({ win, useStore }) {
                     defaultLanguage="javascript"
                     defaultValue={`${code.code}`}
                     onMount={(editor, monaco) => {
-                      //
                       setEditor(editor);
-                      //
                     }}
                     onChange={(text) => {
                       code.code = text;
