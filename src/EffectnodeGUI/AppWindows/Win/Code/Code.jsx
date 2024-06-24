@@ -26,8 +26,6 @@ export function Code({ win, useStore }) {
     }
     //
 
-    //
-
     useStore.setState({ showCode: true });
 
     //
