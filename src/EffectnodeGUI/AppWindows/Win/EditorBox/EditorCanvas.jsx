@@ -237,7 +237,7 @@ function Content({ useStore }) {
               <meshStandardMaterial
                 roughness={0.2}
                 metalness={0.8}
-                color={"#cccccc"}
+                color={"#ffffff"}
               ></meshStandardMaterial>
             </RoundedBox>
 

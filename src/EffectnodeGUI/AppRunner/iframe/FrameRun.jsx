@@ -231,11 +231,16 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
                   onClean: (fnc) => {
                     cleans.push(fnc);
                   },
-                  renderOnce: (item) => {
+                  mountReact: (item) => {
                     mountReact(item);
                   },
-                  subscribe: (fnc) => {
+                  onChangeState: (fnc) => {
                     cleans.push(useCore.subscribe(fnc));
+                    setTimeout(() => {
+                      useCore.setState({
+                        ...useCore.getState(),
+                      });
+                    });
                   },
                 });
               }
