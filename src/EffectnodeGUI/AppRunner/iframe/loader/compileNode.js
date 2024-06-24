@@ -2,7 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
-// import * as Vue from "vue";
+import * as R3F from "@react-three/fiber";
+import * as Drei from "@react-three/drei";
+import * as R3FPost from "@react-three/postprocessing";
+import * as NativePost from "postprocessing";
 
 export const compileNode = async ({ bootCode = "" }) => {
   return new Promise(async (resolve) => {
@@ -14,6 +17,10 @@ export const compileNode = async ({ bootCode = "" }) => {
         window.GlobalImport = window.GlobalImport || {};
         window.GlobalImport["react"] = React;
         window.GlobalImport["react-dom"] = ReactDOM;
+        window.GlobalImport["@react-three/fiber"] = R3F;
+        window.GlobalImport["@react-three/drei"] = Drei;
+        window.GlobalImport["@react-three/postprocessing"] = R3FPost;
+        window.GlobalImport["postprocessing"] = NativePost;
 
         let runtimePatcher = (Variable, idName) => {
           let str = ` `;
@@ -88,9 +95,7 @@ export const compileNode = async ({ bootCode = "" }) => {
                 }
 
                 if (id in window.GlobalImport) {
-                  return `
-                      ${runtimePatcher(window.GlobalImport[id], id)}
-                    `;
+                  return `${runtimePatcher(window.GlobalImport[id], id)}`;
                 }
 
                 if (id.startsWith(`/`)) {

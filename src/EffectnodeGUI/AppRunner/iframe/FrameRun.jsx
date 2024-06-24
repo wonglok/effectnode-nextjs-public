@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { compileNode } from "./compileNode";
+import { compileNode } from "./loader/compileNode";
 import { create } from "zustand";
 export default function FrameRun() {
   let useCore = React.useMemo(() => {
