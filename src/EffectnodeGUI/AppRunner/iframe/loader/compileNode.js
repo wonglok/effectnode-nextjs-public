@@ -2,10 +2,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
-import * as R3F from "@react-three/fiber";
-import * as Drei from "@react-three/drei";
-import * as R3FPost from "@react-three/postprocessing";
-import * as NativePost from "postprocessing";
+// import * as R3F from "@react-three/fiber";
+// import * as Drei from "@react-three/drei";
+// import * as R3FPost from "@react-three/postprocessing";
+// import * as NativePost from "postprocessing";
 import tunnel from "tunnel-rat";
 
 export const compileNode = async ({
@@ -37,20 +37,22 @@ export const compileNode = async ({
         window[nameSpaceID].NodeModules = modules;
 
         let runtimePatcher = (Variable, idName) => {
-          let str = ` `;
+          let str = `
+            let NSGV = window["${nameSpaceID}"].GV;
+          `;
           Object.entries(Variable).forEach(([key, val]) => {
             if (key === "default") {
               return;
             }
 
             str += `
-    export const ${key} = window["${nameSpaceID}"].GV["${idName}"]["${key}"];
+    export const ${key} = NSGV["${idName}"]["${key}"];
 `;
           });
 
           if (Variable.default) {
             str += `
-    export default window["${nameSpaceID}"].GV["${idName}"]["default"]
+    export default NSGV["${idName}"]["default"]
 `;
           }
 
