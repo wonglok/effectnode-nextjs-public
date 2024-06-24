@@ -15,10 +15,12 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   useFrame(() => {
     refDash.current.material.uniforms.dashOffset.value += -1 * 0.3;
   });
-  // //
+
   // const mat = useMemo(() => {
   //   return getMat();
   // }, []);
+
+  //
 
   // const { geo } = useMemo(() => {
   //   let { geo } = getGeo({
@@ -29,11 +31,15 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   //   return { geo };
   // }, [start, end]);
 
+  //
+
   // const { line, displayLine } = useMemo(() => {
   //   let line = getLine({ geo, mat });
   //   let displayLine = <primitive object={line}></primitive>;
   //   return { line, displayLine };
   // }, [geo, mat]);
+
+  //
 
   // let midA = useMemo(() => {
   //   let midA = new Vector3()
@@ -53,7 +59,6 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   //     .add(new Vector3().fromArray(end))
   //     .divideScalar(2);
 
-  //   //
   //   midB.y += 1;
 
   //   return midB.toArray();
@@ -62,6 +67,7 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   let mix = (a, b, t) => {
     return a * t + b * (1.0 - t);
   };
+
   return (
     <>
       <CubicBezierLine
@@ -108,7 +114,6 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
         lineWidth={2}
         transparent
       />
-
       {/*  */}
 
       {/*  */}
