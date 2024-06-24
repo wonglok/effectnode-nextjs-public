@@ -126,7 +126,7 @@ export function Code({ win, useStore }) {
                 runRun();
               }
             }}
-            className="w-full h-full overflow-hidden rounded-md"
+            className="w-full h-full overflow-hidden rounded-b"
           >
             <div className="flex w-full h-full">
               <div className="h-full" style={{ width: `calc(100% - 300px)` }}>
