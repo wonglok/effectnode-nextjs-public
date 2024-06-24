@@ -159,15 +159,15 @@ function RunnerNode({
       .then((output) => {
         window
           .remoteImport(output.url)
-          .then((value) => {
-            modules.set(node.title, value);
+          .then((moduleItem) => {
+            modules.set(node.title, moduleItem);
             URL.revokeObjectURL(output.url);
 
             let run = () => {
               //
               //
-              if (value.setup) {
-                value.setup({
+              if (moduleItem.setup) {
+                moduleItem.setup({
                   //
                   io: new Proxy(
                     {
@@ -190,7 +190,9 @@ function RunnerNode({
 
                             destEdges.forEach((edge) => {
                               window.dispatchEvent(
-                                new CustomEvent(edge.input._id, { detail: val })
+                                new CustomEvent(edge.input._id, {
+                                  detail: val,
+                                })
                               );
                             });
                             //
@@ -263,6 +265,10 @@ function RunnerNode({
                     }, 100);
                   },
                 });
+              } else {
+                let object = {};
+                modules.set(node._id, object);
+                object.setupPromise = Promise.resolve({});
               }
             };
 
@@ -286,7 +292,6 @@ function RunnerNode({
 
     return () => {
       works.delete(node._id);
-      works.set(node._id, []);
       cleans.forEach((r) => r());
     };
   }, [useCore]);

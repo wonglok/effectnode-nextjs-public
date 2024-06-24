@@ -2,36 +2,37 @@ import * as THREE from "three";
 import {
   uv,
   vec4,
-  color,
-  mix,
-  range,
-  pass,
   timerLocal,
   add,
-  positionLocal,
-  attribute,
   buffer,
   tslFn,
   uniform,
   texture,
   instanceIndex,
-  float,
   vec3,
   storage,
   SpriteNodeMaterial,
   If,
+  //
+  float,
+  color,
+  mix,
+  range,
+  pass,
+  positionLocal,
+  attribute,
 } from "three/nodes";
 
 import WebGPU from "three/addons/capabilities/WebGPU.js";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import WebGPURenderer from "three/addons/renderers/webgpu/WebGPURenderer.js";
 import StorageInstancedBufferAttribute from "three/addons/renderers/common/StorageInstancedBufferAttribute.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 import { rand } from "/tester/rand.js";
+// import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let rAFID = 0;
 const particleCount = 512 * 512;
@@ -44,6 +45,7 @@ const size = uniform(0.14);
 const clickPosition = uniform(new THREE.Vector3());
 
 let postProcessing;
+
 let camera, scene, renderer;
 let controls, stats;
 let computeParticles;
@@ -52,26 +54,23 @@ let mixer, clock;
 let computeSkinning;
 
 const timestamps = document.createElement("div");
-// document.appendChild(te)
 
-new FBXLoader().load("/tester/raw-guy.fbx", function (gltf) {
+new FBXLoader().load("/tester/raw-guy.fbx", function ({ scene }) {
   new FBXLoader().load(`/tester/mma-warmup.fbx`, (anim) => {
-    gltf.scene = gltf;
-    gltf.animations = anim.animations;
-    init({ gltf });
+    init({ glbScene: scene, clip: anim.animations[0] });
   });
 });
 
-function init({ gltf }) {
+function init({ glbScene, clip }) {
   let group = new THREE.Group();
   group.scale.setScalar(0.01);
   clock = new THREE.Clock();
-  mixer = new THREE.AnimationMixer(gltf.scene);
-  mixer.clipAction(gltf.animations[0]).play();
+  mixer = new THREE.AnimationMixer(glbScene);
+  mixer.clipAction(clip).play();
 
-  gltf.scene.updateMatrixWorld(true);
+  glbScene.updateMatrixWorld(true);
   let skinnedMesh = false;
-  gltf.scene.traverse((it) => {
+  glbScene.traverse((it) => {
     if (it.geometry) {
       it.material = new THREE.MeshStandardMaterial({
         roughness: 0,
@@ -90,7 +89,6 @@ function init({ gltf }) {
     }
   });
 
-  //
   skinnedMesh.geometry = skinnedMesh.geometry.toNonIndexed();
 
   skinnedMesh.material = new THREE.MeshBasicMaterial({
@@ -125,8 +123,7 @@ function init({ gltf }) {
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#000000");
-  group.add(gltf.scene);
-
+  group.add(glbScene);
   scene.add(group);
   // textures
 
@@ -448,7 +445,7 @@ function init({ gltf }) {
 
   let v3 = new THREE.Vector3();
   setInterval(() => {
-    gltf.scene.getObjectByName("mixamorigHead").getWorldPosition(v3);
+    glbScene.getObjectByName("mixamorigHead").getWorldPosition(v3);
 
     controls.target.lerp(v3, 0.05);
 

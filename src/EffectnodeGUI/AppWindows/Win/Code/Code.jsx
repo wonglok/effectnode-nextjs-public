@@ -100,12 +100,6 @@ export function Code({ win, useStore }) {
               //   ev.preventDefault();
               //   ev.stopPropagation();
 
-              //   window.dispatchEvent(
-              //     new CustomEvent("editor-save", {
-              //       detail: { win, node, code },
-              //     })
-              //   );
-
               //   let runRun = async () => {
               //     let indexPos = editor
               //       .getModel()
@@ -136,11 +130,6 @@ export function Code({ win, useStore }) {
               //     editor.setPosition(beforePosition);
               //     editor.restoreViewState(beforeState);
 
-              //     // code.code = result.formatted;
-
-              //     useStore.setState({
-              //       codes: [...codes],
-              //     });
               //   };
               //   runRun();
               // }
@@ -224,6 +213,8 @@ export function Code({ win, useStore }) {
                   editor.setPosition(
                     computePosition(prettyVal.formatted, prettyVal.cursorOffset)
                   );
+
+                  code.code = prettyVal.formatted;
                 }
                 // Cmd + p opens the command palette
                 if (alt(e) && e.keyCode == 80) {
@@ -234,6 +225,16 @@ export function Code({ win, useStore }) {
                 if (alt(e) && e.keyCode == 68) {
                   e.preventDefault();
                 }
+
+                window.dispatchEvent(
+                  new CustomEvent("editor-save", {
+                    detail: {},
+                  })
+                );
+
+                useStore.setState({
+                  codes: [...codes],
+                });
               };
 
               hotKeys(ev);
