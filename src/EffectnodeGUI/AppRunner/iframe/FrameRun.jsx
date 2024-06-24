@@ -234,13 +234,17 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
                   mountReact: (item) => {
                     mountReact(item);
                   },
-                  onChangeState: (fnc) => {
+                  onChangeState: (fnc, noInit = false) => {
                     cleans.push(useCore.subscribe(fnc));
+
+                    if (noInit) {
+                      return;
+                    }
                     setTimeout(() => {
                       useCore.setState({
                         ...useCore.getState(),
                       });
-                    });
+                    }, 100);
                   },
                 });
               }
