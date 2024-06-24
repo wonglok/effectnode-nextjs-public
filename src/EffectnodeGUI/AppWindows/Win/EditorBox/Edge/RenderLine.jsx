@@ -4,9 +4,9 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 
 import { CatmullRomCurve3, Color, Vector3 } from "three";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { CubicBezierLine, QuadraticBezierLine } from "@react-three/drei";
+import { CubicBezierLine } from "@react-three/drei";
 // import { Box } from "@react-three/drei";
 
 export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
@@ -114,14 +114,15 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
   );
 }
 
-const getLine = ({ geo, mat }) => {
+export const getLine = ({ geo, mat }) => {
   let line2 = new Line2(geo, mat);
 
   line2.computeLineDistances();
 
   return line2;
 };
-const getMat = () => {
+
+export const getMat = () => {
   const material = new LineMaterial({
     transparent: true,
     color: new Color("#ff0000"),
@@ -133,7 +134,8 @@ const getMat = () => {
 
   return material;
 };
-const getGeo = ({ a, b, dotted = false }) => {
+
+export const getGeo = ({ a, b, dotted = false }) => {
   // const dist = new Vector3().copy(a).distanceTo(b);
 
   let raise = 0.1;

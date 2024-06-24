@@ -153,7 +153,7 @@ function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
                 value.setup({
                   //
 
-                  getByNodeTitle: (v) => modules.get(v),
+                  getNodeByTitle: (v) => modules.get(v),
 
                   ui: new Proxy(
                     {},

@@ -25,6 +25,7 @@ export function DisplayAllEdges({ useStore }) {
         if (input) {
           input.getWorldPosition(end);
         }
+
         let output = scene.getObjectByName(ed.output._id);
         if (output) {
           output.getWorldPosition(start);
@@ -32,7 +33,7 @@ export function DisplayAllEdges({ useStore }) {
 
         return (
           <EdgeLine
-            key={ed._id}
+            key={ed._id + ed.input._id + ed.output._id}
             start={start.toArray()}
             end={end.toArray()}
           ></EdgeLine>
