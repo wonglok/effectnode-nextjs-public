@@ -106,8 +106,6 @@ export default function FrameRun() {
     };
   }, [works]);
 
-  //
-
   return (
     <>
       {graph && useCore && (
@@ -273,6 +271,7 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
 
     return () => {
       works.delete(node._id);
+      works.set(node._id, []);
       cleans.forEach((r) => r());
     };
   }, [useCore]);
