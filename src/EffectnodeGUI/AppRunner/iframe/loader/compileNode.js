@@ -8,7 +8,7 @@ import * as R3FPost from "@react-three/postprocessing";
 import * as NativePost from "postprocessing";
 
 export const compileNode = async ({
-  spaceID,
+  nameSpaceID,
   nodes,
   modules,
   bootCode = "",
@@ -21,19 +21,20 @@ export const compileNode = async ({
       //
       try {
         //
-        //
 
-        window[spaceID] = window[spaceID] || {};
+        window[nameSpaceID] = window[nameSpaceID] || {};
 
-        window[spaceID].GlobalImport = window[spaceID].GlobalImport || {};
-        window[spaceID].GlobalImport["react"] = React;
-        window[spaceID].GlobalImport["react-dom"] = ReactDOM;
-        window[spaceID].GlobalImport["@react-three/fiber"] = R3F;
-        window[spaceID].GlobalImport["@react-three/drei"] = Drei;
-        window[spaceID].GlobalImport["@react-three/postprocessing"] = R3FPost;
-        window[spaceID].GlobalImport["postprocessing"] = NativePost;
+        window[nameSpaceID].GlobalImport =
+          window[nameSpaceID].GlobalImport || {};
+        window[nameSpaceID].GlobalImport["react"] = React;
+        window[nameSpaceID].GlobalImport["react-dom"] = ReactDOM;
+        window[nameSpaceID].GlobalImport["@react-three/fiber"] = R3F;
+        window[nameSpaceID].GlobalImport["@react-three/drei"] = Drei;
+        window[nameSpaceID].GlobalImport["@react-three/postprocessing"] =
+          R3FPost;
+        window[nameSpaceID].GlobalImport["postprocessing"] = NativePost;
 
-        window[spaceID].NodeModules = modules;
+        window[nameSpaceID].NodeModules = modules;
 
         let runtimePatcher = (Variable, idName) => {
           let str = ` `;
@@ -43,13 +44,13 @@ export const compileNode = async ({
             }
 
             str += `
-    export const ${key} = window["${spaceID}"].GlobalImport["${idName}"]["${key}"];
+    export const ${key} = window["${nameSpaceID}"].GlobalImport["${idName}"]["${key}"];
 `;
           });
 
           if (Variable.default) {
             str += `
-    export default window["${spaceID}"].GlobalImport["${idName}"]["default"]
+    export default window["${nameSpaceID}"].GlobalImport["${idName}"]["default"]
 `;
           }
 
@@ -64,13 +65,13 @@ export const compileNode = async ({
             }
 
             str += `
-    export const ${key} = window["${spaceID}"].NodeModules.get("${idName}")["${key}"];
+    export const ${key} = window["${nameSpaceID}"].NodeModules.get("${idName}")["${key}"];
 `;
           });
 
           if (Variable.default) {
             str += `
-    export default window["${spaceID}"].NodeModules.get("${idName}")["default"]
+    export default window["${nameSpaceID}"].NodeModules.get("${idName}")["default"]
 `;
           }
 
@@ -151,8 +152,8 @@ export const compileNode = async ({
                   });
                 }
 
-                if (id in window[spaceID].GlobalImport) {
-                  return `${runtimePatcher(window[spaceID].GlobalImport[id], id)}`;
+                if (id in window[nameSpaceID].GlobalImport) {
+                  return `${runtimePatcher(window[nameSpaceID].GlobalImport[id], id)}`;
                 }
 
                 if (id.startsWith(`/`)) {

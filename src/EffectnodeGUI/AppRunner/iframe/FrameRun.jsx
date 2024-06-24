@@ -107,7 +107,7 @@ export default function FrameRun() {
     };
   }, [works]);
 
-  let spaceID = React.useMemo(() => {
+  let nameSpaceID = React.useMemo(() => {
     return getID();
   }, []);
 
@@ -119,7 +119,7 @@ export default function FrameRun() {
             let code = codes.find((r) => r.nodeID === it._id);
             return (
               <RunnerNode
-                spaceID={spaceID}
+                nameSpaceID={nameSpaceID}
                 edges={graph.edges}
                 codes={codes}
                 nodes={nodes}
@@ -138,7 +138,15 @@ export default function FrameRun() {
   );
 }
 
-function RunnerNode({ spaceID, nodes, modules, works, useCore, code, node }) {
+function RunnerNode({
+  nameSpaceID,
+  nodes,
+  modules,
+  works,
+  useCore,
+  code,
+  node,
+}) {
   //
   let [display, mountReact] = useState(null);
 
@@ -147,7 +155,7 @@ function RunnerNode({ spaceID, nodes, modules, works, useCore, code, node }) {
     works.set(node._id, localWork);
     let cleans = [];
 
-    compileNode({ nodes, modules, bootCode: code.code, spaceID })
+    compileNode({ nodes, modules, bootCode: code.code, nameSpaceID })
       .then((output) => {
         window
           .remoteImport(output.url)
