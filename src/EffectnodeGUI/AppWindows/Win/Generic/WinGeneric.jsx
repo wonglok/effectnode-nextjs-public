@@ -257,7 +257,24 @@ export function WinGeneric({
   // };
 
   let active = win.zIndex === wins.length - 1;
+
   let percentage = active ? 1 : 0;
+
+  let activeGradient = active
+    ? `
+            linear-gradient(
+                hsl(210, 100%, 95%),
+                hsl(190, 100%, 70%)
+            )
+            `
+    : `
+            linear-gradient(
+                hsl(210, ${(percentage * 100).toFixed(0)}%, 90%),
+                hsl(190, ${(percentage * 100).toFixed(0)}%, 90%)
+            )
+            `;
+
+  let activeColor = active ? `#000000` : `#bababa`;
 
   //
   return (
@@ -296,13 +313,8 @@ export function WinGeneric({
             height: `30px`,
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            // borderBottom: `gray solid 1px`,
-            backgroundImage: `
-            linear-gradient(
-                hsl(210, ${(percentage * 100).toFixed(0)}%, 80%),
-                hsl(190, ${(percentage * 100).toFixed(0)}%, 50%)
-            )
-            `,
+            color: activeColor,
+            backgroundImage: activeGradient,
             borderTop: "gray solid 1px",
             borderLeft: "gray solid 1px",
             borderRight: "gray solid 1px",

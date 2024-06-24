@@ -151,7 +151,7 @@ export function Code({ win, useStore }) {
                 )}
               </div>
               <div
-                className="h-full border-l border-gray-400"
+                className="h-full border-l border-gray-400 bg-gray-700"
                 style={{ width: `calc(300px)` }}
               >
                 {/*  */}
