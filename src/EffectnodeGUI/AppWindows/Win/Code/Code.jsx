@@ -16,6 +16,7 @@ export function Code({ win, useStore }) {
 
   let spaceID = useStore((r) => r.spaceID);
   let [editor, setEditor] = useState(false);
+  let [monaco, setMonaco] = useState(false);
 
   useEffect(() => {
     if (!spaceID) {
@@ -95,28 +96,97 @@ export function Code({ win, useStore }) {
         <div className="w-full " style={{ height: "calc(100% - 30px)" }}>
           <div
             onKeyDownCapture={(ev) => {
-              if (ev.metaKey && ev.key === "s") {
-                ev.preventDefault();
-                ev.stopPropagation();
+              // if (ev.metaKey && ev.key === "s") {
+              //   ev.preventDefault();
+              //   ev.stopPropagation();
 
-                window.dispatchEvent(
-                  new CustomEvent("editor-save", {
-                    detail: { win, node, code },
-                  })
-                );
+              //   window.dispatchEvent(
+              //     new CustomEvent("editor-save", {
+              //       detail: { win, node, code },
+              //     })
+              //   );
 
-                let runRun = async () => {
-                  let indexPos = editor
-                    .getModel()
-                    .getOffsetAt(editor.getPosition());
+              //   let runRun = async () => {
+              //     let indexPos = editor
+              //       .getModel()
+              //       .getOffsetAt(editor.getPosition());
 
-                  let beforePosition = editor.getPosition();
+              //     let beforePosition = editor.getPosition();
 
-                  let beforeState = editor.saveViewState();
-                  // console.log(editor);
-                  let result = await prettier
+              //     let beforeState = editor.saveViewState();
+              //     // console.log(editor);
+              //     let result = await prettier
+              //       .formatWithCursor(code.code, {
+              //         cursorOffset: indexPos,
+              //         parser: "babel",
+              //         plugins: [
+              //           prettierPluginBabel,
+              //           prettierPluginEstree,
+              //           prettierPluginHtml,
+              //         ],
+              //       })
+              //       .catch((r) => {
+              //         console.error(r);
+              //         return code.code;
+              //       });
+
+              //     //
+              //     // editor.setValue(result.formatted);
+              //     //
+              //     editor.setPosition(beforePosition);
+              //     editor.restoreViewState(beforeState);
+
+              //     // code.code = result.formatted;
+
+              //     useStore.setState({
+              //       codes: [...codes],
+              //     });
+              //   };
+              //   runRun();
+              // }
+
+              const computeOffset = (code, pos) => {
+                let line = 1;
+                let col = 1;
+                let offset = 0;
+                while (offset < code.length) {
+                  if (line === pos.lineNumber && col === pos.column)
+                    return offset;
+                  if (code[offset] === "\n") line++, (col = 1);
+                  else col++;
+                  offset++;
+                }
+                return -1;
+              };
+
+              const computePosition = (code, offset) => {
+                let line = 1;
+                let col = 1;
+                let char = 0;
+                while (char < offset) {
+                  if (code[char] === "\n") line++, (col = 1);
+                  else col++;
+                  char++;
+                }
+                return { lineNumber: line, column: col };
+              };
+
+              const alt = (e) => {
+                return navigator.userAgent.includes("Mac")
+                  ? e.metaKey
+                  : e.ctrlKey;
+              };
+              const hotKeys = async (e) => {
+                // Cdm + s formats with prettier
+                if (alt(e) && e.keyCode == 83) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const val = editor.getValue();
+                  const pos = editor.getPosition();
+
+                  let prettyVal = await prettier
                     .formatWithCursor(code.code, {
-                      cursorOffset: indexPos,
+                      cursorOffset: computeOffset(val, pos),
                       parser: "babel",
                       plugins: [
                         prettierPluginBabel,
@@ -126,23 +196,48 @@ export function Code({ win, useStore }) {
                     })
                     .catch((r) => {
                       console.error(r);
-                      return code.code;
+                      return {
+                        formatted: code.code,
+                        cursorOffset: computeOffset(val, pos),
+                      };
                     });
 
-                  //
-                  // editor.setValue(result.formatted);
-                  //
-                  editor.setPosition(beforePosition);
-                  editor.restoreViewState(beforeState);
+                  editor.executeEdits("prettier", [
+                    {
+                      identifier: "delete",
+                      range: editor.getModel().getFullModelRange(),
+                      text: "",
+                      forceMoveMarkers: true,
+                    },
+                  ]);
 
-                  // code.code = result.formatted;
+                  editor.executeEdits("prettier", [
+                    {
+                      identifier: "insert",
+                      range: new monaco.Range(1, 1, 1, 1),
+                      text: prettyVal.formatted,
+                      forceMoveMarkers: true,
+                    },
+                  ]);
 
-                  useStore.setState({
-                    codes: [...codes],
-                  });
-                };
-                runRun();
-              }
+                  editor.setSelection(new monaco.Range(0, 0, 0, 0));
+                  editor.setPosition(
+                    computePosition(prettyVal.formatted, prettyVal.cursorOffset)
+                  );
+                }
+                // Cmd + p opens the command palette
+                if (alt(e) && e.keyCode == 80) {
+                  editor.trigger("anyString", "editor.action.quickCommand");
+                  e.preventDefault();
+                }
+                // Cmd + d prevents browser bookmark dialog
+                if (alt(e) && e.keyCode == 68) {
+                  e.preventDefault();
+                }
+              };
+
+              hotKeys(ev);
+              // container.addEventListener("keydown", hotKeys);
             }}
             className="w-full h-full overflow-hidden rounded-b"
           >
@@ -155,6 +250,7 @@ export function Code({ win, useStore }) {
                     defaultValue={`${code.code}`}
                     onMount={(editor, monaco) => {
                       setEditor(editor);
+                      setMonaco(monaco);
                     }}
                     onChange={(text) => {
                       code.code = text;

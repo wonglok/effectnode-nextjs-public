@@ -220,6 +220,7 @@ function RunnerNode({
                     }
                   ),
 
+                  modules: modules,
                   //
                   getNode: (v) => modules.get(v),
 

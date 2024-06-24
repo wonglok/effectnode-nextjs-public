@@ -98,7 +98,6 @@ export function AppRunner({
         ev.data
       ) {
         //
-        //
         let payload = ev.data.payload;
         let action = ev.data.action;
 
