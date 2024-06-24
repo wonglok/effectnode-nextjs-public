@@ -155,7 +155,7 @@ function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
 
                   //
 
-                  modules,
+                  getByNodeTitle: (v) => modules.get(v),
 
                   ui: new Proxy(
                     {},
