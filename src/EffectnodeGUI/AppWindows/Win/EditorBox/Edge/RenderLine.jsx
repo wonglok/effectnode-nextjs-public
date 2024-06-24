@@ -80,10 +80,12 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
           mix(start[2], end[2], 0.85),
         ]}
         end={[end[0], end[1], end[2]]}
-        color="red"
+        color="teal"
         dashed
-        dashScale={50}
-        gapSize={10}
+        dashScale={10}
+        gapSize={3}
+        transparent
+        opacity={0.5}
         lineWidth={3}
       />
       <CubicBezierLine
@@ -101,10 +103,10 @@ export function RenderLine({ start = [1, 0, 1], end = [0, 0, 0] }) {
           mix(start[2], end[2], 0.85),
         ]}
         end={[end[0], end[1], end[2]]}
-        color="blue"
+        color="cyan"
+        opacity={0.5}
         lineWidth={2}
         transparent
-        opacity={0.2}
       />
 
       {/*  */}

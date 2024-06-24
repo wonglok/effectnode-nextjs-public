@@ -99,6 +99,7 @@ export function Code({ win, useStore }) {
 
                   let beforePosition = editor.getPosition();
 
+                  let beforeState = editor.saveViewState();
                   // console.log(editor);
                   let result = await prettier.formatWithCursor(code.code, {
                     cursorOffset: indexPos,
@@ -109,10 +110,12 @@ export function Code({ win, useStore }) {
                       prettierPluginHtml,
                     ],
                   });
+
                   //
-                  editor.setValue(result.formatted);
+                  // editor.setValue(result.formatted);
                   //
                   editor.setPosition(beforePosition);
+                  editor.restoreViewState(beforeState);
 
                   code.code = result.formatted;
 
@@ -134,8 +137,8 @@ export function Code({ win, useStore }) {
                     defaultValue={`${code.code}`}
                     onMount={(editor, monaco) => {
                       //
-
                       setEditor(editor);
+                      //
                     }}
                     onChange={(text) => {
                       code.code = text;

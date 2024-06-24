@@ -8,9 +8,8 @@ export function DisplayAllEdges({ useStore }) {
   let edges = graph.edges;
   //
   let scene = useThree((r) => r.scene);
-  //
 
-  //   console.log(edges);
+  //
 
   //
 
