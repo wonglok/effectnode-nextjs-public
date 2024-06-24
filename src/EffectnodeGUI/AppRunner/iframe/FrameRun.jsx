@@ -113,6 +113,7 @@ export default function FrameRun() {
             let code = codes.find((r) => r.nodeID === it._id);
             return (
               <RunnerNode
+                edges={graph.edges}
                 codes={codes}
                 nodes={nodes}
                 modules={modules}
@@ -130,7 +131,7 @@ export default function FrameRun() {
   );
 }
 
-function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
+function RunnerNode({ nodes, modules, works, useCore, code, node }) {
   //
   let [display, mountReact] = useState(null);
 
@@ -145,15 +146,68 @@ function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
           .remoteImport(output.url)
           .then((value) => {
             modules.set(node.title, value);
-
             URL.revokeObjectURL(output.url);
 
             let run = () => {
+              //
+              //
               if (value.setup) {
                 value.setup({
                   //
+                  io: new Proxy(
+                    {
+                      //
+                      //
+                    },
+                    {
+                      get: (obj, key) => {
+                        if (key.startsWith("out")) {
+                          let idx = Number(key.replace("out", ""));
 
-                  getNodeByTitle: (v) => modules.get(v),
+                          let output = node.outputs[idx];
+                          // console.log(output);
+
+                          return (val) => {
+                            let edges = useCore?.getState()?.graph?.edges || [];
+
+                            let destEdges = edges.filter(
+                              (r) => r.output._id === output._id
+                            );
+
+                            destEdges.forEach((edge) => {
+                              window.dispatchEvent(
+                                new CustomEvent(edge.input._id, { detail: val })
+                              );
+                            });
+                            //
+                            //
+                          };
+                        }
+
+                        if (key.startsWith("in")) {
+                          let idx = Number(key.replace("in", ""));
+                          let input = node.inputs[idx];
+
+                          return (handler) => {
+                            //
+                            let hh = ({ detail }) => {
+                              handler(detail);
+                            };
+                            window.addEventListener(input._id, hh);
+                            cleans.push(() => {
+                              window.removeEventListener(input._id, hh);
+                            });
+                            //
+                          };
+                        }
+                      },
+                      //
+                      //
+                    }
+                  ),
+
+                  //
+                  getNode: (v) => modules.get(v),
 
                   ui: new Proxy(
                     {},
