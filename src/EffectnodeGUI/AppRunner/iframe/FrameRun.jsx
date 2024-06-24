@@ -80,7 +80,6 @@ export default function FrameRun() {
     return new Map();
   }, []);
 
-  //
   useEffect(() => {
     let rAFID = 0;
     let rAF = () => {
@@ -97,6 +96,7 @@ export default function FrameRun() {
       }
       //
     };
+
     rAFID = requestAnimationFrame(rAF);
     return () => {
       cancelAnimationFrame(rAFID);
@@ -151,8 +151,6 @@ function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
             let run = () => {
               if (value.setup) {
                 value.setup({
-                  //
-
                   //
 
                   getByNodeTitle: (v) => modules.get(v),

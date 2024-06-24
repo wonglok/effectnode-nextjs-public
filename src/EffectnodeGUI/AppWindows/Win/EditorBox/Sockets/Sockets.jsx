@@ -15,6 +15,7 @@ export function SocketInputs({ node, useStore }) {
               socket={inp}
               useStore={useStore}
               type={"input"}
+              idx={iii}
             ></SocketOne>
           </group>
         );
@@ -36,6 +37,7 @@ export function SocketOutputs({ node, useStore }) {
             scale={0.2}
           >
             <SocketOne
+              idx={iii}
               node={node}
               socket={outp}
               useStore={useStore}

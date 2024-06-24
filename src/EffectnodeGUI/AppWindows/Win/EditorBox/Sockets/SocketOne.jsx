@@ -1,17 +1,22 @@
 import { getID } from "@/src/EffectnodeGUI/utils/getID";
-import { Box, RoundedBox } from "@react-three/drei";
+import { Box, RoundedBox, Text } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
+import { useRef } from "react";
 
-export function SocketOne({ type, socket, node, useStore }) {
+export function SocketOne({ idx, type, socket, node, useStore }) {
   let graphCursorState = useStore((r) => r.graphCursorState);
   let controls = useThree((s) => s.controls);
   return (
     <>
+      <Text position={[0, 1, 0]} rotation={[Math.PI * -0.5, 0, 0]}>
+        {idx}
+      </Text>
+
       <RoundedBox
         name={socket._id}
         radius={0.5}
-        scale={[1, 2, 1]}
-        position={[0, 2 / 2, 0]}
+        scale={[1, 0.5, 1]}
+        position={[0, 0.5, 0]}
         onPointerDown={({ point }) => {
           //
           graphCursorState.nodeID = node._id;
@@ -32,12 +37,34 @@ export function SocketOne({ type, socket, node, useStore }) {
               ...graphCursorState,
             },
           });
-          //
-
-          //
         }}
+        //
         onPointerUp={({ point }) => {
           //
+          if (performance.now() - graphCursorState.timer <= 250) {
+            //
+            let graph = useStore.getState().graph;
+
+            if (type === "output") {
+              graph.edges = graph.edges.filter((ed) => {
+                return ed.output._id !== socket._id;
+              });
+            }
+            if (type === "input") {
+              graph.edges = graph.edges.filter((ed) => {
+                return ed.input._id !== socket._id;
+              });
+            }
+
+            useStore.setState({
+              graph: {
+                ...graph,
+              },
+            });
+
+            return;
+          }
+
           let start = graphCursorState.ts;
           let end = point.end;
           console.log(start, end);
