@@ -165,7 +165,6 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
                           let idx = Number(key.replace("out", ""));
 
                           let output = node.outputs[idx];
-                          // console.log(output);
 
                           return (val) => {
                             let edges = useCore?.getState()?.graph?.edges || [];

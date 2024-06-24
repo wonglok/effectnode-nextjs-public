@@ -8,7 +8,12 @@ export function SocketOne({ idx, type, socket, node, useStore }) {
   let controls = useThree((s) => s.controls);
   return (
     <>
-      <Text position={[0, 1, 0]} rotation={[Math.PI * -0.5, 0, 0]}>
+      <Text
+        position={[0, 0.8, 0]}
+        scale={[0.5, 0.5, 1]}
+        color={"black"}
+        rotation={[Math.PI * -0.5, 0, 0]}
+      >
         {idx}
       </Text>
 
