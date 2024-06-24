@@ -18,23 +18,20 @@ export const compileNode = async ({
     const rollupProm = import("rollup").then((r) => r.rollup); //2.56.3
     rollupProm.then(async (rollup) => {
       //
-      //
-      //
       try {
         //
 
         window[nameSpaceID] = window[nameSpaceID] || {};
         window[nameSpaceID].GV = window[nameSpaceID].GV || {};
-
         let Vars = window[nameSpaceID].GV;
 
         //
         Vars["react"] = React;
         Vars["react-dom"] = ReactDOM;
-        Vars["@react-three/fiber"] = R3F;
-        Vars["@react-three/drei"] = Drei;
-        Vars["@react-three/postprocessing"] = R3FPost;
-        Vars["postprocessing"] = NativePost;
+        // Vars["@react-three/fiber"] = R3F;
+        // Vars["@react-three/drei"] = Drei;
+        // Vars["@react-three/postprocessing"] = R3FPost;
+        // Vars["postprocessing"] = NativePost;
         Vars["tunnel-rat"] = tunnel;
 
         window[nameSpaceID].NodeModules = modules;
