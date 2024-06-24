@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getID } from "../utils/getID";
 
-export function AppRunner({ useStore, spaceID }) {
+export function AppRunner({
+  getState = () => {
+    console.log("not implemented!!!");
+  },
+  state = false,
+  spaceID,
+}) {
   let ref = useRef();
   let el = useMemo(() => {
     let el = document.createElement("iframe");
@@ -61,6 +67,17 @@ export function AppRunner({ useStore, spaceID }) {
   );
 
   useEffect(() => {
+    if (!state) {
+      return;
+    }
+
+    send({
+      action: "pushLatestState",
+      payload: state,
+    });
+  }, [send, state]);
+
+  useEffect(() => {
     let reloadHandler = () => {
       el?.contentWindow?.location?.reload();
     };
@@ -88,11 +105,21 @@ export function AppRunner({ useStore, spaceID }) {
         // console.log("[payload]", payload);
         // console.log("[action]", action);
 
-        if (action === "ready") {
-          let backup = useStore.getState().editorAPI.exportBackup();
+        if (action === "requestLaunchApp") {
+          let backupState = getState(); //useStore.getState().editorAPI.exportBackup();
+
           send({
-            action: "launchApp",
-            payload: backup,
+            action: "responseLaunchApp",
+            payload: backupState,
+          });
+        }
+
+        if (action === "requestLatestState") {
+          let state = getState(); // useStore.getState().editorAPI.exportBackup();
+
+          send({
+            action: "respondLatestState",
+            payload: state,
           });
         }
       }
@@ -103,7 +130,7 @@ export function AppRunner({ useStore, spaceID }) {
     return () => {
       window.removeEventListener("message", hh);
     };
-  }, [launcher, send, useStore]);
+  }, [launcher, send, getState]);
 
   return (
     <>

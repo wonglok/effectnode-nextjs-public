@@ -3,11 +3,18 @@ import * as React from "react";
 import { compileNode } from "./compileNode";
 import { create } from "zustand";
 export default function FrameRun() {
-  let [state, setState] = useState({});
+  let useCore = React.useMemo(() => {
+    return create(() => {
+      return {
+        sendParent: () => {},
+        graph: false,
+        codes: [],
+      };
+    });
+  }, []);
 
-  let [sendParent, setSend] = useState(() => {
-    return () => {};
-  });
+  let graph = useCore((r) => r.graph);
+  let codes = useCore((r) => r.codes);
 
   let readyRef = useRef(false);
 
@@ -30,8 +37,8 @@ export default function FrameRun() {
       );
     };
 
-    setSend(() => {
-      return send;
+    useCore.setState({
+      sendParent: send,
     });
 
     let hh = (ev) => {
@@ -39,8 +46,17 @@ export default function FrameRun() {
         let payload = ev.data.payload;
         let action = ev.data.action;
 
-        if (action === "launchApp") {
-          setState(payload);
+        if (action === "responseLaunchApp") {
+          useCore.setState({
+            graph: payload.graph,
+            codes: payload.codes,
+          });
+        }
+        if (action === "pushLatestState") {
+          useCore.setState({
+            graph: payload.graph,
+            codes: payload.codes,
+          });
         }
       }
     };
@@ -48,53 +64,32 @@ export default function FrameRun() {
 
     if (!readyRef.current) {
       readyRef.current = true;
-      send({ action: "ready", payload: {} });
+      send({ action: "requestLaunchApp", payload: {} });
     }
 
     return () => {
       window.removeEventListener("message", hh);
     };
-  }, []);
-
-  let { graph, codes } = state;
-  let useCore = React.useMemo(() => {
-    if (!graph) {
-      return false;
-    }
-    return create(() => {
-      return {
-        sendParent,
-        graph,
-        nodes: graph.nodes,
-        edges: graph.edges,
-        codes,
-      };
-    });
-  }, [codes, graph, sendParent]);
-
-  useEffect(() => {
-    if (!useCore) {
-      return;
-    }
-
-    return useCore.subscribe((now, before) => {
-      console.log(now, before);
-    });
   }, [useCore]);
 
   let modules = React.useMemo(() => {
     return new Map();
   }, []);
+
   let works = React.useMemo(() => {
     return new Map();
   }, []);
+
+  //
   useEffect(() => {
     let rAFID = 0;
     let rAF = () => {
       rAFID = requestAnimationFrame(rAF);
       //
       for (let val of works.values()) {
+        //
         for (let fnc of val) {
+          //
           if (typeof fnc === "function") {
             fnc();
           }
@@ -108,6 +103,8 @@ export default function FrameRun() {
     };
   }, [works]);
 
+  //
+
   return (
     <>
       {graph && useCore && (
@@ -116,6 +113,7 @@ export default function FrameRun() {
             let code = codes.find((r) => r.nodeID === it._id);
             return (
               <RunnerNode
+                codes={codes}
                 nodes={nodes}
                 modules={modules}
                 works={works}
@@ -132,8 +130,10 @@ export default function FrameRun() {
   );
 }
 
-function RunnerNode({ nodes, modules, works, useCore, code, node }) {
+function RunnerNode({ nodes, modules, works, useCore, code, node, codes }) {
+  //
   let [display, mountReact] = useState(null);
+
   useEffect(() => {
     let localWork = [];
     works.set(node._id, localWork);
@@ -150,11 +150,29 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
 
             let run = () => {
               if (value.setup) {
-                //
                 value.setup({
+                  //
+
+                  //
+
                   modules,
-                  data: code.data,
+
+                  ui: new Proxy(
+                    {},
+                    {
+                      get: (obj, key) => {
+                        let codes = useCore.getState().codes;
+                        let code = codes.find((r) => r.nodeID === node._id);
+                        let item = code.data.find((r) => r.label === key);
+                        if (item) {
+                          return item.value;
+                        }
+                      },
+                    }
+                  ),
+
                   useCore,
+
                   onLoop: (fnc) => {
                     localWork.push(fnc);
                   },
@@ -193,8 +211,9 @@ function RunnerNode({ nodes, modules, works, useCore, code, node }) {
       works.delete(node._id);
       cleans.forEach((r) => r());
     };
-  }, [code, modules, node, nodes.length, useCore, works]);
-
+  }, [useCore]);
+  //
+  //code, modules, node, nodes.length, useCore, works
   //
   return <>{display}</>;
 }

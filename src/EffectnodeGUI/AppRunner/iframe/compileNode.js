@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import path from "path";
 import { transform } from "sucrase";
-import * as Vue from "vue";
+// import * as Vue from "vue";
 
 export const compileNode = async ({ bootCode = "" }) => {
   return new Promise(async (resolve) => {
@@ -14,7 +14,6 @@ export const compileNode = async ({ bootCode = "" }) => {
         window.GlobalImport = window.GlobalImport || {};
         window.GlobalImport["react"] = React;
         window.GlobalImport["react-dom"] = ReactDOM;
-        window.GlobalImport["vue"] = Vue;
 
         let runtimePatcher = (Variable, idName) => {
           let str = ` `;
@@ -52,9 +51,11 @@ export const compileNode = async ({ bootCode = "" }) => {
                   if (source === "three") {
                     return "/jsrepo/three/build/three.module.js";
                   }
+
                   if (source === "three/nodes") {
                     return "/jsrepo/three/examples/jsm/nodes/Nodes.js";
                   }
+
                   if (source.startsWith("three/addons/")) {
                     return (
                       "/jsrepo/three/examples/jsm/" +

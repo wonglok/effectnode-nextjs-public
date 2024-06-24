@@ -35,8 +35,6 @@ export function SocketOne({ type, socket, node, useStore }) {
           //
 
           //
-
-          //
         }}
         onPointerUp={({ point }) => {
           //
