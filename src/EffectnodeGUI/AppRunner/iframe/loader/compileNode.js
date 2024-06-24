@@ -121,6 +121,7 @@ export const compileNode = async ({
                     throw new Error('cannot import modle itself');
                   `;
                 }
+
                 if (id === "effectnode.bootloader.js") {
                   let tCocde = transform(bootCode, {
                     transforms: ["jsx"],
