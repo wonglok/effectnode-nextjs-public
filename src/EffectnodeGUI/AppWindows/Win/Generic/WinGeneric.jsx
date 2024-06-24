@@ -388,6 +388,15 @@ export function WinGeneric({
               ></div>
             </>
           )}
+
+          {mouseState.isDown && (
+            <>
+              <div
+                className="w-full h-full absolute top-0 left-0 "
+                style={{ height: `calc(100% - 30px)` }}
+              ></div>
+            </>
+          )}
         </div>
 
         {mouseState.isDown && (
