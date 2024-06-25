@@ -54,6 +54,7 @@ export default function FrameRun() {
           });
         }
         if (action === "pushLatestState") {
+          // console.log(action);
           useCore.setState({
             graph: payload.graph,
             codes: payload.codes,

@@ -3,6 +3,7 @@ import { getID } from "../utils/getID";
 
 export function AppRunner({
   useCore,
+  state,
   getState = () => {
     console.log("not implemented!!!");
   },
@@ -69,18 +70,14 @@ export function AppRunner({
   );
 
   useEffect(() => {
-    if (!useCore) {
+    if (!state) {
       return;
     }
-
-    return useCore.subscribe(() => {
-      let st = useCore.getState().editorAPI.exportBackup();
-      send({
-        action: "pushLatestState",
-        payload: st,
-      });
+    send({
+      action: "pushLatestState",
+      payload: state,
     });
-  }, [send, useCore]);
+  }, [send, state]);
 
   useEffect(() => {
     let reloadHandler = () => {
