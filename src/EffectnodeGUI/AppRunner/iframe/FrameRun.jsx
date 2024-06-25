@@ -155,7 +155,13 @@ function RunnerNode({
     works.set(node._id, localWork);
     let cleans = [];
 
-    compileNode({ nodes, modules, bootCode: code.code, nameSpaceID })
+    compileNode({
+      nodes,
+      modules,
+      title: code.title,
+      bootCode: code.code,
+      nameSpaceID,
+    })
       .then((output) => {
         window
           .remoteImport(output.url)

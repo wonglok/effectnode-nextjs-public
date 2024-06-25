@@ -9,6 +9,7 @@ import * as NativePost from "postprocessing";
 import tunnel from "tunnel-rat";
 
 export const compileNode = async ({
+  title,
   nameSpaceID,
   nodes,
   modules,
@@ -83,7 +84,7 @@ export const compileNode = async ({
         };
 
         let bundle = rollup({
-          input: `effectnode.bootloader.js`,
+          input: `effectnode.bootloader.${title}.js`,
           plugins: [
             {
               name: "FS",
@@ -127,7 +128,7 @@ export const compileNode = async ({
                   `;
                 }
 
-                if (id === "effectnode.bootloader.js") {
+                if (id === `effectnode.bootloader.${title}.js`) {
                   let tCocde = transform(bootCode, {
                     transforms: ["jsx"],
                     preserveDynamicImport: true,

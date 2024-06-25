@@ -69,10 +69,10 @@ export const EditorRoot = () => {
         core.onChange((state, before) => {
           clearTimeout(toout);
           toout = setTimeout(() => {
+            console.log("saving to disk...");
             let st = core.exportBackup();
             localforage.setItem(spaceID, JSON.stringify(st));
-            console.log("saving to disk...");
-          }, 150);
+          }, 1000);
         });
 
         try {
