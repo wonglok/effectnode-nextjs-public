@@ -34,7 +34,6 @@ export function AppRunner({
     if (!spaceID) {
       return;
     }
-
     if (!el) {
       return;
     }
@@ -45,8 +44,6 @@ export function AppRunner({
       el.src = `/iframe/FrameRun?launcher=${encodeURIComponent(launcher)}`;
     }
 
-    // console.log(launcher);
-
     return () => {
       //
     };
@@ -56,11 +53,9 @@ export function AppRunner({
     ({ action = "action", payload = {} }) => {
       return el?.contentWindow?.postMessage(
         {
-          //
           launcher: launcher,
           action: action,
           payload: payload,
-          //
         },
         {
           targetOrigin: `${location.origin}`,
