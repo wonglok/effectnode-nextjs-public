@@ -4,6 +4,7 @@ import { getID } from "../utils/getID";
 export function AppRunner({
   useCore,
   state,
+  win,
   getState = () => {
     console.log("not implemented!!!");
   },
@@ -44,7 +45,7 @@ export function AppRunner({
       el.src = `/iframe/FrameRun?launcher=${encodeURIComponent(launcher)}`;
     }
 
-    console.log(launcher);
+    // console.log(launcher);
 
     return () => {
       //
@@ -68,6 +69,16 @@ export function AppRunner({
     },
     [el?.contentWindow, launcher]
   );
+
+  useEffect(() => {
+    send({
+      action: "resize",
+      payload: { ...win },
+    });
+    return () => {
+      //
+    };
+  }, [send, win, win.width, win.height]);
 
   useEffect(() => {
     if (!state) {

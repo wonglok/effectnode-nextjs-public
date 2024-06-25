@@ -60,6 +60,9 @@ export default function FrameRun() {
             codes: payload.codes,
           });
         }
+        if (action === "resize") {
+          window.dispatchEvent(new Event("resize", {}));
+        }
       }
     };
     window.addEventListener("message", hh);

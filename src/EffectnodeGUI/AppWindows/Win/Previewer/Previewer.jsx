@@ -1,7 +1,7 @@
 import { AppRunner } from "@/src/EffectnodeGUI/AppRunner/AppRunner";
 import { useCallback, useEffect, useState } from "react";
 
-export function Previewer({ useStore }) {
+export function Previewer({ win, useStore }) {
   let spaceID = useStore((r) => r.spaceID);
   let getState = useCallback(() => {
     return useStore.getState().editorAPI.exportBackup();
@@ -22,6 +22,7 @@ export function Previewer({ useStore }) {
     <>
       {spaceID && (
         <AppRunner
+          win={win}
           state={state}
           useStore={useStore}
           getState={getState}
