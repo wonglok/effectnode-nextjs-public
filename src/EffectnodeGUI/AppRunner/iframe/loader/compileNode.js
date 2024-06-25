@@ -34,7 +34,7 @@ export const compileNode = async ({
         Vars["postprocessing"] = NativePost;
         Vars["tunnel-rat"] = tunnel;
 
-        window[nameSpaceID].NodeModules = modules;
+        window[nameSpaceID].NODE_MODULES = modules;
 
         let runtimePatcher = (Variable, idName) => {
           let str = `
@@ -60,20 +60,22 @@ export const compileNode = async ({
         };
 
         let modulePatcher = (Variable, idName) => {
-          let str = ` `;
+          let str = `
+          
+          `;
           Object.entries(Variable).forEach(([key, val]) => {
             if (key === "default") {
               return;
             }
 
             str += `
-    export const ${key} = window["${nameSpaceID}"].NodeModules.get("${idName}")["${key}"];
+    export const ${key} = window["${nameSpaceID}"].NODE_MODULES.get("${idName}")["${key}"];
 `;
           });
 
           if (Variable.default) {
             str += `
-    export default window["${nameSpaceID}"].NodeModules.get("${idName}")["default"]
+    export default window["${nameSpaceID}"].NODE_MODULES.get("${idName}")["default"]
 `;
           }
 

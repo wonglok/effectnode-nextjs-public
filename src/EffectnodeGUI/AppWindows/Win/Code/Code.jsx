@@ -19,6 +19,22 @@ export function Code({ win, useStore }) {
   let [monaco, setMonaco] = useState(false);
 
   useEffect(() => {
+    if (!monaco) {
+      return;
+    }
+    if (!editor) {
+      return;
+    }
+    var myBinding = editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_W,
+      function (ev) {
+        ev.preventDefault();
+        alert("SAVE pressed!");
+      }
+    );
+  }, [editor, monaco]);
+
+  useEffect(() => {
     if (!spaceID) {
       return;
     }
@@ -29,6 +45,23 @@ export function Code({ win, useStore }) {
 
     useStore.setState({ showCode: true });
 
+    const alt = (e) => {
+      return navigator?.platform?.match("Mac") ? e.metaKey : e.ctrlKey;
+    };
+
+    let handler = (ev) => {
+      if (alt(ev) && ev.key === "w") {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        console.log(ev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+
+    return () => {
+      window.addEventListener("keyup", handler);
+    };
     //
   }, [code, spaceID, useStore, win.nodeID]);
 
@@ -238,6 +271,7 @@ export function Code({ win, useStore }) {
               };
 
               hotKeys(ev);
+
               // container.addEventListener("keydown", hotKeys);
             }}
             className="w-full h-full overflow-hidden rounded-b"
